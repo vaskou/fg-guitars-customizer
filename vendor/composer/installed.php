@@ -1,0 +1,41 @@
+<?php return array(
+    'root' => array(
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
+        'type' => 'library',
+        'install_path' => __DIR__ . '/../../',
+        'aliases' => array(),
+        'reference' => '64a3234ca8ebbf90fbb49dbbf99d2675f2fb10cd',
+        'name' => '__root__',
+        'dev' => true,
+    ),
+    'versions' => array(
+        '__root__' => array(
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../../',
+            'aliases' => array(),
+            'reference' => '64a3234ca8ebbf90fbb49dbbf99d2675f2fb10cd',
+            'dev_requirement' => false,
+        ),
+        'vaskou/autoloader' => array(
+            'pretty_version' => 'v1.0.1',
+            'version' => '1.0.1.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../vaskou/autoloader',
+            'aliases' => array(),
+            'reference' => 'aa0956e9c09105cc8077ae908c843c80d5f30e76',
+            'dev_requirement' => false,
+        ),
+        'vaskou/wordpress-enqueue' => array(
+            'pretty_version' => 'v1.0.0',
+            'version' => '1.0.0.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../vaskou/wordpress-enqueue',
+            'aliases' => array(),
+            'reference' => '97ba242e711e2bb91f2d201aec753aea5158ddfa',
+            'dev_requirement' => false,
+        ),
+    ),
+);

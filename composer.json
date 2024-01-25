@@ -1,0 +1,6 @@
+{
+    "require": {
+        "vaskou/wordpress-enqueue": "^1.0",
+        "vaskou/autoloader": "^1.0"
+    }
+}

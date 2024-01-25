@@ -8,7 +8,7 @@
  * Author:            Vasilis Koutsopoulos
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       fg-guitars
+ * Text Domain:       fg-guitars-customizer
  * Domain Path:       /languages
  */
 
