@@ -36,10 +36,13 @@ class FG_Guitars_Customizer {
 //			FG_GUITARS_CUSTOMIZER_VERSION
 //		);
 
+		// CMB2 Custom Fields
+		Cmb2_Custom_Fields\Option::instance();
+
 		// Metaboxes
 		Metaboxes\Customizer_Metabox::instance();
 
 		// Post Types
-		Post_Types\Customizer::instance();
+		Post_Types\Customizer_Fields_Group::instance();
 	}
 }
