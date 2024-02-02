@@ -2,6 +2,8 @@
 
 namespace FG_Guitars_Customizer\Metaboxes;
 
+use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
+
 class Customizer_Metabox {
 
 	private $fields = [];
@@ -51,6 +53,10 @@ class Customizer_Metabox {
 				]
 			]
 		];
+
+		$fields = Customizer_Fields_Group::get_fields_array();
+
+		$this->fields = $fields;
 
 		$metabox = $this->_addMetabox( 'fg_guitars' );
 

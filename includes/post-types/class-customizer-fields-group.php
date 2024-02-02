@@ -72,7 +72,7 @@ class Customizer_Fields_Group {
 			'label'         => __( 'FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
 			'description'   => __( 'FG Guitar Customizer Fields Group Description', 'fg-guitars-customizer' ),
 			'labels'        => $labels,
-			'supports'      => array( 'title' ),
+			'supports'      => array( 'title', 'page-attributes' ),
 			'taxonomies'    => array(),
 			'hierarchical'  => false,
 			'public'        => false,
@@ -126,5 +126,72 @@ class Customizer_Fields_Group {
 			'type'       => 'fggc_cmb2_field_option_field',
 			'repeatable' => true,
 		) );
+	}
+
+	public static function get_fields_array() {
+		$args = array(
+			'post_type'      => self::POST_TYPE_NAME,
+			'post_status'    => 'publish',
+			'posts_per_page' => - 1,
+			'orderby'        => 'menu',
+			'order'          => 'ASC'
+		);
+
+		$query = new \WP_Query( $args );
+
+		$fields = $query->get_posts();
+
+//		error_log( print_r( $fields, 1 ) );
+
+		$result = [];
+
+		if ( ! empty( $fields ) ) {
+			foreach ( $fields as $field ) {
+//				'body' => [
+//					'name'       => __( 'Body', 'fg-guitars-customizer' ),
+//					'type'       => 'group',
+//					'repeatable' => false,
+//					'fields'     => [
+//						'type' => [
+//							'name'              => __( 'Type', 'fg-guitars-customizer' ),
+//							'type'              => 'multicheck',
+//							'options'           => [
+//								'check1' => 'Check One',
+//								'check2' => 'Check Two',
+//								'check3' => 'Check Three',
+//							],
+//							'select_all_button' => false,
+//						]
+//					]
+//				]
+
+				$group_fields = get_post_meta( $field->ID, self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
+
+				$g_fields = [];
+				foreach ( $group_fields as $group_field ) {
+					$options = [];
+
+					foreach ( $group_field['fggc_group_field_options'] as $option ) {
+						$options[ sanitize_title( $option['title'] ) ] = $option['title'];
+					}
+
+					$g_fields[ sanitize_title( $group_field['fggc_group_field_title'] ) ] = [
+						'name'              => $group_field['fggc_group_field_title'],
+						'type'              => 'multicheck',
+						'options'           => $options,
+						'select_all_button' => false,
+					];
+				}
+
+				$result[ $field->post_name ] = [
+					'name'       => $field->post_title,
+					'type'       => 'group',
+					'repeatable' => false,
+					'fields'     => $g_fields
+				];
+			}
+		}
+
+		return $result;
 	}
 }

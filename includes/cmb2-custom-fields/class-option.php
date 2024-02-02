@@ -19,17 +19,16 @@ class Option {
 	private function __construct() {
 		$this->field_type = 'fggc_cmb2_field_option_field';
 		add_action( "cmb2_render_{$this->field_type}", [ $this, 'render' ], 10, 5 );
-//		add_action( "cmb2_sanitize_{$this->field_type}", array( $this, 'sanitize' ), 10, 2 );
-//		add_action( "cmb2_types_esc_{$this->field_type}", array( $this, 'escape_value' ), 10, 2 );
-		// TODO: add sanitize and escape functions
+		add_action( "cmb2_sanitize_{$this->field_type}", array( $this, 'sanitize' ), 10, 2 );
+		add_action( "cmb2_types_esc_{$this->field_type}", array( $this, 'escape_value' ), 10, 2 );
 	}
 
 	/**
-	 * @param $field         CMB2_Field
+	 * @param $field         \CMB2_Field
 	 * @param $escaped_value mixed
 	 * @param $object_id     int
 	 * @param $object_type   string
-	 * @param $field_type    CMB2_Types
+	 * @param $field_type    \CMB2_Types
 	 */
 	public function render( $field, $escaped_value, $object_id, $object_type, $field_type ) {
 
@@ -51,30 +50,96 @@ class Option {
 			'value' => $price_value,
 		];
 
+		$fields = [
+			'title' => [
+				'type'  => 'text',
+				'title' => __( 'Title', 'fg-guitars-customizer' ),
+			],
+			'price' => [
+				'type'  => 'text',
+				'title' => __( 'Price', 'fg-guitars-customizer' ),
+			],
+		];
+
 		ob_start();
 		?>
         <div class="fggc_cmb2_field_option_field">
-            <div class="option-title cmb-row">
-                <div class="cmb-th">
-                    <label><?php echo __( 'Title', 'fg-guitars-customizer' ); ?></label>
+			<?php foreach ( $fields as $key => $args ): ?>
+				<?php $type = $args['type']; ?>
+				<?php $id = "_{$key}"; ?>
+				<?php $name = "[{$key}]"; ?>
+				<?php $value = ! is_array( $escaped_value ) ? $escaped_value : ( ! empty( $escaped_value[ $key ] ) ? $escaped_value[ $key ] : '' ); ?>
+
+				<?php
+				$field_params = [
+					'type'  => $type,
+					'id'    => $field_type->_id( $id ),
+					'name'  => $field_type->_name( $name ),
+					'value' => $value,
+				];
+				?>
+                <div class="option-<?php echo $key; ?> cmb-row">
+                    <div class="cmb-th">
+                        <label><?php echo $args['title']; ?></label>
+                    </div>
+                    <div class="cmb-td">
+						<?php echo $field_type->input( $field_params ); ?>
+                    </div>
                 </div>
-                <div class="cmb-td">
-					<?php echo $field_type->input( $title_args ); ?>
-                </div>
-            </div>
-            <div class="option-price cmb-row">
-                <div class="cmb-th">
-                    <label><?php echo __( 'Price', 'fg-guitars-customizer' ); ?></label>
-                </div>
-                <div class="cmb-td">
-					<?php echo $field_type->input( $price_args ); ?>
-                </div>
-            </div>
+			<?php endforeach; ?>
         </div>
 		<?php
 
 		$html = ob_get_clean();
 
 		echo $html;
+	}
+
+	public function sanitize( $sanitized_val, $val ) {
+		if ( ! is_array( $val ) ) {
+			return array();
+		}
+
+		foreach ( $val as $key => $value ) {
+
+			$has_value = false;
+			$sanitized = [];
+
+			foreach ( $value as $k => $v ) {
+				$v = ! empty( $v ) ? $v : '';
+
+				$sanitized[ $k ] = sanitize_text_field( $v );
+
+				if ( ! $has_value ) {
+					$has_value = ! empty( $sanitized[ $k ] );
+				}
+			}
+
+			if ( $has_value ) {
+				$sanitized_val[ $key ] = $sanitized;
+			}
+
+		}
+
+		return $sanitized_val;
+	}
+
+	public function escape_value( $escaped_value, $val ) {
+
+		if ( ! is_array( $val ) ) {
+			return array();
+		}
+
+		foreach ( $val as $key => $value ) {
+
+			foreach ( $value as $k => $v ) {
+				$v = ! empty( $v ) ? $v : '';
+
+				$escaped_value[ $key ][ $k ] = esc_attr( $v );
+			}
+
+		}
+
+		return $escaped_value;
 	}
 }
