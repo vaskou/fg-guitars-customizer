@@ -43,6 +43,8 @@ class FG_Guitars_Customizer {
 		Metaboxes\Customizer_Metabox::instance();
 
 		// Post Types
+		Post_Types\Customizer_Field::instance();
+		Post_Types\Customizer_Field_Option::instance();
 		Post_Types\Customizer_Fields_Group::instance();
 	}
 }
