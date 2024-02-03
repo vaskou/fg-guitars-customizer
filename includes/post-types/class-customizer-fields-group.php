@@ -123,7 +123,7 @@ class Customizer_Fields_Group {
 		$metabox->add_group_field( $group_field_id, array(
 			'name'       => __( 'Options', 'fg-guitars-customizer' ),
 			'id'         => self::GUITAR_CUSTOMIZER_GROUP_FIELD_OPTIONS_META_KEY,
-			'type'       => 'fggc_cmb2_field_option_field',
+			'type'       => 'text',
 			'repeatable' => true,
 		) );
 	}
@@ -172,12 +172,12 @@ class Customizer_Fields_Group {
 					$options = [];
 
 					foreach ( $group_field['fggc_group_field_options'] as $option ) {
-						$options[ sanitize_title( $option['title'] ) ] = $option['title'];
+						$options[ sanitize_title( $option ) ] = $option;
 					}
 
 					$g_fields[ sanitize_title( $group_field['fggc_group_field_title'] ) ] = [
 						'name'              => $group_field['fggc_group_field_title'],
-						'type'              => 'multicheck',
+						'type'              => 'fggc_cmb2_field_option_field',
 						'options'           => $options,
 						'select_all_button' => false,
 					];
