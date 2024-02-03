@@ -8,6 +8,8 @@ class Customizer_Metabox {
 
 	private $fields = [];
 
+	private $metabox_id = 'fg_guitars_customizer';
+
 	private static $_instance;
 
 	/**
@@ -27,12 +29,6 @@ class Customizer_Metabox {
 
 	private function __construct() {
 		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
-	}
-
-	public function add_metaboxes() {
-		if ( ! function_exists( 'new_cmb2_box' ) ) {
-			return;
-		}
 
 		$this->fields = [
 			'body' => [
@@ -57,15 +53,36 @@ class Customizer_Metabox {
 		$fields = Customizer_Fields_Group::get_fields_array();
 
 		$this->fields = $fields;
+	}
+
+	public function add_metaboxes() {
+		if ( ! function_exists( 'new_cmb2_box' ) ) {
+			return;
+		}
 
 		$metabox = $this->_addMetabox( 'fg_guitars' );
 
 		$this->_addMetaboxFields( $metabox );
 	}
 
+	public function getPostMeta( $post_id ) {
+		$post_meta    = array();
+		$field_prefix = 'fggc_';
+
+		foreach ( $this->fields as $key => $args ) {
+			if ( ! empty( $args['type'] ) && 'wysiwyg' == $args['type'] ) {
+				$post_meta[ $this->metabox_id ][ $key ] = wpautop( get_post_meta( $post_id, $field_prefix . $key, true ) );
+			} else {
+				$post_meta[ $this->metabox_id ][ $key ] = get_post_meta( $post_id, $field_prefix . $key, true );
+			}
+		}
+
+		return $post_meta;
+	}
+
 	protected function _addMetabox( $post_type, $context = 'normal', $priority = 'high' ) {
 		return new_cmb2_box( array(
-			'id'           => 'fg_guitars_customizer',
+			'id'           => $this->metabox_id,
 			'title'        => __( 'Customizer', 'fg-guitars-customizer' ),
 			'object_types' => array( $post_type ), // Post type
 			'context'      => $context,

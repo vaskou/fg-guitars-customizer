@@ -94,7 +94,7 @@ class Customizer_Fields_Group {
 		}
 
 		$metabox = new_cmb2_box( array(
-			'id'           => 'fggc_fields_group',
+			'id'           => 'fggc_fields_group_meta_box',
 			'title'        => __( 'FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
 			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
 			'context'      => 'normal',
@@ -103,33 +103,29 @@ class Customizer_Fields_Group {
 		) );
 
 		$group_field_id = $metabox->add_field( array(
-			'name'    => __( 'Customizer Fields', 'fg-guitars-customizer' ),
-			'id'      => self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY,
-			'type'    => 'group',
-			'options' => [
-				'group_title'   => __( 'Field {#}', 'fg-guitars-customizer' ),
-				'add_button'    => __( 'Add Another Field', 'fg-guitars-customizer' ),
-				'remove_button' => __( 'Remove Field', 'fg-guitars-customizer' ),
-				'sortable'      => true,
-			],
+			'name'              => __( 'Customizer Fields', 'fg-guitars-customizer' ),
+			'id'                => self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY,
+			'type'              => 'multicheck',
+			'options'           => $this->_get_options(),
+			'select_all_button' => false,
 		) );
 
-		$metabox->add_group_field( $group_field_id, array(
-			'name' => __( 'Field title', 'fg-guitars-customizer' ),
-			'id'   => 'fggc_group_field_title',
-			'type' => 'text',
-		) );
-
-		$metabox->add_group_field( $group_field_id, array(
-			'name'       => __( 'Options', 'fg-guitars-customizer' ),
-			'id'         => self::GUITAR_CUSTOMIZER_GROUP_FIELD_OPTIONS_META_KEY,
-			'type'       => 'text',
-			'repeatable' => true,
-		) );
+//		$metabox->add_group_field( $group_field_id, array(
+//			'name' => __( 'Field title', 'fg-guitars-customizer' ),
+//			'id'   => 'fggc_group_field_title',
+//			'type' => 'text',
+//		) );
+//
+//		$metabox->add_group_field( $group_field_id, array(
+//			'name'       => __( 'Options', 'fg-guitars-customizer' ),
+//			'id'         => self::GUITAR_CUSTOMIZER_GROUP_FIELD_OPTIONS_META_KEY,
+//			'type'       => 'text',
+//			'repeatable' => true,
+//		) );
 	}
 
-	public static function get_fields_array() {
-		$args = array(
+	public static function get_items( $args = [] ) {
+		$default = array(
 			'post_type'      => self::POST_TYPE_NAME,
 			'post_status'    => 'publish',
 			'posts_per_page' => - 1,
@@ -137,61 +133,75 @@ class Customizer_Fields_Group {
 			'order'          => 'ASC'
 		);
 
+		$args = wp_parse_args( $args, $default );
+
 		$query = new \WP_Query( $args );
 
-		$fields = $query->get_posts();
+		return $query->get_posts();
+	}
 
-//		error_log( print_r( $fields, 1 ) );
+	public static function get_fields_array() {
+
+		$groups = self::get_items();
 
 		$result = [];
 
-		if ( ! empty( $fields ) ) {
-			foreach ( $fields as $field ) {
-//				'body' => [
-//					'name'       => __( 'Body', 'fg-guitars-customizer' ),
-//					'type'       => 'group',
-//					'repeatable' => false,
-//					'fields'     => [
-//						'type' => [
-//							'name'              => __( 'Type', 'fg-guitars-customizer' ),
-//							'type'              => 'multicheck',
-//							'options'           => [
-//								'check1' => 'Check One',
-//								'check2' => 'Check Two',
-//								'check3' => 'Check Three',
-//							],
-//							'select_all_button' => false,
-//						]
-//					]
-//				]
+		if ( ! empty( $groups ) ) {
+			foreach ( $groups as $group ) {
 
-				$group_fields = get_post_meta( $field->ID, self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
+				$group_id    = $group->ID;
+				$group_title = $group->post_title;
 
-				$g_fields = [];
-				foreach ( $group_fields as $group_field ) {
+				$fields = get_post_meta( $group->ID, self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
+
+				if ( empty( $fields ) ) {
+					continue;
+				}
+
+				$result[ $group_id ] = [
+					'name'       => $group_title,
+					'type'       => 'group',
+					'repeatable' => false,
+				];
+
+				foreach ( $fields as $field_id ) {
+
+					$field_title   = get_post_field( 'post_title', $field_id );
+					$field_options = get_post_meta( $field_id, Customizer_Field::OPTIONS_META_KEY, true );
+
 					$options = [];
 
-					foreach ( $group_field['fggc_group_field_options'] as $option ) {
-						$options[ sanitize_title( $option ) ] = $option;
+					if ( empty( $field_options ) ) {
+						continue;
 					}
 
-					$g_fields[ sanitize_title( $group_field['fggc_group_field_title'] ) ] = [
-						'name'              => $group_field['fggc_group_field_title'],
+					foreach ( $field_options as $option_id ) {
+						$option_title          = get_post_field( 'post_title', $option_id );
+						$options[ $option_id ] = $option_title;
+					}
+
+					$result[ $group_id ]['fields'][ $field_id ] = [
+						'name'              => $field_title,
 						'type'              => 'fggc_cmb2_field_option_field',
 						'options'           => $options,
 						'select_all_button' => false,
 					];
 				}
-
-				$result[ $field->post_name ] = [
-					'name'       => $field->post_title,
-					'type'       => 'group',
-					'repeatable' => false,
-					'fields'     => $g_fields
-				];
 			}
 		}
 
 		return $result;
+	}
+
+	private function _get_options() {
+		$options = [];
+
+		$items = Customizer_Field::get_items();
+
+		foreach ( $items as $item ) {
+			$options[ $item->ID ] = $item->post_title;
+		}
+
+		return $options;
 	}
 }

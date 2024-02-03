@@ -109,6 +109,22 @@ class Customizer_Field {
 		) );
 	}
 
+	public static function get_items( $args = [] ) {
+		$default = array(
+			'post_type'      => self::POST_TYPE_NAME,
+			'post_status'    => 'publish',
+			'posts_per_page' => - 1,
+			'orderby'        => 'menu',
+			'order'          => 'ASC'
+		);
+
+		$args = wp_parse_args( $args, $default );
+
+		$query = new \WP_Query( $args );
+
+		return $query->get_posts();
+	}
+
 	private function _get_options() {
 		$options = [];
 
