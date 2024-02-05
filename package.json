@@ -1,0 +1,16 @@
+{
+  "name": "fg-guitar-customizer",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.tsx",
+  "dependencies": {
+    "@wordpress/scripts": "^27.1.0"
+  },
+  "scripts": {
+    "build": "wp-scripts build",
+    "format": "wp-scripts format",
+    "lint:js": "wp-scripts lint-js",
+    "packages-update": "wp-scripts packages-update",
+    "start": "wp-scripts start"
+  }
+}
