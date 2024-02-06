@@ -25,40 +25,40 @@ class Enqueue extends AEnqueue {
 
 		$this->wp_script_dependencies = ! empty( $app_assets['dependencies'] ) ? $app_assets['dependencies'] : [];
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_styles' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
 	}
 
-	public function register_styles() {
+	public function enqueue_styles() {
 		$prefix = $this->_get_assets_prefix();
 
 		$styles = array(
 			array(
 				'handle'        => 'fggc-styles',
-				'relative_path' => '/assets/css/tiny-slider' . $prefix . '.css',
+				'relative_path' => '/build/index' . $prefix . '.css',
 				'deps'          => $this->wp_script_dependencies
 			),
 		);
 
 		foreach ( $styles as $style ) {
-			$this->_register_style( $style );
+			$this->_enqueue_style( $style );
 		}
 	}
 
-	public function register_scripts() {
+	public function enqueue_scripts() {
 		$prefix = $this->_get_assets_prefix();
 
 		$scripts = array(
 			array(
 				'handle'        => 'fgcc-scripts',
-				'relative_path' => '/assets/js/tiny-slider' . $prefix . '.js',
+				'relative_path' => '/build/index' . $prefix . '.js',
 				'deps'          => $this->wp_script_dependencies
 			),
 		);
 
 		foreach ( $scripts as $script ) {
-			$this->_register_script( $script );
+			$this->_enqueue_script( $script );
 		}
 	}
 }
