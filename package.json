@@ -4,11 +4,16 @@
   "description": "",
   "main": "index.tsx",
   "dependencies": {
-    "@wordpress/element": "^5.27.0",
+    "@reduxjs/toolkit": "^2.1.0",
+    "@types/react": "^18.2.55",
+    "@types/react-dom": "^18.2.19",
+    "@types/react-redux": "^7.1.33",
     "@wordpress/scripts": "^27.1.0",
     "browser-sync": "^3.0.2",
     "browser-sync-webpack-plugin": "^2.3.0",
-    "react": "^18.2.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-redux": "^9.1.0"
   },
   "scripts": {
     "build": "wp-scripts build",
@@ -25,5 +30,8 @@
     "start:hot": "wp-scripts start --hot",
     "test:e2e": "wp-scripts test-e2e",
     "test:unit": "wp-scripts test-unit-js"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
   }
 }

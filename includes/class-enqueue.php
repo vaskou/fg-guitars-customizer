@@ -36,8 +36,7 @@ class Enqueue extends AEnqueue {
 		$styles = array(
 			array(
 				'handle'        => 'fggc-styles',
-				'relative_path' => '/build/index' . $prefix . '.css',
-				'deps'          => $this->wp_script_dependencies
+				'relative_path' => '/build/index.css',
 			),
 		);
 
@@ -52,7 +51,7 @@ class Enqueue extends AEnqueue {
 		$scripts = array(
 			array(
 				'handle'        => 'fgcc-scripts',
-				'relative_path' => '/build/index' . $prefix . '.js',
+				'relative_path' => '/build/index.js',
 				'deps'          => $this->wp_script_dependencies
 			),
 		);

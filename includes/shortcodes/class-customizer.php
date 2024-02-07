@@ -2,8 +2,6 @@
 
 namespace FG_Guitars_Customizer\Shortcodes;
 
-use FG_Guitars_Customizer\Enqueue;
-
 class Customizer {
 
 	private static $_instance;

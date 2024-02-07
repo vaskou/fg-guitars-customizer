@@ -1,0 +1,24 @@
+.fggc-form__group {
+  @media (min-width: 640px) {
+    &.uk-width-1-3\@s {
+      .fggc-form__group__content {
+        border-right-width: 0;
+      }
+
+      &:nth-child(3n) {
+        .fggc-form__group__content {
+          border-right-width: 1px;
+        }
+      }
+    }
+  }
+
+  &__content {
+    border: 1px solid #dddddd;
+    padding: 10px;
+
+    .fggc-field-wrapper:last-of-type {
+      margin-bottom: 0 !important;
+    }
+  }
+}

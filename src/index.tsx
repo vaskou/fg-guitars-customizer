@@ -1,14 +1,14 @@
+import {createRoot} from "react-dom/client";
+import {Provider} from 'react-redux';
+import store from './redux/store';
+import App from "./App";
 import './main.scss';
-import {render} from '@wordpress/element';
-// import App from './App';
 
-window.addEventListener(
-    'load',
-    function () {
-        render(
-            <div>test1</div>,
-            document.querySelector('#app')
-        );
-    },
-    false
+const element = document.getElementById('app') as Element;
+
+const root = createRoot(element);
+root.render(
+    <Provider store={store}>
+        <App/>
+    </Provider>
 );
