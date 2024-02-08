@@ -30,11 +30,11 @@ class FG_Guitars_Customizer {
 	}
 
 	public function init_classes() {
-//		Enqueue::instance(
-//			FG_GUITARS_CUSTOMIZER_PLUGIN_DIR_PATH,
-//			FG_GUITARS_CUSTOMIZER_PLUGIN_URL,
-//			FG_GUITARS_CUSTOMIZER_VERSION
-//		);
+		Enqueue::instance(
+			FG_GUITARS_CUSTOMIZER_PLUGIN_DIR_PATH,
+			FG_GUITARS_CUSTOMIZER_PLUGIN_URL,
+			FG_GUITARS_CUSTOMIZER_VERSION
+		);
 
 		// CMB2 Custom Fields
 		Cmb2_Custom_Fields\Option::instance();
@@ -46,5 +46,8 @@ class FG_Guitars_Customizer {
 		Post_Types\Customizer_Field::instance();
 		Post_Types\Customizer_Field_Option::instance();
 		Post_Types\Customizer_Fields_Group::instance();
+
+		// Shortcodes
+		Shortcodes\Customizer::instance();
 	}
 }
