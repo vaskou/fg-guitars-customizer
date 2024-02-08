@@ -123,4 +123,8 @@ class Customizer_Field_Option {
 		return $query->get_posts();
 	}
 
+	public static function get_item( $id ) {
+		return get_post( $id );
+	}
+
 }

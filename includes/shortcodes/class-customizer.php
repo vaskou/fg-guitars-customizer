@@ -2,6 +2,7 @@
 
 namespace FG_Guitars_Customizer\Shortcodes;
 
+use FG_Guitars_Customizer\Post_Types\Customizer_Field_Option;
 use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
 
 class Customizer {
@@ -48,8 +49,16 @@ class Customizer {
 			}
 		}
 
-		$customizer_fields = get_post_meta( $selected_guitar->ID, 'fggc_1913', true );
-        error_log( print_r( $customizer_fields, 1) );
+		$customizer_options = get_post_meta( $selected_guitar->ID, 'fggc_customizer_options', true );
+		error_log( print_r( $customizer_options, 1 ) );
+
+		foreach ( $customizer_options as $option_id => $option ) {
+			if ( empty( $option['enable'] ) ) {
+				continue;
+			}
+
+            
+		}
 
 		ob_start();
 		?>
