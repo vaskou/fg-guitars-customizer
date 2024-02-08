@@ -146,7 +146,7 @@ class Customizer_Fields_Group {
 
 		$result['customizer_options'] = [
 			'name'              => __( 'Customizer', 'fg-guitar-customizer' ),
-			'type'              => 'fggc_cmb2_field_option_field',
+			'type'              => 'fggc_cmb2_customizer_options_field',
 			'options'           => $groups,
 			'show_names' => false,
 		];

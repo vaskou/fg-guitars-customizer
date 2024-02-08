@@ -37,7 +37,7 @@ class FG_Guitars_Customizer {
 		);
 
 		// CMB2 Custom Fields
-		Cmb2_Custom_Fields\Option::instance();
+		Cmb2_Custom_Fields\Customizer_Options::instance();
 
 		// Metaboxes
 		Metaboxes\Customizer_Metabox::instance();
