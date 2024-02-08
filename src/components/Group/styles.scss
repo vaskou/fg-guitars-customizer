@@ -5,7 +5,8 @@
         border-right-width: 0;
       }
 
-      &:nth-child(3n) {
+      &:nth-child(3n),
+      &:last-child {
         .fggc-form__group__content {
           border-right-width: 1px;
         }
