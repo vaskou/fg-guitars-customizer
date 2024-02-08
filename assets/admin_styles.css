@@ -1,0 +1,34 @@
+:root {
+    --label-color: #222222;
+    --border-color: #e9e9e9;
+    --title-bg-color: #e9e9e9;
+}
+
+.fggc_cmb2_field_option_field_wrapper {
+
+}
+
+.fggc-group-wrapper,
+.fggc-field-wrapper {
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.fggc-group-wrapper:last-child,
+.fggc-field-wrapper:last-child {
+    margin-bottom: 0;
+}
+
+.fggc-group-label,
+.fggc-field-label {
+    background: var(--title-bg-color);
+    color: var(--label-color);
+    display: block;
+    font-weight: 600;
+    padding: 5px;
+}
+
+.fggc-group-content,
+.fggc-field-content {
+    padding: 10px;
+}

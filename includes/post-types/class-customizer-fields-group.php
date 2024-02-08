@@ -144,51 +144,12 @@ class Customizer_Fields_Group {
 
 		$groups = self::get_items();
 
-		$result = [];
-
-		if ( ! empty( $groups ) ) {
-			foreach ( $groups as $group ) {
-
-				$group_id    = $group->ID;
-				$group_title = $group->post_title;
-
-				$fields = get_post_meta( $group->ID, self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
-
-				if ( empty( $fields ) ) {
-					continue;
-				}
-
-				$result[ $group_id ] = [
-					'name'       => $group_title,
-					'type'       => 'group',
-					'repeatable' => false,
-				];
-
-				foreach ( $fields as $field_id ) {
-
-					$field_title   = get_post_field( 'post_title', $field_id );
-					$field_options = get_post_meta( $field_id, Customizer_Field::OPTIONS_META_KEY, true );
-
-					$options = [];
-
-					if ( empty( $field_options ) ) {
-						continue;
-					}
-
-					foreach ( $field_options as $option_id ) {
-						$option_title          = get_post_field( 'post_title', $option_id );
-						$options[ $option_id ] = $option_title;
-					}
-
-					$result[ $group_id ]['fields'][ $field_id ] = [
-						'name'              => $field_title,
-						'type'              => 'fggc_cmb2_field_option_field',
-						'options'           => $options,
-						'select_all_button' => false,
-					];
-				}
-			}
-		}
+		$result['customizer_options'] = [
+			'name'              => __( 'Customizer', 'fg-guitar-customizer' ),
+			'type'              => 'fggc_cmb2_field_option_field',
+			'options'           => $groups,
+			'show_names' => false,
+		];
 
 		return $result;
 	}

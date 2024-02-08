@@ -2,6 +2,9 @@
 
 namespace FG_Guitars_Customizer\Cmb2_Custom_Fields;
 
+use FG_Guitars_Customizer\Post_Types\Customizer_Field;
+use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
+
 class Option {
 
 	private $field_type;
@@ -32,13 +35,62 @@ class Option {
 	 */
 	public function render( $field, $escaped_value, $object_id, $object_type, $field_type ) {
 
-		$options = ! empty( $field->args['options'] ) ? $field->args['options'] : array();
+		$groups = ! empty( $field->args['options'] ) ? $field->args['options'] : array();
 
 		ob_start();
 		?>
-        <div class="fggc_cmb2_field_option_field">
-			<?php foreach ( $options as $option_key => $option ): ?>
+        <div class="fggc_cmb2_field_option_field_wrapper">
+			<?php foreach ( $groups as $group ): ?>
 				<?php
+				$group_id    = $group->ID;
+				$group_title = $group->post_title;
+
+				$fields = get_post_meta( $group_id, Customizer_Fields_Group::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
+				if ( empty( $fields ) ) {
+					continue;
+				}
+
+				?>
+                <div class="fggc-group-wrapper group-<?php echo $group_id; ?>">
+                    <label class="fggc-group-label"><?php echo $group_title; ?></label>
+
+					<?php foreach ( $fields as $field_id ): ?>
+						<?php
+						$field_title   = get_post_field( 'post_title', $field_id );
+						$field_options = get_post_meta( $field_id, Customizer_Field::OPTIONS_META_KEY, true );
+						if ( empty( $field_options ) ) {
+							continue;
+						}
+						?>
+                        <div class="fggc-group-content">
+                            <div class="fggc-field-wrapper field-<?php echo $group_id; ?>">
+                                <label class="fggc-field-label"><?php echo $field_title; ?></label>
+                                <div class="fggc-field-content">
+									<?php echo $this->_get_field_option_field_html( $field_options, $field_type, $escaped_value ); ?>
+                                </div>
+                            </div>
+                        </div>
+					<?php endforeach; ?>
+                </div>
+			<?php endforeach; ?>
+        </div>
+
+		<?php
+
+		$html = ob_get_clean();
+
+		echo $html;
+	}
+
+	private function _get_field_option_field_html( $options, $field_type, $escaped_value ) {
+		ob_start();
+		?>
+        <div class="fggc_cmb2_field_option_field">
+			<?php foreach ( $options as $option_id ): ?>
+				<?php
+				$option_key = $option_id;
+				$option     = get_post_field( 'post_title', $option_id );
+
 				$is_enabled  = ! empty( $escaped_value[ $option_key ]['enable'] );
 				$option_args = [
 					'id'   => $field_type->_id( '_option_enable_' . $option_key ),
@@ -76,10 +128,7 @@ class Option {
 			<?php endforeach; ?>
         </div>
 		<?php
-
-		$html = ob_get_clean();
-
-		echo $html;
+		return ob_get_clean();
 	}
 
 	public function sanitize( $sanitized_val, $val ) {

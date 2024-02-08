@@ -30,26 +30,6 @@ class Customizer_Metabox {
 	private function __construct() {
 		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
 
-		$this->fields = [
-			'body' => [
-				'name'       => __( 'Body', 'fg-guitars-customizer' ),
-				'type'       => 'group',
-				'repeatable' => false,
-				'fields'     => [
-					'type' => [
-						'name'              => __( 'Type', 'fg-guitars-customizer' ),
-						'type'              => 'multicheck',
-						'options'           => [
-							'check1' => 'Check One',
-							'check2' => 'Check Two',
-							'check3' => 'Check Three',
-						],
-						'select_all_button' => false,
-					]
-				]
-			]
-		];
-
 		$fields = Customizer_Fields_Group::get_fields_array();
 
 		$this->fields = $fields;
