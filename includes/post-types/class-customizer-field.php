@@ -125,6 +125,10 @@ class Customizer_Field {
 		return $query->get_posts();
 	}
 
+	public static function get_field_options( $field_id ) {
+		return get_post_meta( $field_id, self::OPTIONS_META_KEY, true );
+	}
+
 	private function _get_options() {
 		$options = [];
 

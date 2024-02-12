@@ -36,6 +36,9 @@ class FG_Guitars_Customizer {
 			FG_GUITARS_CUSTOMIZER_VERSION
 		);
 
+		// Ajax
+		Ajax\Customizer::instance();
+
 		// CMB2 Custom Fields
 		Cmb2_Custom_Fields\Customizer_Options::instance();
 

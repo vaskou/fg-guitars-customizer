@@ -140,14 +140,18 @@ class Customizer_Fields_Group {
 		return $query->get_posts();
 	}
 
+	public static function get_group_fields( $group_id ) {
+		return get_post_meta( $group_id, self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
+	}
+
 	public static function get_fields_array() {
 
 		$groups = self::get_items();
 
 		$result['customizer_options'] = [
-			'name'              => __( 'Customizer', 'fg-guitar-customizer' ),
-			'type'              => 'fggc_cmb2_customizer_options_field',
-			'options'           => $groups,
+			'name'       => __( 'Customizer', 'fg-guitar-customizer' ),
+			'type'       => 'fggc_cmb2_customizer_options_field',
+			'options'    => $groups,
 			'show_names' => false,
 		];
 

@@ -1,6 +1,9 @@
 import {configureStore, combineReducers} from "@reduxjs/toolkit";
+import formReducer from "../components/Form/formSlice";
 
-const rootReducer = combineReducers({});
+const rootReducer = combineReducers({
+    sections: formReducer
+});
 
 const store = configureStore({
     reducer: rootReducer,
