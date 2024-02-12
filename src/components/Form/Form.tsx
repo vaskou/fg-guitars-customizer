@@ -3,8 +3,9 @@ import SelectField, {SelectOption} from "../SelectField/SelectField";
 import RadioField, {RadioOption} from "../RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector} from "react-redux";
 import {loadSections, selectSectionsArray} from "./formSlice";
+import {useAppDispatch} from "../../redux/store";
 
 interface Props {
 
@@ -35,7 +36,7 @@ interface SectionData {
 
 const Form: React.FC<Props> = ({}) => {
 
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch();
 
     const sections = useSelector(selectSectionsArray);
 
