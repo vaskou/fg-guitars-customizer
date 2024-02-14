@@ -3,7 +3,7 @@ import {useDispatch} from "react-redux";
 import formReducer from "../components/Form/formSlice";
 
 const rootReducer = combineReducers({
-    sections: formReducer
+    data: formReducer
 });
 
 const store = configureStore({

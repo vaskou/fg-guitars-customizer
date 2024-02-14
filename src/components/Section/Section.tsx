@@ -2,7 +2,7 @@ import React from 'react';
 
 interface Props {
     title: string;
-    children: any;
+    children?: any;
 }
 
 const Section: React.FC<Props> = ({title, children}) => {

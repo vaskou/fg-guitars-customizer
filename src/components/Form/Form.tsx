@@ -1,11 +1,16 @@
-import React, {useEffect, useState} from 'react';
+import React, {ChangeEvent, useEffect, useState} from 'react';
 import SelectField, {SelectOption} from "../SelectField/SelectField";
 import RadioField, {RadioOption} from "../RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
 import {useSelector} from "react-redux";
-import {loadSections, selectSectionsArray} from "./formSlice";
+import {loadData, selectGuitarsArray, selectSectionsArray} from "./formSlice";
 import {useAppDispatch} from "../../redux/store";
+
+enum SectionTypes {
+    GUITARS = 'guitars',
+    FIELDS = 'fields',
+}
 
 interface Props {
 
@@ -30,6 +35,7 @@ interface GroupData {
 }
 
 interface SectionData {
+    type: string;
     title: string;
     groups: GroupData[];
 }
@@ -38,10 +44,11 @@ const Form: React.FC<Props> = ({}) => {
 
     const dispatch = useAppDispatch();
 
+    const guitars = useSelector(selectGuitarsArray);
     const sections = useSelector(selectSectionsArray);
 
     useEffect(() => {
-        dispatch(loadSections())
+        dispatch(loadData())
     }, [dispatch]);
 
     const getField = (field: FieldData, index: any) => {
@@ -59,12 +66,49 @@ const Form: React.FC<Props> = ({}) => {
         return fieldComponent;
     }
 
+    const getGuitarsSection = (sections: SectionData[]) => {
+        let guitarsSection = sections.find((section) => {
+            return section.type === SectionTypes.GUITARS;
+        })
+
+        return (
+            <div>
+                {
+                    guitarsSection && guitarsSection.groups.length > 0 &&
+                    <Section title={guitarsSection.title}>
+                        {guitarsSection.groups.map((group, index: any) => {
+                            return (
+                                <Group key={index} title={group.title} width={group.width}>
+                                    <SelectField label={'Model'} fieldName={'model'} options={guitars} onChange={handleOnChange}/>
+                                    {group.fields.map((field, index: any) => {
+                                        return (getField(field, index));
+                                    })}
+                                </Group>
+                            )
+                        })}
+                    </Section>
+                }
+            </div>
+        )
+    }
+
+    const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
+        const target = e.target;
+        const name = target.name;
+        const value = target.value;
+
+        if ('model' === name) {
+            dispatch(loadData(value));
+        }
+    }
+
     return (
         <div className="fggc-form">
+            {getGuitarsSection(sections)}
 
             {sections && sections.map((section: SectionData, index: any) => {
                 return (
-                    <Section key={index} title={section.title}>
+                    section.type === SectionTypes.FIELDS && section.groups.length > 0 && <Section key={index} title={section.title}>
                         {section.groups.map((group, index: any) => {
                             return (
                                 <Group key={index} title={group.title} width={group.width}>
@@ -75,6 +119,7 @@ const Form: React.FC<Props> = ({}) => {
                             )
                         })}
                     </Section>
+
                 );
             })}
 

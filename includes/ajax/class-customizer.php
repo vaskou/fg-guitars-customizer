@@ -28,7 +28,9 @@ class Customizer {
 
 	public function get_customizer_data() {
 
-		$selected_guitar_id = ! empty( $_GET['guitar_id'] ) ? $_GET['guitar_id'] : '';
+		$guitars = $this->get_guitars();
+
+		$selected_guitar_id = ! empty( $_GET['model'] ) ? $_GET['model'] : ( ! empty( $guitars ) ? array_key_first( $guitars ) : '' );
 
 		$customizer_options = get_post_meta( $selected_guitar_id, 'fggc_customizer_options', true );
 
@@ -36,12 +38,71 @@ class Customizer {
 
 		$sections = [
 			[
-				'title'  => 'Make your choices',
+				'type'   => 'guitars',
+				'title'  => __( 'Choose your guitar', 'fg-guitars-customizer' ),
+				'groups' => [
+					[
+						'width'  => 'uk-width-1-2@s',
+						'fields' => [ //TODO: get this dynamically
+							[
+								'label'     => __( 'Left or Right-handed', 'fg-guitars-customizer' ),
+								'fieldName' => 'orientation',
+								'type'      => 'radio',
+								'options'   => [
+									[
+										'name'  => __( 'Right', 'fg-guitars-customizer' ),
+										'value' => 'right',
+									],
+									[
+										'name'  => __( 'Left', 'fg-guitars-customizer' ),
+										'value' => 'left',
+									],
+								]
+							]
+						]
+					]
+				],
+			],
+			[
+				'type'   => 'fields',
+				'title'  => __( 'Make your choices', 'fg-guitars-customizer' ),
 				'groups' => $groups,
-			]
+			],
 		];
 
-		wp_send_json( [ 'sections' => $sections ] );
+		wp_send_json( [
+			'guitars'  => $guitars,
+			'sections' => $sections,
+		] );
+	}
+
+	public function get_guitars() {
+		$guitars = [];
+
+		$args = [
+			'post_type'        => 'fg_guitars',
+			'post_status'      => [ 'publish' ],
+			'posts_per_page'   => - 1,
+			'orderby'          => 'title',
+			'order'            => 'ASC',
+			'suppress_filters' => false,
+		];
+
+		$posts = get_posts( $args );
+
+		if ( empty( $posts ) ) {
+			return $guitars;
+		}
+
+
+		foreach ( $posts as $post ) {
+			$guitars[] = [
+				'value' => $post->ID,
+				'name'  => $post->post_title,
+			];
+		}
+
+		return $guitars;
 	}
 
 	public function get_groups( $selected_options ) {

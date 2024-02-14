@@ -4,7 +4,7 @@ import './styles.scss';
 interface Props {
     title?: string;
     width: string;
-    children: any;
+    children?: any;
 }
 
 const Group: React.FC<Props> = ({title, width, children}) => {
