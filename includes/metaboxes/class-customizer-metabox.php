@@ -2,6 +2,7 @@
 
 namespace FG_Guitars_Customizer\Metaboxes;
 
+use FG_Guitars_Customizer\Helpers\Helpers;
 use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
 
 class Customizer_Metabox {
@@ -25,7 +26,7 @@ class Customizer_Metabox {
 			return;
 		}
 
-		$groups = Customizer_Fields_Group::get_items();
+		$groups = Helpers::get_group_field_option_tree();
 
 		$metabox = new_cmb2_box( [
 			'id'           => 'fg_guitars_customizer',

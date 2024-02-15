@@ -100,15 +100,20 @@ class Customizer_Options {
 		ob_start();
 		?>
 
-		<?php foreach ( $groups as $group ): ?>
+		<?php foreach ( $groups as $group_tree ): ?>
 			<?php
+			if ( empty( $group_tree['group'] ) ) {
+				continue;
+			}
+			$group       = $group_tree['group'];
 			$group_id    = $group->ID;
 			$group_title = $group->post_title;
 
-			$fields = get_post_meta( $group_id, Customizer_Fields_Group::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
-			if ( empty( $fields ) ) {
+			if ( empty( $group_tree['fields'] ) ) {
 				continue;
 			}
+
+			$fields = $group_tree['fields'];
 
 			?>
             <div class="fggc-group-wrapper group-<?php echo $group_id; ?>">
@@ -126,10 +131,14 @@ class Customizer_Options {
 		ob_start();
 		?>
 
-		<?php foreach ( $fields as $field_id ): ?>
+		<?php foreach ( $fields as $field_tree ): ?>
 			<?php
-			$field_title   = get_post_field( 'post_title', $field_id );
-			$field_options = get_post_meta( $field_id, Customizer_Field::OPTIONS_META_KEY, true );
+			if ( empty( $field_tree['field'] ) ) {
+				continue;
+			}
+			$field         = $field_tree['field'];
+			$field_title   = $field->post_title;
+			$field_options = ! empty( $field_tree['options'] ) ? $field_tree['options'] : [];
 			if ( empty( $field_options ) ) {
 				continue;
 			}
@@ -152,10 +161,11 @@ class Customizer_Options {
 		ob_start();
 		?>
         <div class="fggc-options-wrapper">
-			<?php foreach ( $options as $option_id ): ?>
+			<?php foreach ( $options as $option ): ?>
 				<?php
+				$option_id  = $option->ID;
 				$option_key = $option_id;
-				$option     = get_post_field( 'post_title', $option_id );
+				$option     = $option->post_title;
 
 				$is_enabled  = ! empty( $escaped_value[ $option_key ]['enable'] );
 				$option_args = [

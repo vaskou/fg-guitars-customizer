@@ -112,7 +112,7 @@ class Customizer_Field_Option {
 			'post_type'      => self::POST_TYPE_NAME,
 			'post_status'    => 'publish',
 			'posts_per_page' => - 1,
-			'orderby'        => 'menu',
+			'orderby'        => 'menu_order',
 			'order'          => 'ASC'
 		);
 

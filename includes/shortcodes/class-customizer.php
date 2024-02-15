@@ -3,9 +3,6 @@
 namespace FG_Guitars_Customizer\Shortcodes;
 
 use FG_Guitars_Customizer\Ajax\Customizer as Customizer_Ajax;
-use FG_Guitars_Customizer\Post_Types\Customizer_Field;
-use FG_Guitars_Customizer\Post_Types\Customizer_Field_Option;
-use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
 
 class Customizer {
 
