@@ -119,7 +119,7 @@ class Customizer_Options {
             <div class="fggc-group-wrapper group-<?php echo $group_id; ?>">
                 <label class="fggc-group-label"><?php echo $group_title; ?></label>
 
-				<?php echo $this->_get_fields_html( $fields, $group_id, $field_type, $escaped_value ); ?>
+				<?php echo $this->_get_fields_html( $fields, $field_type, $escaped_value ); ?>
             </div>
 		<?php endforeach; ?>
 
@@ -127,7 +127,7 @@ class Customizer_Options {
 		return ob_get_clean();
 	}
 
-	private function _get_fields_html( $fields, $group_id, $field_type, $escaped_value ) {
+	private function _get_fields_html( $fields, $field_type, $escaped_value ) {
 		ob_start();
 		?>
 
@@ -137,6 +137,7 @@ class Customizer_Options {
 				continue;
 			}
 			$field         = $field_tree['field'];
+			$field_id      = $field->ID;
 			$field_title   = $field->post_title;
 			$field_options = ! empty( $field_tree['options'] ) ? $field_tree['options'] : [];
 			if ( empty( $field_options ) ) {
@@ -144,7 +145,7 @@ class Customizer_Options {
 			}
 			?>
             <div class="fggc-group-content">
-                <div class="fggc-field-wrapper field-<?php echo $group_id; ?>">
+                <div class="fggc-field-wrapper field-<?php echo $field_id; ?>">
                     <label class="fggc-field-label"><?php echo $field_title; ?></label>
                     <div class="fggc-field-content">
 						<?php echo $this->_get_field_options_html( $field_options, $field_type, $escaped_value ); ?>

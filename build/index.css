@@ -1,2 +1,3 @@
+.fggc-grid-match>*{display:flex;flex-direction:column}.fggc-grid-match>*>.fggc-form__group__content{flex:1}
 @media(min-width:640px){.fggc-form__group.uk-width-1-3\@s .fggc-form__group__content{border-right-width:0}.fggc-form__group.uk-width-1-3\@s:last-child .fggc-form__group__content,.fggc-form__group.uk-width-1-3\@s:nth-child(3n) .fggc-form__group__content{border-right-width:1px}}.fggc-form__group__content{border:1px solid #ddd;padding:10px}.fggc-form__group__content .fggc-field-wrapper:last-of-type{margin-bottom:0!important}
 

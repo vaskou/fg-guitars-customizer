@@ -32,6 +32,8 @@ class Customizer {
 
 		$selected_guitar_id = ! empty( $_GET['model'] ) ? $_GET['model'] : ( ! empty( $guitars ) ? array_key_first( $guitars ) : '' );
 
+		$guitar_orientation_field = $this->get_guitar_orientation_field( $selected_guitar_id );
+
 		$customizer_options = get_post_meta( $selected_guitar_id, 'fggc_customizer_options', true );
 
 		$groups = $this->get_groups( $customizer_options );
@@ -43,22 +45,8 @@ class Customizer {
 				'groups' => [
 					[
 						'width'  => 'uk-width-1-2@s',
-						'fields' => [ //TODO: get this dynamically
-							[
-								'label'     => __( 'Left or Right-handed', 'fg-guitars-customizer' ),
-								'fieldName' => 'orientation',
-								'type'      => 'radio',
-								'options'   => [
-									[
-										'name'  => __( 'Right', 'fg-guitars-customizer' ),
-										'value' => 'right',
-									],
-									[
-										'name'  => __( 'Left', 'fg-guitars-customizer' ),
-										'value' => 'left',
-									],
-								]
-							]
+						'fields' => [
+							$guitar_orientation_field,
 						]
 					]
 				],
@@ -103,6 +91,43 @@ class Customizer {
 		}
 
 		return $guitars;
+	}
+
+	public function get_guitar_orientation_field( $selected_guitar_id ) {
+		$result = [];
+
+		if ( empty( $selected_guitar_id ) ) {
+			return $result;
+		}
+
+		$guitar_orientation = get_post_meta( $selected_guitar_id, 'fggc_guitar_orientation', true );
+
+		$options = [];
+
+		if ( ! empty( $guitar_orientation['right']['enable'] ) ) {
+			$options[] = [
+				'name'  => __( 'Right', 'fg-guitars-customizer' ),
+				'value' => 'right',
+			];
+		}
+
+		if ( ! empty( $guitar_orientation['left']['enable'] ) ) {
+			$options[] = [
+				'name'  => __( 'Left', 'fg-guitars-customizer' ),
+				'value' => 'left',
+			];
+		}
+
+		if ( empty( $options ) ) {
+			return $result;
+		}
+
+		return [
+			'label'     => __( 'Left or Right-handed', 'fg-guitars-customizer' ),
+			'fieldName' => 'orientation',
+			'type'      => 'radio',
+			'options'   => $options,
+		];
 	}
 
 	public function get_groups( $selected_options ) {

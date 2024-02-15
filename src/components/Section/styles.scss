@@ -1,0 +1,10 @@
+.fggc-grid-match {
+  & > * {
+    display: flex;
+    flex-direction: column;
+
+    & > .fggc-form__group__content {
+      flex: 1;
+    }
+  }
+}
