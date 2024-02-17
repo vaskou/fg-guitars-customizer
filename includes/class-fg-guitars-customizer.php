@@ -52,5 +52,8 @@ class FG_Guitars_Customizer {
 
 		// Shortcodes
 		Shortcodes\Customizer::instance();
+
+		// Taxonomies
+		Taxonomies\Customizer_Section::instance();
 	}
 }

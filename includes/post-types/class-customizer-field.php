@@ -104,11 +104,17 @@ class Customizer_Field {
 			'name'              => __( 'Options', 'fg-guitars-customizer' ),
 			'id'                => self::OPTIONS_META_KEY,
 			'type'              => 'multicheck',
-			'options'           => $this->_get_options(),
+			'options_cb'        => [ $this, 'get_options' ],
 			'select_all_button' => false,
+			'multiple'          => true,
 		) );
 	}
 
+	/**
+	 * @param $args
+	 *
+	 * @return \WP_Post[]
+	 */
 	public static function get_items( $args = [] ) {
 		$default = array(
 			'post_type'      => self::POST_TYPE_NAME,
@@ -126,16 +132,37 @@ class Customizer_Field {
 	}
 
 	public static function get_field_options( $field_id ) {
-		return get_post_meta( $field_id, self::OPTIONS_META_KEY, true );
+		return get_post_meta( $field_id, self::OPTIONS_META_KEY );
 	}
 
-	private function _get_options() {
+
+	/**
+	 * @param \CMB2_Field $field
+	 *
+	 * @return array
+	 */
+	public function get_options( $field ) {
 		$options = [];
 
 		$items = Customizer_Field_Option::get_items();
 
+		$current_post_id = $field->object_id;
+
 		foreach ( $items as $item ) {
-			$options[ $item->ID ] = $item->post_title;
+			$item_id = $item->ID;
+
+			$args = [
+				'meta_key'   => self::OPTIONS_META_KEY,
+				'meta_value' => $item_id
+			];
+
+			$fields = self::get_items( $args );
+
+			if ( ! empty( $fields[0] ) && $fields[0]->ID != $current_post_id ) {
+				continue;
+			}
+
+			$options[ $item_id ] = $item->post_title;
 		}
 
 		return $options;
