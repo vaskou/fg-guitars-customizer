@@ -35,15 +35,18 @@ class Customizer_Options {
 	 */
 	public function render( $field, $escaped_value, $object_id, $object_type, $field_type ) {
 
-		$groups = ! empty( $field->args['options'] ) ? $field->args['options'] : array();
+		$groups = $field->options();
 
 		ob_start();
-		?>
-        <div class="fggc-customizer-options-field-wrapper">
-			<?php echo $this->_get_groups_html( $groups, $field_type, $escaped_value ); ?>
-        </div>
+
+		if ( is_array( $groups ) && ! empty( $groups ) ):
+			?>
+            <div class="fggc-customizer-options-field-wrapper">
+				<?php echo $this->_get_groups_html( $groups, $field_type, $escaped_value ); ?>
+            </div>
 
 		<?php
+		endif;
 
 		$html = ob_get_clean();
 
@@ -100,20 +103,21 @@ class Customizer_Options {
 		ob_start();
 		?>
 
-		<?php foreach ( $groups as $group_tree ): ?>
+		<?php foreach ( $groups as $group ): ?>
 			<?php
-			if ( empty( $group_tree['group'] ) ) {
-				continue;
-			}
-			$group       = $group_tree['group'];
-			$group_id    = $group->ID;
-			$group_title = $group->post_title;
 
-			if ( empty( $group_tree['fields'] ) ) {
+			if ( empty( $group ) || empty( $group['group_id'] ) ) {
 				continue;
 			}
 
-			$fields = $group_tree['fields'];
+			$group_id    = $group['group_id'];
+			$group_title = ! empty( $group['group_title'] ) ? $group['group_title'] : '';
+
+			if ( empty( $group['fields'] ) ) {
+				continue;
+			}
+
+			$fields = $group['fields'];
 
 			?>
             <div class="fggc-group-wrapper group-<?php echo $group_id; ?>">
@@ -131,18 +135,20 @@ class Customizer_Options {
 		ob_start();
 		?>
 
-		<?php foreach ( $fields as $field_tree ): ?>
+		<?php foreach ( $fields as $field ): ?>
 			<?php
-			if ( empty( $field_tree['field'] ) ) {
+			if ( empty( $field ) || empty( $field['field_id'] ) ) {
 				continue;
 			}
-			$field         = $field_tree['field'];
-			$field_id      = $field->ID;
-			$field_title   = $field->post_title;
-			$field_options = ! empty( $field_tree['options'] ) ? $field_tree['options'] : [];
-			if ( empty( $field_options ) ) {
+			$field_id    = $field['field_id'];
+			$field_title = ! empty( $field['field_title'] ) ? $field['field_title'] : '';
+
+			if ( empty( $field['options'] ) ) {
 				continue;
 			}
+
+			$field_options = $field['options'];
+
 			?>
             <div class="fggc-group-content">
                 <div class="fggc-field-wrapper field-<?php echo $field_id; ?>">
@@ -164,9 +170,13 @@ class Customizer_Options {
         <div class="fggc-options-wrapper">
 			<?php foreach ( $options as $option ): ?>
 				<?php
-				$option_id  = $option->ID;
-				$option_key = $option_id;
-				$option     = $option->post_title;
+
+				if ( empty( $option['option_id'] ) || empty( $option['option_title'] ) ) {
+					continue;
+				}
+
+				$option_key = $option['option_id'];
+				$option     = $option['option_title'];
 
 				$is_enabled  = ! empty( $escaped_value[ $option_key ]['enable'] );
 				$option_args = [

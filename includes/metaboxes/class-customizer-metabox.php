@@ -26,8 +26,6 @@ class Customizer_Metabox {
 			return;
 		}
 
-		$groups = Helpers::get_group_field_option_tree();
-
 		$metabox = new_cmb2_box( [
 			'id'           => 'fg_guitars_customizer',
 			'title'        => __( 'Customizer', 'fg-guitars-customizer' ),
@@ -41,7 +39,7 @@ class Customizer_Metabox {
 			'id'         => 'fggc_guitar_orientation',
 			'name'       => __( 'Guitar Orientation', 'fg-guitar-customizer' ),
 			'type'       => 'fggc_cmb2_customizer_options_field',
-			'options'    => $this->_get_guitar_orientation_options(),
+			'options_cb' => [ $this, 'get_guitar_orientation_options' ],
 			'show_names' => false,
 		] );
 
@@ -49,46 +47,45 @@ class Customizer_Metabox {
 			'id'         => 'fggc_customizer_options',
 			'name'       => __( 'Customizer', 'fg-guitar-customizer' ),
 			'type'       => 'fggc_cmb2_customizer_options_field',
-			'options'    => $groups,
+			'options_cb' => [ $this, 'get_group_field_option_tree' ],
 			'show_names' => false,
 		] );
 
 	}
 
-	private function _get_guitar_orientation_options() {
-		$group             = new \stdClass();
-		$group->ID         = 'orientation';
-		$group->post_title = __( 'Orientation', 'fg-guitar-customizer' );
+	public function get_group_field_option_tree() {
+		return Helpers::get_group_field_option_tree();
+	}
 
-		$field             = new \stdClass();
-		$field->ID         = 'left_right_handed';
-		$field->post_title = __( 'Left or Right-handed', 'fg-guitar-customizer' );
+	public function get_guitar_orientation_options() {
 
-		$left             = new \stdClass();
-		$left->ID         = 'left';
-		$left->post_title = __( 'Left', 'fg-guitar-customizer' );
+		$left = [
+			'option_id'    => 'left',
+			'option_title' => __( 'Left', 'fg-guitar-customizer' ),
+		];
 
-		$right             = new \stdClass();
-		$right->ID         = 'right';
-		$right->post_title = __( 'Right', 'fg-guitar-customizer' );
+		$right = [
+			'option_id'    => 'right',
+			'option_title' => __( 'Right', 'fg-guitar-customizer' ),
+		];
 
 		$fields = [
 			[
-				'field'   => $field,
-				'options' => [
+				'field_id'    => 'left_right_handed',
+				'field_title' => __( 'Left or Right-handed', 'fg-guitar-customizer' ),
+				'options'     => [
 					$left,
 					$right
 				]
 			]
 		];
 
-		$result = [
+		return [
 			[
-				'group'  => $group,
-				'fields' => $fields,
+				'group_id'    => 'orientation',
+				'group_title' => __( 'Orientation', 'fg-guitar-customizer' ),
+				'fields'      => $fields,
 			]
 		];
-
-		return $result;
 	}
 }

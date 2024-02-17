@@ -7,6 +7,11 @@ use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
 
 class Helpers {
 
+	/**
+	 * @param $field_id
+	 *
+	 * @return \WP_Post[]
+	 */
 	public static function get_field_options( $field_id ) {
 		$result = [];
 
@@ -35,6 +40,12 @@ class Helpers {
 		return $result;
 	}
 
+
+	/**
+	 * @param $group_id
+	 *
+	 * @return \WP_Post[]
+	 */
 	public static function get_group_fields( $group_id ) {
 		$result = [];
 
@@ -73,25 +84,37 @@ class Helpers {
 		}
 
 		foreach ( $groups as $group_post ) {
-			$field_data = [];
-			$group_id   = $group_post->ID;
+			$field_data  = [];
+			$group_id    = $group_post->ID;
+			$group_title = $group_post->post_title;
 
 			$fields = self::get_group_fields( $group_id );
 
 			foreach ( $fields as $field_post ) {
-				$field_id = $field_post->ID;
+				$field_id    = $field_post->ID;
+				$field_title = $field_post->post_title;
 
 				$options = self::get_field_options( $field_id );
 
+				$option_data = [];
+				foreach ( $options as $option_post ) {
+					$option_data[] = [
+						'option_id'    => $option_post->ID,
+						'option_title' => $option_post->post_title,
+					];
+				}
+
 				$field_data[] = [
-					'field'   => $field_post,
-					'options' => $options,
+					'field_id'    => $field_id,
+					'field_title' => $field_title,
+					'options'     => $option_data,
 				];
 			}
 
 			$result[] = [
-				'group'  => $group_post,
-				'fields' => $field_data,
+				'group_id'    => $group_id,
+				'group_title' => $group_title,
+				'fields'      => $field_data,
 			];
 		}
 
