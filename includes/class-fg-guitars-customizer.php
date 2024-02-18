@@ -20,6 +20,8 @@ class FG_Guitars_Customizer {
 		$this->init_autoloader();
 
 		$this->init_classes();
+
+		add_action( 'cmb2_init', [ $this, 'include_custom_multicheck_class' ] );
 	}
 
 	public function init_autoloader() {
@@ -55,5 +57,9 @@ class FG_Guitars_Customizer {
 
 		// Taxonomies
 		Taxonomies\Customizer_Section::instance();
+	}
+
+	public function include_custom_multicheck_class() {
+		include 'cmb2-custom-fields/class-custom-multicheck.php';
 	}
 }

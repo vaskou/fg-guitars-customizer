@@ -107,6 +107,7 @@ class Customizer_Field {
 			'options_cb'        => [ $this, 'get_options' ],
 			'select_all_button' => false,
 			'multiple'          => true,
+			'render_class'      => 'FG_Guitars_Customizer_Custom_Multicheck'
 		) );
 	}
 
@@ -120,7 +121,7 @@ class Customizer_Field {
 			'post_type'      => self::POST_TYPE_NAME,
 			'post_status'    => 'publish',
 			'posts_per_page' => - 1,
-			'orderby'        => 'menu_order',
+			'orderby'        => 'menu_order title',
 			'order'          => 'ASC'
 		);
 
@@ -158,12 +159,19 @@ class Customizer_Field {
 
 			$fields = self::get_items( $args );
 
+			$other = '';
 			if ( ! empty( $fields[0] ) && $fields[0]->ID != $current_post_id ) {
-				continue;
+				$options[ $item_id ]['disabled'] = 'disabled';
+
+				$other = $fields[0]->post_title;
 			}
 
-			$options[ $item_id ] = $item->post_title;
+			$options[ $item_id ]['label'] = $item->post_title . ( ! empty( $other ) ? " ({$other})" : '' );
 		}
+
+		uasort( $options, function ( $a, $b ) {
+			return ! empty( $a['disabled'] ) ? 1 : - 1;
+		} );
 
 		return $options;
 	}
