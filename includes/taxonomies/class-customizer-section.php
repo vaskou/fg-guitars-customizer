@@ -70,7 +70,7 @@ class Customizer_Section {
 	 *
 	 * @return int|\WP_Error|\WP_Term[]
 	 */
-	public function get_items( $args = array() ) {
+	public static function get_items( $args = array() ) {
 
 		$default = array(
 			'taxonomy' => self::TAXONOMY_NAME,

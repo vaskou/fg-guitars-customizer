@@ -35,14 +35,14 @@ class Customizer_Options {
 	 */
 	public function render( $field, $escaped_value, $object_id, $object_type, $field_type ) {
 
-		$groups = $field->options();
+		$sections = $field->options();
 
 		ob_start();
 
-		if ( is_array( $groups ) && ! empty( $groups ) ):
+		if ( is_array( $sections ) && ! empty( $sections ) ):
 			?>
             <div class="fggc-customizer-options-field-wrapper">
-				<?php echo $this->_get_groups_html( $groups, $field_type, $escaped_value ); ?>
+				<?php echo $this->_get_sections_html( $sections, $field_type, $escaped_value ); ?>
             </div>
 
 		<?php
@@ -97,6 +97,43 @@ class Customizer_Options {
 		}
 
 		return $escaped_value;
+	}
+
+	private function _get_sections_html( $sections, $field_type, $escaped_value ) {
+		ob_start();
+		?>
+
+		<?php foreach ( $sections as $section ): ?>
+			<?php
+
+			if ( empty( $section ) || empty( $section['section_id'] ) ) {
+				continue;
+			}
+
+			$section_id    = $section['section_id'];
+			$section_title = ! empty( $section['section_title'] ) ? $section['section_title'] : '';
+
+			if ( empty( $section['groups'] ) ) {
+				continue;
+			}
+
+			$groups = $section['groups'];
+
+			?>
+            <div class="section-<?php echo $section_id; ?> cmb-row">
+                <div class="field" style="clear:both;">
+                    <div class="cmb-th">
+                        <label><?php echo $section_title; ?></label>
+                    </div>
+                    <div class="cmb-td">
+						<?php echo $this->_get_groups_html( $groups, $field_type, $escaped_value ); ?>
+                    </div>
+                </div>
+            </div>
+		<?php endforeach; ?>
+
+		<?php
+		return ob_get_clean();
 	}
 
 	private function _get_groups_html( $groups, $field_type, $escaped_value ) {

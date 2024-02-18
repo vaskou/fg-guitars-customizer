@@ -203,6 +203,19 @@ class Customizer_Field {
 		return get_post_meta( $field_id, self::OPTIONS_META_KEY );
 	}
 
+	public static function get_items_by_group_id( $group_id ) {
+		if ( empty( $group_id ) ) {
+			return [];
+		}
+
+		$args = [
+			'meta_key'   => self::GROUP_META_KEY,
+			'meta_value' => $group_id,
+		];
+
+		return self::get_items( $args );
+	}
+
 
 	/**
 	 * @param \CMB2_Field $field

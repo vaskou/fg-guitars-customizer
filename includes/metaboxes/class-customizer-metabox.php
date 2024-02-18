@@ -34,13 +34,13 @@ class Customizer_Metabox {
 			'show_names'   => true, // Show field names on the left
 		] );
 
-		$metabox->add_field( [
-			'id'         => 'fggc_guitar_orientation',
-			'name'       => __( 'Guitar Orientation', 'fg-guitar-customizer' ),
-			'type'       => 'fggc_cmb2_customizer_options_field',
-			'options_cb' => [ $this, 'get_guitar_orientation_options' ],
-			'show_names' => false,
-		] );
+//		$metabox->add_field( [
+//			'id'         => 'fggc_guitar_orientation',
+//			'name'       => __( 'Guitar Orientation', 'fg-guitar-customizer' ),
+//			'type'       => 'fggc_cmb2_customizer_options_field',
+//			'options_cb' => [ $this, 'get_guitar_orientation_options' ],
+//			'show_names' => false,
+//		] );
 
 		$metabox->add_field( [
 			'id'         => 'fggc_customizer_options',

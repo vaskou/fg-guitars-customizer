@@ -3,7 +3,9 @@
 namespace FG_Guitars_Customizer\Helpers;
 
 use FG_Guitars_Customizer\Post_Types\Customizer_Field;
+use FG_Guitars_Customizer\Post_Types\Customizer_Field_Option;
 use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
+use FG_Guitars_Customizer\Taxonomies\Customizer_Section;
 
 class Helpers {
 
@@ -21,23 +23,25 @@ class Helpers {
 			return $result;
 		}
 
-		$options = Customizer_Field::get_field_options( $field_id );
+//		$options = Customizer_Field::get_field_options( $field_id );
 
-		if ( empty( $options ) ) {
-			return $result;
-		}
+		return Customizer_Field_Option::get_items_by_field_id( $field_id );
 
-		foreach ( $options as $option_id ) {
-			$option_post = get_post( $option_id );
-
-			if ( empty( $option_post ) ) {
-				continue;
-			}
-
-			$result[] = $option_post;
-		}
-
-		return $result;
+//		if ( empty( $options ) ) {
+//			return $result;
+//		}
+//
+//		foreach ( $options as $option_id ) {
+//			$option_post = get_post( $option_id );
+//
+//			if ( empty( $option_post ) ) {
+//				continue;
+//			}
+//
+//			$result[] = $option_post;
+//		}
+//
+//		return $result;
 	}
 
 
@@ -55,39 +59,63 @@ class Helpers {
 			return $result;
 		}
 
-		$fields = Customizer_Fields_Group::get_group_fields( $group_id );
+//		$fields = Customizer_Fields_Group::get_group_fields( $group_id );
 
-		if ( empty( $fields ) ) {
-			return $result;
-		}
+		return Customizer_Field::get_items_by_group_id( $group_id );
 
-		foreach ( $fields as $field_id ) {
-			$field_post = get_post( $field_id );
-
-			if ( empty( $field_post ) ) {
-				continue;
-			}
-
-			$result[] = $field_post;
-		}
-
-		return $result;
+//		if ( empty( $fields ) ) {
+//			return $result;
+//		}
+//
+//		foreach ( $fields as $field_id ) {
+//			$field_post = get_post( $field_id );
+//
+//			if ( empty( $field_post ) ) {
+//				continue;
+//			}
+//
+//			$result[] = $field_post;
+//		}
+//
+//		return $result;
 	}
 
 	public static function get_group_field_option_tree() {
-		$section_id = '';
+		$section_data = [];
 
-		$result = self::_get_section_groups( $section_id );
+		$sections = Customizer_Section::get_items();
 
+		if ( is_wp_error( $sections ) ) {
+			return $section_data;
+		}
 
-		return $result;
+		foreach ( $sections as $section_term ) {
+			$section_id     = $section_term->term_id;
+			$section_title  = $section_term->name;
+			$section_data[] = [
+				'section_id'    => $section_id,
+				'section_title' => $section_title,
+				'groups'        => self::_get_section_groups( $section_id ),
+			];
+		}
+
+		return $section_data;
 
 	}
 
 	private static function _get_section_groups( $section_id ) {
 		$group_data = [];
 
-		$groups = Customizer_Fields_Group::get_items();
+		$args = [
+			'tax_query' => [
+				[
+					'taxonomy' => Customizer_Section::TAXONOMY_NAME,
+					'terms'    => $section_id,
+				]
+			]
+		];
+
+		$groups = Customizer_Fields_Group::get_items( $args );
 
 		if ( empty( $groups ) ) {
 			return $group_data;

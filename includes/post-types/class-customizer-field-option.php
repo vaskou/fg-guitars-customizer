@@ -175,6 +175,23 @@ class Customizer_Field_Option {
 		}
 	}
 
+	/**
+	 * @param \CMB2_Field $field
+	 *
+	 * @return array
+	 */
+	public function get_options( $field = '' ) {
+		$options = [];
+
+		$items = Customizer_Field::get_items();
+
+		foreach ( $items as $item ) {
+			$options[ $item->ID ] = $item->post_title;
+		}
+
+		return $options;
+	}
+
 	public static function get_items( $args = [] ) {
 		$default = array(
 			'post_type'      => self::POST_TYPE_NAME,
@@ -195,21 +212,17 @@ class Customizer_Field_Option {
 		return get_post( $id );
 	}
 
-	/**
-	 * @param \CMB2_Field $field
-	 *
-	 * @return array
-	 */
-	public function get_options( $field = '' ) {
-		$options = [];
-
-		$items = Customizer_Field::get_items();
-
-		foreach ( $items as $item ) {
-			$options[ $item->ID ] = $item->post_title;
+	public static function get_items_by_field_id( $field_id ) {
+		if ( empty( $field_id ) ) {
+			return [];
 		}
 
-		return $options;
+		$args = [
+			'meta_key'   => self::FIELD_META_KEY,
+			'meta_value' => $field_id,
+		];
+
+		return self::get_items( $args );
 	}
 
 }
