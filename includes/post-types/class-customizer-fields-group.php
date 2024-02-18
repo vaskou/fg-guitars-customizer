@@ -7,14 +7,11 @@ use FG_Guitars_Customizer\Taxonomies\Customizer_Section;
 class Customizer_Fields_Group {
 
 	const POST_TYPE_NAME = 'fggc_fields_group';
-
 	const POST_TYPE_SLUG = 'customizer_fields_group';
-
-	const GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY = 'fggc_group_fields';
-
-	const GUITAR_CUSTOMIZER_GROUP_FIELD_OPTIONS_META_KEY = 'fggc_group_field_options';
-
 	const SECTION_META_KEY = 'section';
+	const HIDE_TITLE_META_KEY = 'hide_title';
+	const GUITAR_SELECTION_FIELD_META_KEY = 'has_guitar_selection_field';
+	const WIDTH_META_KEY = 'width';
 
 	private static $_instance;
 
@@ -97,25 +94,6 @@ class Customizer_Fields_Group {
 			return;
 		}
 
-//		$metabox = new_cmb2_box( array(
-//			'id'           => 'fggc_fields_group_meta_box',
-//			'title'        => __( 'FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
-//			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
-//			'context'      => 'normal',
-//			'priority'     => 'high',
-//			'show_names'   => true,
-//		) );
-//
-//		$group_field_id = $metabox->add_field( array(
-//			'name'              => __( 'Customizer Fields', 'fg-guitars-customizer' ),
-//			'id'                => self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY,
-//			'type'              => 'multicheck',
-//			'options_cb'        => [ $this, 'get_options' ],
-//			'select_all_button' => false,
-//			'multiple'          => true,
-//			'render_class'      => 'FG_Guitars_Customizer_Custom_Multicheck'
-//		) );
-
 		$metabox = new_cmb2_box( array(
 			'id'           => 'fggc_group_belongs_to_section_meta_box',
 			'title'        => __( 'Section that belongs to', 'fg-guitars-customizer' ),
@@ -132,6 +110,45 @@ class Customizer_Fields_Group {
 			'type'           => 'taxonomy_select',
 			'remove_default' => true,
 		) );
+
+		$metabox = new_cmb2_box( array(
+			'id'           => 'fggc_group_settings_meta_box',
+			'title'        => __( 'Group Settings', 'fg-guitars-customizer' ),
+			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true,
+		) );
+
+		$metabox->add_field( array(
+			'name' => __( 'Hide title', 'fg-guitars-customizer' ),
+			'id'   => self::HIDE_TITLE_META_KEY,
+			'type' => 'checkbox',
+		) );
+
+		$metabox->add_field( array(
+			'name' => __( 'Has guitar selection field', 'fg-guitars-customizer' ),
+			'id'   => self::GUITAR_SELECTION_FIELD_META_KEY,
+			'type' => 'checkbox',
+		) );
+
+		$metabox->add_field( array(
+			'name'    => __( 'Width', 'fg-guitars-customizer' ),
+			'id'      => self::WIDTH_META_KEY,
+			'type'    => 'select',
+			'options' => [
+				'uk-width-1-3@s' => __( '1/3', 'fg-guitars-customizer' ),
+				'uk-width-1-2@s' => __( '1/2', 'fg-guitars-customizer' )
+			],
+		) );
+	}
+
+	public static function get_has_guitar_selection_field( $group_id ) {
+		return ! empty( get_post_meta( $group_id, self::GUITAR_SELECTION_FIELD_META_KEY, true ) );
+	}
+
+	public static function get_group_width( $group_id ) {
+		return get_post_meta( $group_id, self::WIDTH_META_KEY, true );
 	}
 
 	public static function get_items( $args = [] ) {
@@ -148,48 +165,5 @@ class Customizer_Fields_Group {
 		$query = new \WP_Query( $args );
 
 		return $query->get_posts();
-	}
-
-	public static function get_group_fields( $group_id ) {
-		return get_post_meta( $group_id, self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY );
-	}
-
-	/**
-	 * @param \CMB2_Field $field
-	 *
-	 * @return array
-	 */
-	public function get_options( $field ) {
-		$options = [];
-
-		$items = Customizer_Field::get_items();
-
-		$current_post_id = $field->object_id;
-
-		foreach ( $items as $item ) {
-			$item_id = $item->ID;
-
-			$args = [
-				'meta_key'   => self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY,
-				'meta_value' => $item_id
-			];
-
-			$fields = self::get_items( $args );
-
-			$other = '';
-			if ( ! empty( $fields[0] ) && $fields[0]->ID != $current_post_id ) {
-				$options[ $item_id ]['disabled'] = 'disabled';
-
-				$other = $fields[0]->post_title;
-			}
-
-			$options[ $item_id ]['label'] = $item->post_title . ( ! empty( $other ) ? " ({$other})" : '' );
-		}
-
-		uasort( $options, function ( $a, $b ) {
-			return ! empty( $a['disabled'] ) ? 1 : - 1;
-		} );
-
-		return $options;
 	}
 }

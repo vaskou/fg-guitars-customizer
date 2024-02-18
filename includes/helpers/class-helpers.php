@@ -23,25 +23,8 @@ class Helpers {
 			return $result;
 		}
 
-//		$options = Customizer_Field::get_field_options( $field_id );
-
 		return Customizer_Field_Option::get_items_by_field_id( $field_id );
 
-//		if ( empty( $options ) ) {
-//			return $result;
-//		}
-//
-//		foreach ( $options as $option_id ) {
-//			$option_post = get_post( $option_id );
-//
-//			if ( empty( $option_post ) ) {
-//				continue;
-//			}
-//
-//			$result[] = $option_post;
-//		}
-//
-//		return $result;
 	}
 
 
@@ -59,25 +42,26 @@ class Helpers {
 			return $result;
 		}
 
-//		$fields = Customizer_Fields_Group::get_group_fields( $group_id );
-
 		return Customizer_Field::get_items_by_group_id( $group_id );
 
-//		if ( empty( $fields ) ) {
-//			return $result;
-//		}
-//
-//		foreach ( $fields as $field_id ) {
-//			$field_post = get_post( $field_id );
-//
-//			if ( empty( $field_post ) ) {
-//				continue;
-//			}
-//
-//			$result[] = $field_post;
-//		}
-//
-//		return $result;
+	}
+
+	/**
+	 * @param $section_id
+	 *
+	 * @return \WP_Post[]
+	 */
+	public static function get_section_groups( $section_id ) {
+		$args = [
+			'tax_query' => [
+				[
+					'taxonomy' => Customizer_Section::TAXONOMY_NAME,
+					'terms'    => $section_id,
+				]
+			]
+		];
+
+		return Customizer_Fields_Group::get_items( $args );
 	}
 
 	public static function get_group_field_option_tree() {
@@ -95,7 +79,7 @@ class Helpers {
 			$section_data[] = [
 				'section_id'    => $section_id,
 				'section_title' => $section_title,
-				'groups'        => self::_get_section_groups( $section_id ),
+				'groups'        => self::_get_section_groups_data( $section_id ),
 			];
 		}
 
@@ -103,19 +87,10 @@ class Helpers {
 
 	}
 
-	private static function _get_section_groups( $section_id ) {
+	private static function _get_section_groups_data( $section_id ) {
 		$group_data = [];
 
-		$args = [
-			'tax_query' => [
-				[
-					'taxonomy' => Customizer_Section::TAXONOMY_NAME,
-					'terms'    => $section_id,
-				]
-			]
-		];
-
-		$groups = Customizer_Fields_Group::get_items( $args );
+		$groups = self::get_section_groups( $section_id );
 
 		if ( empty( $groups ) ) {
 			return $group_data;
@@ -125,7 +100,7 @@ class Helpers {
 			$group_id    = $group_post->ID;
 			$group_title = $group_post->post_title;
 
-			$field_data = self::_get_group_fields( $group_id );
+			$field_data = self::_get_group_fields_data( $group_id );
 
 			$group_data[] = [
 				'group_id'    => $group_id,
@@ -137,7 +112,7 @@ class Helpers {
 		return $group_data;
 	}
 
-	private static function _get_group_fields( $group_id ) {
+	private static function _get_group_fields_data( $group_id ) {
 		$field_data = [];
 
 		$fields = self::get_group_fields( $group_id );

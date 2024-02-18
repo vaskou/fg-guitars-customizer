@@ -2,12 +2,16 @@
 
 namespace FG_Guitars_Customizer\Ajax;
 
+use FG_Guitars_Customizer\Helpers\Helpers;
 use FG_Guitars_Customizer\Post_Types\Customizer_Field;
 use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
+use FG_Guitars_Customizer\Taxonomies\Customizer_Section;
 
 class Customizer {
 
 	const ACTION = 'fggc_customizer_get_data';
+
+	private $customizer_options = [];
 
 	private static $_instance;
 
@@ -32,36 +36,56 @@ class Customizer {
 
 		$selected_guitar_id = ! empty( $_GET['model'] ) ? $_GET['model'] : ( ! empty( $guitars ) ? array_key_first( $guitars ) : '' );
 
-		$guitar_orientation_field = $this->get_guitar_orientation_field( $selected_guitar_id );
+		$this->customizer_options = get_post_meta( $selected_guitar_id, 'fggc_customizer_options', true );
 
-		$customizer_options = get_post_meta( $selected_guitar_id, 'fggc_customizer_options', true );
-
-		$groups = $this->get_groups( $customizer_options );
-
-		$sections = [
-			[
-				'type'   => 'guitars',
-				'title'  => __( 'Choose your guitar', 'fg-guitars-customizer' ),
-				'groups' => [
-					[
-						'width'  => 'uk-width-1-2@s',
-						'fields' => [
-							$guitar_orientation_field,
-						]
-					]
-				],
-			],
-			[
-				'type'   => 'fields',
-				'title'  => __( 'Make your choices', 'fg-guitars-customizer' ),
-				'groups' => $groups,
-			],
-		];
+		$sections = $this->get_sections();
 
 		wp_send_json( [
 			'guitars'  => $guitars,
 			'sections' => $sections,
 		] );
+	}
+
+	public function get_sections() {
+		$section_data = [];
+
+		$sections = Customizer_Section::get_items();
+
+		if ( is_wp_error( $sections ) ) {
+			return $section_data;
+		}
+
+		foreach ( $sections as $section_term ) {
+			$section_id     = $section_term->term_id;
+			$section_title  = $section_term->name;
+			$section_groups = self::_get_section_groups_data( $section_id );
+			$section_type   = 'fields';
+
+			$has_guitar_selection_field = array_filter( $section_groups, function ( $group ) {
+				return ! empty( $group['hasGuitarSelectionField'] );
+			} );
+
+			$has_group_fields = array_filter( $section_groups, function ( $group ) {
+				return ! empty( $group['fields'] );
+			} );
+
+			if ( ! empty( $has_guitar_selection_field ) ) {
+				$section_type = 'guitars';
+			}
+
+			if ( ! $has_group_fields && ! $has_guitar_selection_field ) {
+				continue;
+			}
+
+			$section_data[] = [
+				'section_id' => $section_id,
+				'type'       => $section_type,
+				'title'      => $section_title,
+				'groups'     => $section_groups,
+			];
+		}
+
+		return $section_data;
 	}
 
 	public function get_guitars() {
@@ -93,109 +117,81 @@ class Customizer {
 		return $guitars;
 	}
 
-	public function get_guitar_orientation_field( $selected_guitar_id ) {
-		$result = [];
-
-		if ( empty( $selected_guitar_id ) ) {
-			return $result;
-		}
-
-		$guitar_orientation = get_post_meta( $selected_guitar_id, 'fggc_guitar_orientation', true );
-
-		$options = [];
-
-		if ( ! empty( $guitar_orientation['right']['enable'] ) ) {
-			$options[] = [
-				'name'  => __( 'Right', 'fg-guitars-customizer' ),
-				'value' => 'right',
-			];
-		}
-
-		if ( ! empty( $guitar_orientation['left']['enable'] ) ) {
-			$options[] = [
-				'name'  => __( 'Left', 'fg-guitars-customizer' ),
-				'value' => 'left',
-			];
-		}
-
-		if ( empty( $options ) ) {
-			return $result;
-		}
-
-		return [
-			'label'     => __( 'Left or Right-handed', 'fg-guitars-customizer' ),
-			'fieldName' => 'orientation',
-			'type'      => 'radio',
-			'options'   => $options,
-		];
-	}
-
-	public function get_groups( $selected_options ) {
+	private function _get_section_groups_data( $section_id ) {
 		$group_data = [];
-		$groups     = Customizer_Fields_Group::get_items();
 
-		foreach ( $groups as $group ) {
-			$field_data = [];
-			$group_id   = $group->ID;
-			$fields     = Customizer_Fields_Group::get_group_fields( $group_id );
+		$groups = Helpers::get_section_groups( $section_id );
 
-			if ( empty( $fields ) ) {
-				continue;
-			}
+		if ( empty( $groups ) ) {
+			return $group_data;
+		}
 
-			foreach ( $fields as $field_id ) {
+		foreach ( $groups as $group_post ) {
+			$group_id    = $group_post->ID;
+			$group_title = $group_post->post_title;
+			$group_width = Customizer_Fields_Group::get_group_width( $group_id );
 
-				$field_post = get_post( $field_id );
+			$group_has_guitar_selection_field = Customizer_Fields_Group::get_has_guitar_selection_field( $group_id );
 
-				if ( ! $field_post ) {
-					continue;
-				}
-
-				$option_data = [];
-
-				$options = Customizer_Field::get_field_options( $field_id );
-
-				foreach ( $options as $option_id ) {
-					if ( empty( $selected_options[ $option_id ]['enable'] ) ) {
-						continue;
-					}
-
-					$option_post = get_post( $option_id );
-
-					if ( empty( $option_post ) ) {
-						continue;
-					}
-
-					$option_data[] = [
-						'name'  => $option_post->post_title,
-						'value' => $option_post->post_name,
-					];
-
-				}
-
-				if ( empty( $option_data ) ) {
-					continue;
-				}
-
-				$field_data[] = [
-					'label'     => $field_post->post_title,
-					'fieldName' => $field_post->post_name,
-					'type'      => 'radio',
-					'options'   => $option_data
-				];
-			}
-
-			if ( empty( $field_data ) ) {
-				continue;
-			}
+			$field_data = $this->_get_group_fields_data( $group_id );
 
 			$group_data[] = [
-				'title'  => $group->post_title,
-				'width'  => 'uk-width-1-3@s',
-				'fields' => $field_data
+				'title'                   => $group_title,
+				'width'                   => ! empty( $group_width ) ? $group_width : 'uk-width-1-3@s',
+				'hasGuitarSelectionField' => $group_has_guitar_selection_field,
+				'fields'                  => $field_data,
 			];
 		}
 
 		return $group_data;
+	}
+
+	private function _get_group_fields_data( $group_id ) {
+		$field_data = [];
+
+		$fields = Helpers::get_group_fields( $group_id );
+
+		foreach ( $fields as $field_post ) {
+			$field_id    = $field_post->ID;
+			$field_title = $field_post->post_title;
+			$field_name  = $field_post->post_name;
+			$field_type  = Customizer_Field::get_field_type( $field_id );
+
+			$option_data = $this->_get_field_option_data( $field_id );
+
+			if ( empty( $option_data ) ) {
+				continue;
+			}
+
+			$field_data[] = [
+				'label'     => $field_title,
+				'fieldName' => $field_name,
+				'type'      => $field_type,
+				'options'   => $option_data,
+			];
+		}
+
+		return $field_data;
+	}
+
+	private function _get_field_option_data( $field_id ) {
+		$options = Helpers::get_field_options( $field_id );
+
+		$option_data = [];
+
+		foreach ( $options as $option_post ) {
+			$option_id = $option_post->ID;
+
+			if ( empty( $this->customizer_options[ $option_id ]['enable'] ) ) {
+				continue;
+			}
+
+			$option_data[] = [
+				'name'  => $option_post->post_title,
+				'value' => $option_post->post_name,
+			];
+		}
+
+		return $option_data;
 	}
 }

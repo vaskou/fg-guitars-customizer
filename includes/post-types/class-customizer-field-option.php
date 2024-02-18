@@ -5,12 +5,8 @@ namespace FG_Guitars_Customizer\Post_Types;
 class Customizer_Field_Option {
 
 	const POST_TYPE_NAME = 'fggc_field_option';
-
 	const POST_TYPE_SLUG = 'customizer_field_option';
-
 	const FIELD_META_KEY = 'field';
-
-	const PRICE_META_KEY = 'price';
 
 	private static $_instance;
 
@@ -96,21 +92,6 @@ class Customizer_Field_Option {
 		if ( ! function_exists( 'new_cmb2_box' ) ) {
 			return;
 		}
-
-//		$metabox = new_cmb2_box( array(
-//			'id'           => 'fggc_field_option_meta_box',
-//			'title'        => __( 'Options', 'fg-guitars-customizer' ),
-//			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
-//			'context'      => 'normal',
-//			'priority'     => 'high',
-//			'show_names'   => true,
-//		) );
-//
-//		$metabox->add_field( array(
-//			'name' => __( 'Price', 'fg-guitars-customizer' ),
-//			'id'   => self::PRICE_META_KEY,
-//			'type' => 'text_small',
-//		) );
 
 		$metabox = new_cmb2_box( array(
 			'id'           => 'fggc_option_belongs_to_field_meta_box',
