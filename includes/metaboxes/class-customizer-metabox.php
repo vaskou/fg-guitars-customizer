@@ -3,7 +3,6 @@
 namespace FG_Guitars_Customizer\Metaboxes;
 
 use FG_Guitars_Customizer\Helpers\Helpers;
-use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
 
 class Customizer_Metabox {
 

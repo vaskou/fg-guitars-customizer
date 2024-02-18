@@ -75,51 +75,73 @@ class Helpers {
 	}
 
 	public static function get_group_field_option_tree() {
-		$result = [];
+		$section_id = '';
+
+		$result = self::_get_section_groups( $section_id );
+
+
+		return $result;
+
+	}
+
+	private static function _get_section_groups( $section_id ) {
+		$group_data = [];
 
 		$groups = Customizer_Fields_Group::get_items();
 
 		if ( empty( $groups ) ) {
-			return $result;
+			return $group_data;
 		}
 
 		foreach ( $groups as $group_post ) {
-			$field_data  = [];
 			$group_id    = $group_post->ID;
 			$group_title = $group_post->post_title;
 
-			$fields = self::get_group_fields( $group_id );
+			$field_data = self::_get_group_fields( $group_id );
 
-			foreach ( $fields as $field_post ) {
-				$field_id    = $field_post->ID;
-				$field_title = $field_post->post_title;
-
-				$options = self::get_field_options( $field_id );
-
-				$option_data = [];
-				foreach ( $options as $option_post ) {
-					$option_data[] = [
-						'option_id'    => $option_post->ID,
-						'option_title' => $option_post->post_title,
-					];
-				}
-
-				$field_data[] = [
-					'field_id'    => $field_id,
-					'field_title' => $field_title,
-					'options'     => $option_data,
-				];
-			}
-
-			$result[] = [
+			$group_data[] = [
 				'group_id'    => $group_id,
 				'group_title' => $group_title,
 				'fields'      => $field_data,
 			];
 		}
 
+		return $group_data;
+	}
 
-		return $result;
+	private static function _get_group_fields( $group_id ) {
+		$field_data = [];
 
+		$fields = self::get_group_fields( $group_id );
+
+		foreach ( $fields as $field_post ) {
+			$field_id    = $field_post->ID;
+			$field_title = $field_post->post_title;
+
+			$option_data = self::_get_field_option_data( $field_id );
+
+			$field_data[] = [
+				'field_id'    => $field_id,
+				'field_title' => $field_title,
+				'options'     => $option_data,
+			];
+		}
+
+		return $field_data;
+	}
+
+	private static function _get_field_option_data( $field_id ) {
+		$options = self::get_field_options( $field_id );
+
+		$option_data = [];
+
+		foreach ( $options as $option_post ) {
+			$option_data[] = [
+				'option_id'    => $option_post->ID,
+				'option_title' => $option_post->post_title,
+			];
+		}
+
+		return $option_data;
 	}
 }
