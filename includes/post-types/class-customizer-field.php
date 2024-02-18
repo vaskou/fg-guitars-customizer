@@ -9,6 +9,7 @@ class Customizer_Field {
 	const POST_TYPE_SLUG = 'customizer_field';
 
 	const OPTIONS_META_KEY = 'options';
+	const GROUP_META_KEY = 'group';
 
 	private static $_instance;
 
@@ -23,6 +24,10 @@ class Customizer_Field {
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
+
+		// Filters
+		add_action( 'restrict_manage_posts', [ $this, 'field_filter' ] );
+		add_action( 'pre_get_posts', [ $this, 'filter_posts' ] );
 	}
 
 	/**
@@ -91,9 +96,28 @@ class Customizer_Field {
 			return;
 		}
 
+//		$metabox = new_cmb2_box( array(
+//			'id'           => 'fggc_field_meta_box',
+//			'title'        => __( 'Options', 'fg-guitars-customizer' ),
+//			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
+//			'context'      => 'normal',
+//			'priority'     => 'high',
+//			'show_names'   => true,
+//		) );
+//
+//		$metabox->add_field( array(
+//			'name'              => __( 'Options', 'fg-guitars-customizer' ),
+//			'id'                => self::OPTIONS_META_KEY,
+//			'type'              => 'multicheck',
+//			'options_cb'        => [ $this, 'get_options' ],
+//			'select_all_button' => false,
+//			'multiple'          => true,
+//			'render_class'      => 'FG_Guitars_Customizer_Custom_Multicheck'
+//		) );
+
 		$metabox = new_cmb2_box( array(
-			'id'           => 'fggc_field_meta_box',
-			'title'        => __( 'Options', 'fg-guitars-customizer' ),
+			'id'           => 'fggc_field_belongs_to_group_meta_box',
+			'title'        => __( 'Group that belongs to', 'fg-guitars-customizer' ),
 			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -101,14 +125,57 @@ class Customizer_Field {
 		) );
 
 		$metabox->add_field( array(
-			'name'              => __( 'Options', 'fg-guitars-customizer' ),
-			'id'                => self::OPTIONS_META_KEY,
-			'type'              => 'multicheck',
-			'options_cb'        => [ $this, 'get_options' ],
-			'select_all_button' => false,
-			'multiple'          => true,
-			'render_class'      => 'FG_Guitars_Customizer_Custom_Multicheck'
+			'name'             => __( 'Group', 'fg-guitars-customizer' ),
+			'id'               => self::GROUP_META_KEY,
+			'type'             => 'select',
+			'show_option_none' => true,
+			'options_cb'       => [ $this, 'get_group_options' ],
+			'column'           => [
+				'position' => 2,
+			]
 		) );
+	}
+
+	public function field_filter( $post_type ) {
+		if ( $post_type != self::POST_TYPE_NAME ) {
+			return;
+		}
+
+		$options = self::get_group_options();
+
+		$selected = ! empty( $_GET[ self::GROUP_META_KEY ] ) ? $_GET[ self::GROUP_META_KEY ] : '';
+
+		?>
+		<select name="<?php echo self::GROUP_META_KEY; ?>">
+			<option value=""><?php echo __( 'All Groups', 'fg-guitars-customizer' ); ?></option>
+			<?php foreach ( $options as $option_value => $option_label ): ?>
+				<option value="<?php echo esc_attr( $option_value ); ?>" <?php selected( $selected, $option_value ); ?>><?php echo esc_html( $option_label ); ?></option>
+			<?php endforeach; ?>
+		</select>
+		<?php
+	}
+
+	/**
+	 * @param \WP_Query $query
+	 *
+	 * @return void
+	 */
+	public function filter_posts( $query ) {
+
+		if ( $query->get( 'post_type' ) == self::POST_TYPE_NAME ) {
+			$meta_query = (array) $query->get( 'meta_query' );
+
+			if ( ! empty( $_GET[ self::GROUP_META_KEY ] ) ) {
+				$meta_query[] = [
+					'key'   => self::GROUP_META_KEY,
+					'value' => $_GET[ self::GROUP_META_KEY ],
+				];
+			}
+
+			$meta_query = array_filter( $meta_query );
+
+			$query->set( 'meta_query', $meta_query );
+		}
 	}
 
 	/**
@@ -172,6 +239,23 @@ class Customizer_Field {
 		uasort( $options, function ( $a, $b ) {
 			return ! empty( $a['disabled'] ) ? 1 : - 1;
 		} );
+
+		return $options;
+	}
+
+	/**
+	 * @param \CMB2_Field $field
+	 *
+	 * @return array
+	 */
+	public function get_group_options( $field = '' ) {
+		$options = [];
+
+		$items = Customizer_Fields_Group::get_items();
+
+		foreach ( $items as $item ) {
+			$options[ $item->ID ] = $item->post_title;
+		}
 
 		return $options;
 	}

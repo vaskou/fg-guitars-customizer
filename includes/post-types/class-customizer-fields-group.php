@@ -2,6 +2,8 @@
 
 namespace FG_Guitars_Customizer\Post_Types;
 
+use FG_Guitars_Customizer\Taxonomies\Customizer_Section;
+
 class Customizer_Fields_Group {
 
 	const POST_TYPE_NAME = 'fggc_fields_group';
@@ -11,6 +13,8 @@ class Customizer_Fields_Group {
 	const GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY = 'fggc_group_fields';
 
 	const GUITAR_CUSTOMIZER_GROUP_FIELD_OPTIONS_META_KEY = 'fggc_group_field_options';
+
+	const SECTION_META_KEY = 'section';
 
 	private static $_instance;
 
@@ -93,23 +97,40 @@ class Customizer_Fields_Group {
 			return;
 		}
 
+//		$metabox = new_cmb2_box( array(
+//			'id'           => 'fggc_fields_group_meta_box',
+//			'title'        => __( 'FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
+//			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
+//			'context'      => 'normal',
+//			'priority'     => 'high',
+//			'show_names'   => true,
+//		) );
+//
+//		$group_field_id = $metabox->add_field( array(
+//			'name'              => __( 'Customizer Fields', 'fg-guitars-customizer' ),
+//			'id'                => self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY,
+//			'type'              => 'multicheck',
+//			'options_cb'        => [ $this, 'get_options' ],
+//			'select_all_button' => false,
+//			'multiple'          => true,
+//			'render_class'      => 'FG_Guitars_Customizer_Custom_Multicheck'
+//		) );
+
 		$metabox = new_cmb2_box( array(
-			'id'           => 'fggc_fields_group_meta_box',
-			'title'        => __( 'FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
+			'id'           => 'fggc_group_belongs_to_section_meta_box',
+			'title'        => __( 'Section that belongs to', 'fg-guitars-customizer' ),
 			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_names'   => true,
 		) );
 
-		$group_field_id = $metabox->add_field( array(
-			'name'              => __( 'Customizer Fields', 'fg-guitars-customizer' ),
-			'id'                => self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY,
-			'type'              => 'multicheck',
-			'options_cb'        => [ $this, 'get_options' ],
-			'select_all_button' => false,
-			'multiple'          => true,
-			'render_class'      => 'FG_Guitars_Customizer_Custom_Multicheck'
+		$metabox->add_field( array(
+			'name'           => __( 'Section', 'fg-guitars-customizer' ),
+			'id'             => self::SECTION_META_KEY,
+			'taxonomy'       => Customizer_Section::TAXONOMY_NAME,
+			'type'           => 'taxonomy_select',
+			'remove_default' => true,
 		) );
 	}
 

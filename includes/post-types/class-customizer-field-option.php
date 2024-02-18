@@ -8,6 +8,8 @@ class Customizer_Field_Option {
 
 	const POST_TYPE_SLUG = 'customizer_field_option';
 
+	const FIELD_META_KEY = 'field';
+
 	const PRICE_META_KEY = 'price';
 
 	private static $_instance;
@@ -22,7 +24,11 @@ class Customizer_Field_Option {
 
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
-//		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
+		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
+
+		// Filters
+		add_action( 'restrict_manage_posts', [ $this, 'field_filter' ] );
+		add_action( 'pre_get_posts', [ $this, 'filter_posts' ] );
 	}
 
 	/**
@@ -91,9 +97,24 @@ class Customizer_Field_Option {
 			return;
 		}
 
+//		$metabox = new_cmb2_box( array(
+//			'id'           => 'fggc_field_option_meta_box',
+//			'title'        => __( 'Options', 'fg-guitars-customizer' ),
+//			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
+//			'context'      => 'normal',
+//			'priority'     => 'high',
+//			'show_names'   => true,
+//		) );
+//
+//		$metabox->add_field( array(
+//			'name' => __( 'Price', 'fg-guitars-customizer' ),
+//			'id'   => self::PRICE_META_KEY,
+//			'type' => 'text_small',
+//		) );
+
 		$metabox = new_cmb2_box( array(
-			'id'           => 'fggc_field_option_meta_box',
-			'title'        => __( 'Options', 'fg-guitars-customizer' ),
+			'id'           => 'fggc_option_belongs_to_field_meta_box',
+			'title'        => __( 'Field that belongs to', 'fg-guitars-customizer' ),
 			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
 			'context'      => 'normal',
 			'priority'     => 'high',
@@ -101,10 +122,57 @@ class Customizer_Field_Option {
 		) );
 
 		$metabox->add_field( array(
-			'name' => __( 'Price', 'fg-guitars-customizer' ),
-			'id'   => self::PRICE_META_KEY,
-			'type' => 'text_small',
+			'name'             => __( 'Field', 'fg-guitars-customizer' ),
+			'id'               => self::FIELD_META_KEY,
+			'type'             => 'select',
+			'show_option_none' => true,
+			'options_cb'       => [ $this, 'get_options' ],
+			'column'           => [
+				'position' => 2,
+			]
 		) );
+	}
+
+	public function field_filter( $post_type ) {
+		if ( $post_type != self::POST_TYPE_NAME ) {
+			return;
+		}
+
+		$options = self::get_options();
+
+		$selected = ! empty( $_GET[ self::FIELD_META_KEY ] ) ? $_GET[ self::FIELD_META_KEY ] : '';
+
+		?>
+        <select name="<?php echo self::FIELD_META_KEY; ?>">
+            <option value=""><?php echo __( 'All Fields', 'fg-guitars-customizer' ); ?></option>
+			<?php foreach ( $options as $option_value => $option_label ): ?>
+                <option value="<?php echo esc_attr( $option_value ); ?>" <?php selected( $selected, $option_value ); ?>><?php echo esc_html( $option_label ); ?></option>
+			<?php endforeach; ?>
+        </select>
+		<?php
+	}
+
+	/**
+	 * @param \WP_Query $query
+	 *
+	 * @return void
+	 */
+	public function filter_posts( $query ) {
+
+		if ( $query->get( 'post_type' ) == self::POST_TYPE_NAME ) {
+			$meta_query = (array) $query->get( 'meta_query' );
+
+			if ( ! empty( $_GET[ self::FIELD_META_KEY ] ) ) {
+				$meta_query[] = [
+					'key'   => self::FIELD_META_KEY,
+					'value' => $_GET[ self::FIELD_META_KEY ],
+				];
+			}
+
+			$meta_query = array_filter( $meta_query );
+
+			$query->set( 'meta_query', $meta_query );
+		}
 	}
 
 	public static function get_items( $args = [] ) {
@@ -125,6 +193,23 @@ class Customizer_Field_Option {
 
 	public static function get_item( $id ) {
 		return get_post( $id );
+	}
+
+	/**
+	 * @param \CMB2_Field $field
+	 *
+	 * @return array
+	 */
+	public function get_options( $field = '' ) {
+		$options = [];
+
+		$items = Customizer_Field::get_items();
+
+		foreach ( $items as $item ) {
+			$options[ $item->ID ] = $item->post_title;
+		}
+
+		return $options;
 	}
 
 }
