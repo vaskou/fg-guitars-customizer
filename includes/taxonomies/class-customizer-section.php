@@ -8,6 +8,7 @@ class Customizer_Section {
 
 	const TAXONOMY_NAME = 'customizer_section';
 	const TAXONOMY_SLUG = 'customizer-section';
+	const ORDER_META_KEY = 'order';
 
 	private static $_instance;
 
@@ -21,6 +22,7 @@ class Customizer_Section {
 
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_taxonomy' ] );
+		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
 	}
 
 	/**
@@ -65,6 +67,30 @@ class Customizer_Section {
 		register_taxonomy( self::TAXONOMY_NAME, array( Customizer_Fields_Group::POST_TYPE_NAME ), $args );
 	}
 
+	public function add_metaboxes() {
+		if ( ! function_exists( 'new_cmb2_box' ) ) {
+			return;
+		}
+
+		$metabox = new_cmb2_box( array(
+			'id'               => 'fggc_customizer_section_meta_box',
+			'title'            => __( 'Section options', 'fg-guitars-customizer' ),
+			'object_types'     => [ 'term', ],
+			'taxonomies'       => [ self::TAXONOMY_NAME, ],
+			'new_term_section' => true,
+		) );
+
+		$metabox->add_field( array(
+			'name'    => __( 'Order', 'fg-guitars-customizer' ),
+			'id'      => self::ORDER_META_KEY,
+			'type'    => 'text',
+			'default' => 0,
+			'column'  => [
+				'position' => 100,
+			]
+		) );
+	}
+
 	/**
 	 * @param array $args
 	 *
@@ -74,8 +100,9 @@ class Customizer_Section {
 
 		$default = array(
 			'taxonomy' => self::TAXONOMY_NAME,
-			'orderby'  => 'name',
-			'order'    => 'ASC'
+			'orderby'  => 'meta_value',
+			'order'    => 'ASC',
+			'meta_key' => self::ORDER_META_KEY,
 		);
 
 		$args = wp_parse_args( $args, $default );

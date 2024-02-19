@@ -187,8 +187,10 @@ class Customizer {
 			}
 
 			$option_data[] = [
-				'name'  => $option_post->post_title,
-				'value' => $option_post->post_name,
+				'name'       => $option_post->post_title,
+				'value'      => $option_post->post_name,
+				'price'      => $this->customizer_options[ $option_id ]['price'],
+				'is_default' => $this->customizer_options[ $option_id ]['default'],
 			];
 		}
 

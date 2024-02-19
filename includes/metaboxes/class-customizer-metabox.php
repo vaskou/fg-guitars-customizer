@@ -34,14 +34,6 @@ class Customizer_Metabox {
 			'show_names'   => true, // Show field names on the left
 		] );
 
-//		$metabox->add_field( [
-//			'id'         => 'fggc_guitar_orientation',
-//			'name'       => __( 'Guitar Orientation', 'fg-guitar-customizer' ),
-//			'type'       => 'fggc_cmb2_customizer_options_field',
-//			'options_cb' => [ $this, 'get_guitar_orientation_options' ],
-//			'show_names' => false,
-//		] );
-
 		$metabox->add_field( [
 			'id'         => 'fggc_customizer_options',
 			'name'       => __( 'Customizer', 'fg-guitar-customizer' ),
@@ -54,37 +46,5 @@ class Customizer_Metabox {
 
 	public function get_group_field_option_tree() {
 		return Helpers::get_group_field_option_tree();
-	}
-
-	public function get_guitar_orientation_options() {
-
-		$left = [
-			'option_id'    => 'left',
-			'option_title' => __( 'Left', 'fg-guitar-customizer' ),
-		];
-
-		$right = [
-			'option_id'    => 'right',
-			'option_title' => __( 'Right', 'fg-guitar-customizer' ),
-		];
-
-		$fields = [
-			[
-				'field_id'    => 'left_right_handed',
-				'field_title' => __( 'Left or Right-handed', 'fg-guitar-customizer' ),
-				'options'     => [
-					$left,
-					$right
-				]
-			]
-		];
-
-		return [
-			[
-				'group_id'    => 'orientation',
-				'group_title' => __( 'Orientation', 'fg-guitar-customizer' ),
-				'fields'      => $fields,
-			]
-		];
 	}
 }

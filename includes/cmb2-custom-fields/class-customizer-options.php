@@ -61,8 +61,9 @@ class Customizer_Options {
 
 		foreach ( $val as $key => $value ) {
 
-			$price  = ! empty( $value['price'] ) ? $value['price'] : '';
-			$enable = ! empty( $value['enable'] ) ? $value['enable'] : '';
+			$price   = ! empty( $value['price'] ) ? $value['price'] : '';
+			$enable  = ! empty( $value['enable'] ) ? $value['enable'] : '';
+			$default = ! empty( $value['default'] ) ? $value['default'] : '';
 
 
 			$sanitized_price = sanitize_text_field( $price );
@@ -74,6 +75,11 @@ class Customizer_Options {
 			$sanitized_enable = isset( $sanitized_enable ) && 'on' == $sanitized_enable ? $sanitized_enable : '';
 
 			$sanitized_val[ $key ]['enable'] = $sanitized_enable;
+
+			$sanitized_default = sanitize_text_field( $default );
+			$sanitized_default = isset( $sanitized_default ) && 'on' == $sanitized_default ? $sanitized_default : '';
+
+			$sanitized_val[ $key ]['default'] = $sanitized_default;
 
 		}
 
@@ -229,6 +235,12 @@ class Customizer_Options {
 					'value' => $price_value,
 					'class' => 'cmb2-text-small'
 				];
+
+				$is_default      = ! empty( $escaped_value[ $option_key ]['default'] );
+				$is_default_args = [
+					'id'   => $field_type->_id( '_option_default_' . $option_key ),
+					'name' => $field_type->_name( '[' . $option_key . '][default]' ),
+				];
 				?>
                 <div class="option-<?php echo $option_args['id']; ?> cmb-row">
                     <div class="field" style="clear:both;">
@@ -241,10 +253,18 @@ class Customizer_Options {
                     </div>
                     <div class="field" style="clear:both;">
                         <div class="cmb-th">
-                            <label><?php echo __( 'Price' ); ?></label>
+                            <label><?php echo __( 'Price', 'fg-guitar-customizer' ); ?></label>
                         </div>
                         <div class="cmb-td">
 							<?php echo $field_type->input( $price_args ); ?>
+                        </div>
+                    </div>
+                    <div class="field" style="clear:both;">
+                        <div class="cmb-th">
+                            <label><?php echo __( 'Is selected by default', 'fg-guitar-customizer' ); ?></label>
+                        </div>
+                        <div class="cmb-td">
+							<?php echo $field_type->checkbox( $is_default_args, $is_default ); ?>
                         </div>
                     </div>
                 </div>
