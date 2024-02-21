@@ -78,10 +78,10 @@ class Customizer {
 			}
 
 			$section_data[] = [
-				'section_id' => $section_id,
-				'type'       => $section_type,
-				'title'      => $section_title,
-				'groups'     => $section_groups,
+				'id'     => $section_id,
+				'type'   => $section_type,
+				'title'  => $section_title,
+				'groups' => $section_groups,
 			];
 		}
 
@@ -136,6 +136,7 @@ class Customizer {
 			$field_data = $this->_get_group_fields_data( $group_id );
 
 			$group_data[] = [
+				'id'                      => $group_id,
 				'title'                   => $group_title,
 				'width'                   => ! empty( $group_width ) ? $group_width : 'uk-width-1-3@s',
 				'hasGuitarSelectionField' => $group_has_guitar_selection_field,
@@ -157,16 +158,26 @@ class Customizer {
 			$field_name  = $field_post->post_name;
 			$field_type  = Customizer_Field::get_field_type( $field_id );
 
-			$option_data = $this->_get_field_option_data( $field_id );
+			$option_data = [];
 
-			if ( empty( $option_data ) ) {
-				continue;
+			if ( in_array( $field_type, [ 'radio', 'select' ] ) ) {
+				$option_data = $this->_get_field_option_data( $field_id );
+
+				if ( empty( $option_data ) ) {
+					continue;
+				}
+			} else {
+				if ( empty( $this->customizer_options[ $field_id ]['enable'] ) ) {
+					continue;
+				}
 			}
 
 			$field_data[] = [
+				'id'        => $field_id,
 				'label'     => $field_title,
 				'fieldName' => $field_name,
 				'type'      => $field_type,
+				'required'  => ! empty( $this->customizer_options[ $field_id ]['required'] ),
 				'options'   => $option_data,
 			];
 		}

@@ -4,8 +4,9 @@ import RadioField, {RadioOption} from "../RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
 import {useSelector} from "react-redux";
-import {loadData, selectGuitarsArray, selectSectionsArray} from "./formSlice";
+import {OptionData, FieldData, GroupData, SectionData, loadData, selectGuitarsArray, selectSectionsArray} from "./formSlice";
 import {useAppDispatch} from "../../redux/store";
+import TextareaField from "../TexteareaField/TexteareaField";
 
 enum SectionTypes {
     GUITARS = 'guitars',
@@ -14,30 +15,6 @@ enum SectionTypes {
 
 interface Props {
 
-}
-
-interface OptionData {
-    name: string;
-    value: string;
-}
-
-interface FieldData {
-    label: string;
-    fieldName: string;
-    type: string;
-    options: OptionData[];
-}
-
-interface GroupData {
-    title?: string;
-    width: string;
-    fields: FieldData[];
-}
-
-interface SectionData {
-    type: string;
-    title: string;
-    groups: GroupData[];
 }
 
 const Form: React.FC<Props> = ({}) => {
@@ -51,7 +28,7 @@ const Form: React.FC<Props> = ({}) => {
         dispatch(loadData())
     }, [dispatch]);
 
-    const getField = (field: FieldData, index: any) => {
+    const getField = (field: FieldData, index: string) => {
         let fieldComponent;
 
         switch (field.type) {
@@ -61,13 +38,16 @@ const Form: React.FC<Props> = ({}) => {
             case 'radio':
                 fieldComponent = <RadioField key={index} label={field.label} fieldName={field.fieldName} options={field.options}/>
                 break;
+            case 'textarea':
+                fieldComponent = <TextareaField key={index} label={field.label} fieldName={field.fieldName}/>
+                break;
         }
 
         return fieldComponent;
     }
 
     const getGuitarsSection = (sections: SectionData[]) => {
-        let guitarsSection = sections.find((section) => {
+        let guitarsSection = sections.find((section: SectionData) => {
             return section.type === SectionTypes.GUITARS;
         })
 
@@ -75,13 +55,13 @@ const Form: React.FC<Props> = ({}) => {
             <div>
                 {
                     guitarsSection && guitarsSection.groups.length > 0 &&
-                    <Section title={guitarsSection.title}>
-                        {guitarsSection.groups.map((group, index: any) => {
+                    <Section key={guitarsSection.id} title={guitarsSection.title}>
+                        {guitarsSection.groups.map((group: GroupData) => {
                             return (
-                                <Group key={index} title={group.title} width={group.width}>
+                                <Group key={group.id} title={group.title} width={group.width}>
                                     <SelectField label={'Model'} fieldName={'model'} options={guitars} onChange={handleOnChange}/>
-                                    {group.fields.map((field, index: any) => {
-                                        return (getField(field, index));
+                                    {group.fields.map((field: FieldData) => {
+                                        return (getField(field, field.id));
                                     })}
                                 </Group>
                             )
@@ -106,14 +86,15 @@ const Form: React.FC<Props> = ({}) => {
         <div className="fggc-form">
             {getGuitarsSection(sections)}
 
-            {sections && sections.map((section: SectionData, index: any) => {
+            {sections && sections.map((section: SectionData) => {
                 return (
-                    section.type === SectionTypes.FIELDS && section.groups.length > 0 && <Section key={index} title={section.title}>
-                        {section.groups.map((group, index: any) => {
+                    section.type === SectionTypes.FIELDS && section.groups.length > 0 &&
+                    <Section key={section.id} title={section.title}>
+                        {section.groups.map((group: GroupData) => {
                             return (
-                                <Group key={index} title={group.title} width={group.width}>
-                                    {group.fields.map((field, index: any) => {
-                                        return (getField(field, index));
+                                <Group key={group.id} title={group.title} width={group.width}>
+                                    {group.fields.map((field: FieldData) => {
+                                        return (getField(field, field.id));
                                     })}
                                 </Group>
                             )

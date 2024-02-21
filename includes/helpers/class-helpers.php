@@ -120,12 +120,15 @@ class Helpers {
 		foreach ( $fields as $field_post ) {
 			$field_id    = $field_post->ID;
 			$field_title = $field_post->post_title;
+			$field_type  = Customizer_Field::get_field_type( $field_id );
+
 
 			$option_data = self::_get_field_option_data( $field_id );
 
 			$field_data[] = [
 				'field_id'    => $field_id,
 				'field_title' => $field_title,
+				'field_type'  => $field_type,
 				'options'     => $option_data,
 			];
 		}

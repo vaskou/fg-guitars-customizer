@@ -128,9 +128,10 @@ class Customizer_Field {
 			'id'      => self::FIELD_TYPE_META_KEY,
 			'type'    => 'select',
 			'options' => [
-				''       => __( 'None', 'fg-guitars-customizer' ),
-				'select' => __( 'Dropdown', 'fg-guitars-customizer' ),
-				'radio'  => __( 'Checkboxes', 'fg-guitars-customizer' ),
+				''         => __( 'None', 'fg-guitars-customizer' ),
+				'select'   => __( 'Dropdown', 'fg-guitars-customizer' ),
+				'radio'    => __( 'Checkboxes', 'fg-guitars-customizer' ),
+				'textarea' => __( 'Textarea', 'fg-guitars-customizer' ),
 			],
 		) );
 	}

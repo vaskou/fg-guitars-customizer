@@ -1,9 +1,41 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from '../../redux/store';
 
+export interface Guitar {
+    name: string;
+    value: string;
+}
+
+export interface OptionData {
+    name: string;
+    value: string;
+}
+
+export interface FieldData {
+    id: string;
+    label: string;
+    fieldName: string;
+    type: string;
+    options: OptionData[];
+}
+
+export interface GroupData {
+    id: string;
+    title?: string;
+    width: string;
+    fields: FieldData[];
+}
+
+export interface SectionData {
+    id: string;
+    type: string;
+    title: string;
+    groups: GroupData[];
+}
+
 interface FormState {
-    guitars: any[];
-    sections: any[];
+    guitars: Guitar[];
+    sections: SectionData[];
 }
 
 const initialState: FormState = {

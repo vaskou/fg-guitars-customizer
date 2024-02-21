@@ -61,9 +61,10 @@ class Customizer_Options {
 
 		foreach ( $val as $key => $value ) {
 
-			$price   = ! empty( $value['price'] ) ? $value['price'] : '';
-			$enable  = ! empty( $value['enable'] ) ? $value['enable'] : '';
-			$default = ! empty( $value['default'] ) ? $value['default'] : '';
+			$price    = ! empty( $value['price'] ) ? $value['price'] : '';
+			$enable   = ! empty( $value['enable'] ) ? $value['enable'] : '';
+			$default  = ! empty( $value['default'] ) ? $value['default'] : '';
+			$required = ! empty( $value['required'] ) ? $value['required'] : '';
 
 
 			$sanitized_price = sanitize_text_field( $price );
@@ -80,6 +81,11 @@ class Customizer_Options {
 			$sanitized_default = isset( $sanitized_default ) && 'on' == $sanitized_default ? $sanitized_default : '';
 
 			$sanitized_val[ $key ]['default'] = $sanitized_default;
+
+			$sanitized_required = sanitize_text_field( $required );
+			$sanitized_required = isset( $sanitized_required ) && 'on' == $sanitized_required ? $sanitized_required : '';
+
+			$sanitized_val[ $key ]['required'] = $sanitized_required;
 
 		}
 
@@ -105,6 +111,13 @@ class Customizer_Options {
 		return $escaped_value;
 	}
 
+	/**
+	 * @param array $sections
+	 * @param \CMB2_Types $field_type
+	 * @param mixed $escaped_value
+	 *
+	 * @return false|string
+	 */
 	private function _get_sections_html( $sections, $field_type, $escaped_value ) {
 		ob_start();
 		?>
@@ -142,6 +155,13 @@ class Customizer_Options {
 		return ob_get_clean();
 	}
 
+	/**
+	 * @param array $groups
+	 * @param \CMB2_Types $field_type
+	 * @param mixed $escaped_value
+	 *
+	 * @return false|string
+	 */
 	private function _get_groups_html( $groups, $field_type, $escaped_value ) {
 		ob_start();
 		?>
@@ -174,6 +194,13 @@ class Customizer_Options {
 		return ob_get_clean();
 	}
 
+	/**
+	 * @param array $fields
+	 * @param \CMB2_Types $field_type
+	 * @param mixed $escaped_value
+	 *
+	 * @return false|string
+	 */
 	private function _get_fields_html( $fields, $field_type, $escaped_value ) {
 		ob_start();
 		?>
@@ -185,19 +212,26 @@ class Customizer_Options {
 			}
 			$field_id    = $field['field_id'];
 			$field_title = ! empty( $field['field_title'] ) ? $field['field_title'] : '';
+			$f_type      = ! empty( $field['field_type'] ) ? $field['field_type'] : '';
 
-			if ( empty( $field['options'] ) ) {
-				continue;
+			if ( in_array( $f_type, [ 'radio', 'select' ] ) ) {
+				if ( empty( $field['options'] ) ) {
+					continue;
+				}
+
+				$field_options = $field['options'];
+
+				$field_content = $this->_get_field_options_html( $field_options, $field_type, $escaped_value );
+			} else {
+				$field_content = $this->_get_field_html( $field_id, $field_title, $f_type, $field_type, $escaped_value );
 			}
-
-			$field_options = $field['options'];
-
 			?>
             <div class="fggc-group-content">
                 <div class="fggc-field-wrapper field-<?php echo $field_id; ?>">
                     <label class="fggc-field-label"><?php echo $field_title; ?></label>
                     <div class="fggc-field-content">
-						<?php echo $this->_get_field_options_html( $field_options, $field_type, $escaped_value ); ?>
+						<?php echo $this->_get_required_html( $field_id, $field_type, $escaped_value ); ?>
+						<?php echo $field_content; ?>
                     </div>
                 </div>
             </div>
@@ -207,6 +241,75 @@ class Customizer_Options {
 		return ob_get_clean();
 	}
 
+	/**
+	 * @param string $field_id
+	 * @param \CMB2_Types $field_type
+	 * @param mixed $escaped_value
+	 *
+	 * @return false|string
+	 */
+	private function _get_required_html( $field_id, $field_type, $escaped_value ) {
+		ob_start();
+
+		$is_enabled = ! empty( $escaped_value[ $field_id ]['required'] );
+		$args       = [
+			'id'   => $field_type->_id( '_option_enable_' . $field_id ),
+			'name' => $field_type->_name( '[' . $field_id . '][required]' ),
+		];
+		?>
+        <div class="field-<?php echo $field_id; ?> cmb-row">
+            <div class="field" style="clear:both;">
+                <div class="cmb-th">
+                    <label><?php echo __( 'Required', 'fg-guitar-customizer' ); ?></label>
+                </div>
+                <div class="cmb-td">
+					<?php echo $field_type->checkbox( $args, $is_enabled ); ?>
+                </div>
+            </div>
+        </div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * @param string $field_id
+	 * @param string $field_title
+	 * @param string $f_type
+	 * @param \CMB2_Types $field_type
+	 * @param mixed $escaped_value
+	 *
+	 * @return false|string
+	 */
+	private function _get_field_html( $field_id, $field_title, $f_type, $field_type, $escaped_value ) {
+		ob_start();
+
+		$is_enabled = ! empty( $escaped_value[ $field_id ]['enable'] );
+		$args       = [
+			'id'   => $field_type->_id( '_option_enable_' . $field_id ),
+			'name' => $field_type->_name( '[' . $field_id . '][enable]' ),
+		];
+		?>
+        <div class="field-<?php echo $field_id; ?> cmb-row">
+            <div class="field" style="clear:both;">
+                <div class="cmb-th">
+                    <label><?php echo __( 'Enable', 'fg-guitar-customizer' ); ?></label>
+                </div>
+                <div class="cmb-td">
+					<?php echo $field_type->checkbox( $args, $is_enabled ); ?>
+                </div>
+            </div>
+        </div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * @param array $options
+	 * @param \CMB2_Types $field_type
+	 * @param mixed $escaped_value
+	 *
+	 * @return false|string
+	 */
 	private function _get_field_options_html( $options, $field_type, $escaped_value ) {
 		ob_start();
 		?>
@@ -242,29 +345,33 @@ class Customizer_Options {
 					'name' => $field_type->_name( '[' . $option_key . '][default]' ),
 				];
 				?>
-                <div class="option-<?php echo $option_args['id']; ?> cmb-row">
-                    <div class="field" style="clear:both;">
-                        <div class="cmb-th">
-                            <label><?php echo $option; ?></label>
+
+                <label class="fggc-option-label"><?php echo $option; ?></label>
+                <div class="fggc-option-content option-<?php echo $option_args['id']; ?>">
+                    <div class="cmb-row">
+                        <div class="field" style="clear:both;">
+                            <div class="cmb-th">
+                                <label><?php echo __( 'Enable', 'fg-guitar-customizer' ); ?></label>
+                            </div>
+                            <div class="cmb-td">
+								<?php echo $field_type->checkbox( $option_args, $is_enabled ); ?>
+                            </div>
                         </div>
-                        <div class="cmb-td">
-							<?php echo $field_type->checkbox( $option_args, $is_enabled ); ?>
+                        <div class="field" style="clear:both;">
+                            <div class="cmb-th">
+                                <label><?php echo __( 'Price', 'fg-guitar-customizer' ); ?></label>
+                            </div>
+                            <div class="cmb-td">
+								<?php echo $field_type->input( $price_args ); ?>
+                            </div>
                         </div>
-                    </div>
-                    <div class="field" style="clear:both;">
-                        <div class="cmb-th">
-                            <label><?php echo __( 'Price', 'fg-guitar-customizer' ); ?></label>
-                        </div>
-                        <div class="cmb-td">
-							<?php echo $field_type->input( $price_args ); ?>
-                        </div>
-                    </div>
-                    <div class="field" style="clear:both;">
-                        <div class="cmb-th">
-                            <label><?php echo __( 'Is selected by default', 'fg-guitar-customizer' ); ?></label>
-                        </div>
-                        <div class="cmb-td">
-							<?php echo $field_type->checkbox( $is_default_args, $is_default ); ?>
+                        <div class="field" style="clear:both;">
+                            <div class="cmb-th">
+                                <label><?php echo __( 'Is selected by default', 'fg-guitar-customizer' ); ?></label>
+                            </div>
+                            <div class="cmb-td">
+								<?php echo $field_type->checkbox( $is_default_args, $is_default ); ?>
+                            </div>
                         </div>
                     </div>
                 </div>
