@@ -1,19 +1,13 @@
 import React, {ChangeEvent, ChangeEventHandler} from 'react';
 import FieldWrapper from "../FieldWrapper/FieldWrapper";
+import {FieldData} from "../Form/formSlice";
+import Price from "../Price/Price";
 
-export interface SelectOption {
-    name: string;
-    value: string;
-}
-
-interface Props {
-    label: string;
-    fieldName: string;
-    options: SelectOption[];
+interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLSelectElement> | undefined
 }
 
-const SelectField: React.FC<Props> = ({label, fieldName, options, onChange}) => {
+const SelectField: React.FC<Props> = ({id, label, fieldName, isRequired, options, onChange}) => {
 
     const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
 
@@ -30,10 +24,10 @@ const SelectField: React.FC<Props> = ({label, fieldName, options, onChange}) => 
 
     return (
         <FieldWrapper label={label}>
-            <select name={fieldName} className="uk-select" onChange={handleOnChange}>
+            <select name={fieldName} className="uk-select" onChange={handleOnChange} required={isRequired}>
                 {options.map((option) => {
                     return (
-                        <option key={option.value} value={option.value}>{option.name}</option>
+                        <option key={option.value} value={option.value} defaultValue={option.default?option.value:''} data-price={option.price}>{option.name} <Price price={option.price}/></option>
                     );
                 })}
             </select>

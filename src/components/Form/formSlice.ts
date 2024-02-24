@@ -1,14 +1,11 @@
 import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from '../../redux/store';
 
-export interface Guitar {
-    name: string;
-    value: string;
-}
-
 export interface OptionData {
     name: string;
     value: string;
+    price: number;
+    default: boolean;
 }
 
 export interface FieldData {
@@ -16,6 +13,7 @@ export interface FieldData {
     label: string;
     fieldName: string;
     type: string;
+    isRequired: boolean;
     options: OptionData[];
 }
 
@@ -31,6 +29,9 @@ export interface SectionData {
     type: string;
     title: string;
     groups: GroupData[];
+}
+
+export interface Guitar extends OptionData {
 }
 
 interface FormState {

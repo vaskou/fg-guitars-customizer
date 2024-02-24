@@ -1,12 +1,13 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import SelectField, {SelectOption} from "../SelectField/SelectField";
-import RadioField, {RadioOption} from "../RadioField/RadioField";
+import SelectField from "../SelectField/SelectField";
+import RadioField from "../RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
 import {useSelector} from "react-redux";
-import {OptionData, FieldData, GroupData, SectionData, loadData, selectGuitarsArray, selectSectionsArray} from "./formSlice";
+import {FieldData, GroupData, SectionData, loadData, selectGuitarsArray, selectSectionsArray} from "./formSlice";
 import {useAppDispatch} from "../../redux/store";
 import TextareaField from "../TexteareaField/TexteareaField";
+import Loader from "../Loader/Loader";
 
 enum SectionTypes {
     GUITARS = 'guitars',
@@ -14,18 +15,26 @@ enum SectionTypes {
 }
 
 interface Props {
-
 }
 
 const Form: React.FC<Props> = ({}) => {
 
     const dispatch = useAppDispatch();
 
+    const [loading, setLoading] = useState(true);
     const guitars = useSelector(selectGuitarsArray);
     const sections = useSelector(selectSectionsArray);
 
+    const getData = (value = '') => {
+        setLoading(true);
+
+        dispatch(loadData(value)).finally(() => {
+            setLoading(false);
+        });
+    }
+
     useEffect(() => {
-        dispatch(loadData())
+        getData();
     }, [dispatch]);
 
     const getField = (field: FieldData, index: string) => {
@@ -33,10 +42,10 @@ const Form: React.FC<Props> = ({}) => {
 
         switch (field.type) {
             case 'select':
-                fieldComponent = <SelectField key={index} label={field.label} fieldName={field.fieldName} options={field.options}/>
+                fieldComponent = <SelectField key={index} {...field}/>
                 break;
             case 'radio':
-                fieldComponent = <RadioField key={index} label={field.label} fieldName={field.fieldName} options={field.options}/>
+                fieldComponent = <RadioField key={index} {...field}/>
                 break;
             case 'textarea':
                 fieldComponent = <TextareaField key={index} label={field.label} fieldName={field.fieldName}/>
@@ -52,14 +61,14 @@ const Form: React.FC<Props> = ({}) => {
         })
 
         return (
-            <div>
+            <div className={"fggc-form-guitar-section"}>
                 {
                     guitarsSection && guitarsSection.groups.length > 0 &&
                     <Section key={guitarsSection.id} title={guitarsSection.title}>
                         {guitarsSection.groups.map((group: GroupData) => {
                             return (
                                 <Group key={group.id} title={group.title} width={group.width}>
-                                    <SelectField label={'Model'} fieldName={'model'} options={guitars} onChange={handleOnChange}/>
+                                    <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={handleOnChange}/>
                                     {group.fields.map((field: FieldData) => {
                                         return (getField(field, field.id));
                                     })}
@@ -78,32 +87,36 @@ const Form: React.FC<Props> = ({}) => {
         const value = target.value;
 
         if ('model' === name) {
-            dispatch(loadData(value));
+            getData(value);
         }
     }
 
     return (
         <div className="fggc-form">
-            {getGuitarsSection(sections)}
+            {loading && <Loader/>}
+            <form>
+                {getGuitarsSection(sections)}
 
-            {sections && sections.map((section: SectionData) => {
-                return (
-                    section.type === SectionTypes.FIELDS && section.groups.length > 0 &&
-                    <Section key={section.id} title={section.title}>
-                        {section.groups.map((group: GroupData) => {
-                            return (
-                                <Group key={group.id} title={group.title} width={group.width}>
-                                    {group.fields.map((field: FieldData) => {
-                                        return (getField(field, field.id));
-                                    })}
-                                </Group>
-                            )
-                        })}
-                    </Section>
+                {sections && sections.map((section: SectionData) => {
+                    return (
+                        section.type === SectionTypes.FIELDS && section.groups.length > 0 &&
+                        <Section key={section.id} title={section.title}>
+                            {section.groups.map((group: GroupData) => {
+                                return (
+                                    <Group key={group.id} title={group.title} width={group.width}>
+                                        {group.fields.map((field: FieldData) => {
+                                            return (getField(field, field.id));
+                                        })}
+                                    </Group>
+                                )
+                            })}
+                        </Section>
 
-                );
-            })}
+                    );
+                })}
 
+                {!loading && <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"}>{"Submit"}</button>}
+            </form>
         </div>
     );
 }

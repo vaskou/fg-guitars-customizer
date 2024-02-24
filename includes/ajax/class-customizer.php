@@ -177,7 +177,7 @@ class Customizer {
 				'label'     => $field_title,
 				'fieldName' => $field_name,
 				'type'      => $field_type,
-				'required'  => ! empty( $this->customizer_options[ $field_id ]['required'] ),
+				'isRequired'  => ! empty( $this->customizer_options[ $field_id ]['required'] ),
 				'options'   => $option_data,
 			];
 		}
@@ -198,10 +198,10 @@ class Customizer {
 			}
 
 			$option_data[] = [
-				'name'       => $option_post->post_title,
-				'value'      => $option_post->post_name,
-				'price'      => $this->customizer_options[ $option_id ]['price'],
-				'is_default' => $this->customizer_options[ $option_id ]['default'],
+				'name'    => $option_post->post_title,
+				'value'   => $option_post->post_name,
+				'price'   => $this->customizer_options[ $option_id ]['price'],
+				'default' => ! empty( $this->customizer_options[ $option_id ]['default'] ),
 			];
 		}
 
