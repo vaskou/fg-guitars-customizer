@@ -1,9 +1,8 @@
 import React, {ChangeEvent, ChangeEventHandler} from 'react';
-import FieldWrapper from "../FieldWrapper/FieldWrapper";
+import FieldWrapper from "../../FieldWrapper/FieldWrapper";
+import {FieldData} from "../../Form/formSlice";
 
-interface Props {
-    label: string;
-    fieldName: string;
+interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLTextAreaElement> | undefined
 }
 

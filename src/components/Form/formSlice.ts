@@ -21,6 +21,7 @@ export interface GroupData {
     id: string;
     title?: string;
     width: string;
+    hideTitle: boolean;
     fields: FieldData[];
 }
 
@@ -41,7 +42,7 @@ interface FormState {
 
 const initialState: FormState = {
     guitars: [],
-    sections: []
+    sections: [],
 }
 
 const formSlice = createSlice({

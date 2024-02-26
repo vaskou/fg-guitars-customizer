@@ -129,8 +129,10 @@ class Customizer_Field {
 			'type'    => 'select',
 			'options' => [
 				''         => __( 'None', 'fg-guitars-customizer' ),
-				'select'   => __( 'Dropdown', 'fg-guitars-customizer' ),
 				'radio'    => __( 'Checkboxes', 'fg-guitars-customizer' ),
+				'select'   => __( 'Dropdown', 'fg-guitars-customizer' ),
+				'email'    => __( 'Email', 'fg-guitars-customizer' ),
+				'text'     => __( 'Text', 'fg-guitars-customizer' ),
 				'textarea' => __( 'Textarea', 'fg-guitars-customizer' ),
 			],
 		) );

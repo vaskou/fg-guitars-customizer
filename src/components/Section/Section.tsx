@@ -9,7 +9,7 @@ interface Props {
 const Section: React.FC<Props> = ({title, children}) => {
     return (
         <div className="fggc-form__section uk-margin-top">
-            <h2>{title}</h2>
+            <h2 className="uk-h4 uk-margin-small-bottom">{title}</h2>
             <div className="uk-grid uk-grid-collapse fggc-grid-match">
                 {children}
             </div>

@@ -6,11 +6,7 @@ interface Props {
 
 const Price: React.FC<Props> = ({price}) => {
 
-    if (price) {
-        return `(+${price} €)`;
-    }
-
-    return '';
+    return <>{price && `${price} €`}</>
 }
 
 export default Price;

@@ -1,13 +1,16 @@
 import React, {ChangeEvent, useEffect, useState} from 'react';
-import SelectField from "../SelectField/SelectField";
-import RadioField from "../RadioField/RadioField";
+import SelectField from "../Fields/SelectField/SelectField";
+import RadioField from "../Fields/RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
 import {useSelector} from "react-redux";
 import {FieldData, GroupData, SectionData, loadData, selectGuitarsArray, selectSectionsArray} from "./formSlice";
 import {useAppDispatch} from "../../redux/store";
-import TextareaField from "../TexteareaField/TexteareaField";
+import TextareaField from "../Fields/TexteareaField/TexteareaField";
 import Loader from "../Loader/Loader";
+import EmailField from "../Fields/EmailField/EmailField";
+import TextField from "../Fields/TextField/TextField";
+import PriceEstimate from "../PriceEstimate/PriceEstimate";
 
 enum SectionTypes {
     GUITARS = 'guitars',
@@ -48,7 +51,13 @@ const Form: React.FC<Props> = ({}) => {
                 fieldComponent = <RadioField key={index} {...field}/>
                 break;
             case 'textarea':
-                fieldComponent = <TextareaField key={index} label={field.label} fieldName={field.fieldName}/>
+                fieldComponent = <TextareaField key={index} {...field}/>
+                break;
+            case 'email':
+                fieldComponent = <EmailField key={index} {...field}/>
+                break;
+            case 'text':
+                fieldComponent = <TextField key={index} {...field}/>
                 break;
         }
 
@@ -67,7 +76,7 @@ const Form: React.FC<Props> = ({}) => {
                     <Section key={guitarsSection.id} title={guitarsSection.title}>
                         {guitarsSection.groups.map((group: GroupData) => {
                             return (
-                                <Group key={group.id} title={group.title} width={group.width}>
+                                <Group key={group.id} {...group}>
                                     <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={handleOnChange}/>
                                     {group.fields.map((field: FieldData) => {
                                         return (getField(field, field.id));
@@ -103,7 +112,7 @@ const Form: React.FC<Props> = ({}) => {
                         <Section key={section.id} title={section.title}>
                             {section.groups.map((group: GroupData) => {
                                 return (
-                                    <Group key={group.id} title={group.title} width={group.width}>
+                                    <Group key={group.id} {...group}>
                                         {group.fields.map((field: FieldData) => {
                                             return (getField(field, field.id));
                                         })}
@@ -114,6 +123,8 @@ const Form: React.FC<Props> = ({}) => {
 
                     );
                 })}
+
+                <PriceEstimate totalPrice={2000}/>
 
                 {!loading && <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"}>{"Submit"}</button>}
             </form>

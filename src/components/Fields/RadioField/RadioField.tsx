@@ -1,7 +1,8 @@
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useState} from 'react';
-import FieldWrapper from "../FieldWrapper/FieldWrapper";
-import {FieldData} from "../Form/formSlice";
-import Price from "../Price/Price";
+import FieldWrapper from "../../FieldWrapper/FieldWrapper";
+import {FieldData} from "../../Form/formSlice";
+import './styles.scss';
+import PriceAdded from "../../PriceAdded/PriceAdded";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined
@@ -35,15 +36,14 @@ const RadioField: React.FC<Props> = ({id, label, fieldName, isRequired, options,
     }
 
     return (
-        <FieldWrapper label={label}>
+        <FieldWrapper label={label} isTextControls={true}>
             {options.map((option) => {
                 return (
-                    <div key={option.value}>
+                    <div key={option.value} className="fggc-field__radio">
                         <label>
                             <input className="uk-radio" type="radio" name={fieldName} value={option.value} required={isRequired} checked={optionChecked === option.value} onChange={handleOnChange}/>
-                            <span className="label"> {option.name} <Price price={option.price}/></span>
+                            <span className="label"> {option.name} <PriceAdded price={option.price}/></span>
                         </label>
-                        <br/>
                     </div>
                 );
             })}

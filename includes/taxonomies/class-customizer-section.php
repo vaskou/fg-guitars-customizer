@@ -99,10 +99,11 @@ class Customizer_Section {
 	public static function get_items( $args = array() ) {
 
 		$default = array(
-			'taxonomy' => self::TAXONOMY_NAME,
-			'orderby'  => 'meta_value',
-			'order'    => 'ASC',
-			'meta_key' => self::ORDER_META_KEY,
+			'taxonomy'  => self::TAXONOMY_NAME,
+			'orderby'   => 'meta_value',
+			'order'     => 'ASC',
+			'meta_key'  => self::ORDER_META_KEY,
+			'meta_type' => 'NUMERIC',
 		);
 
 		$args = wp_parse_args( $args, $default );

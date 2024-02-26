@@ -26,8 +26,10 @@ class Customizer {
 
 	public function html() {
 		$data = [
-			'action' => Customizer_Ajax::ACTION,
-			'url'    => admin_url( 'admin-ajax.php' ),
+			'action'                  => Customizer_Ajax::ACTION,
+			'url'                     => admin_url( 'admin-ajax.php' ),
+			'price_estimate_label'    => __( 'Price estimate', 'fg-guitars-customizer' ),
+			'price_estimate_tax_text' => __( 'excludes regional taxes', 'fg-guitars-customizer' ),
 		];
 		wp_localize_script( 'fgcc-scripts', 'fggc_customizer_data', $data );
 

@@ -127,9 +127,10 @@ class Customizer {
 		}
 
 		foreach ( $groups as $group_post ) {
-			$group_id    = $group_post->ID;
-			$group_title = $group_post->post_title;
-			$group_width = Customizer_Fields_Group::get_group_width( $group_id );
+			$group_id         = $group_post->ID;
+			$group_title      = $group_post->post_title;
+			$group_width      = Customizer_Fields_Group::get_group_width( $group_id );
+			$group_hide_title = ! empty( Customizer_Fields_Group::get_hide_title( $group_id ) );
 
 			$group_has_guitar_selection_field = Customizer_Fields_Group::get_has_guitar_selection_field( $group_id );
 
@@ -140,6 +141,7 @@ class Customizer {
 				'title'                   => $group_title,
 				'width'                   => ! empty( $group_width ) ? $group_width : 'uk-width-1-3@s',
 				'hasGuitarSelectionField' => $group_has_guitar_selection_field,
+				'hideTitle'               => $group_hide_title,
 				'fields'                  => $field_data,
 			];
 		}
@@ -173,12 +175,12 @@ class Customizer {
 			}
 
 			$field_data[] = [
-				'id'        => $field_id,
-				'label'     => $field_title,
-				'fieldName' => $field_name,
-				'type'      => $field_type,
-				'isRequired'  => ! empty( $this->customizer_options[ $field_id ]['required'] ),
-				'options'   => $option_data,
+				'id'         => $field_id,
+				'label'      => $field_title,
+				'fieldName'  => $field_name,
+				'type'       => $field_type,
+				'isRequired' => ! empty( $this->customizer_options[ $field_id ]['required'] ),
+				'options'    => $option_data,
 			];
 		}
 

@@ -151,6 +151,10 @@ class Customizer_Fields_Group {
 		return get_post_meta( $group_id, self::WIDTH_META_KEY, true );
 	}
 
+	public static function get_hide_title( $group_id ) {
+		return get_post_meta( $group_id, self::HIDE_TITLE_META_KEY, true );
+	}
+
 	public static function get_items( $args = [] ) {
 		$default = array(
 			'post_type'      => self::POST_TYPE_NAME,
