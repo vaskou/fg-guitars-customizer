@@ -4,7 +4,7 @@ import RadioField from "../Fields/RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
 import {useSelector} from "react-redux";
-import {FieldData, GroupData, SectionData, loadData, selectGuitarsArray, selectSectionsArray} from "./formSlice";
+import {FieldData, GroupData, SectionData, loadData, setTotalPrice, selectGuitarsArray, selectSectionsArray, selectTotalPrice} from "./formSlice";
 import {useAppDispatch} from "../../redux/store";
 import TextareaField from "../Fields/TexteareaField/TexteareaField";
 import Loader from "../Loader/Loader";
@@ -25,8 +25,11 @@ const Form: React.FC<Props> = ({}) => {
     const dispatch = useAppDispatch();
 
     const [loading, setLoading] = useState(true);
+    const [selectedGuitarID, setSelectedGuitarID] = useState('');
+    // const [totalPrice, setTotalPrice] = useState(0);
     const guitars = useSelector(selectGuitarsArray);
     const sections = useSelector(selectSectionsArray);
+    const totalPrice = useSelector(selectTotalPrice);
 
     const getData = (value = '') => {
         setLoading(true);
@@ -39,6 +42,17 @@ const Form: React.FC<Props> = ({}) => {
     useEffect(() => {
         getData();
     }, [dispatch]);
+
+    useEffect(() => {
+        const selectedGuitar = guitars.find((guitar) => {
+            return guitar.value == selectedGuitarID;
+        });
+
+        const _totalPrice = selectedGuitar && selectedGuitar.basePrice ? selectedGuitar.basePrice : 0;
+
+        dispatch(setTotalPrice({totalPrice: _totalPrice}));
+
+    }, [selectedGuitarID]);
 
     const getField = (field: FieldData, index: string) => {
         let fieldComponent;
@@ -97,6 +111,7 @@ const Form: React.FC<Props> = ({}) => {
 
         if ('model' === name) {
             getData(value);
+            setSelectedGuitarID(value);
         }
     }
 
@@ -124,7 +139,7 @@ const Form: React.FC<Props> = ({}) => {
                     );
                 })}
 
-                <PriceEstimate totalPrice={2000}/>
+                {!!totalPrice && <PriceEstimate totalPrice={totalPrice}/>}
 
                 {!loading && <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"}>{"Submit"}</button>}
             </form>

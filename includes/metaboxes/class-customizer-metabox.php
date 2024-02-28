@@ -35,6 +35,12 @@ class Customizer_Metabox {
 		] );
 
 		$metabox->add_field( [
+			'id'   => 'fggc_customizer_price',
+			'name' => __( 'Base Price', 'fg-guitar-customizer' ),
+			'type' => 'text_small',
+		] );
+
+		$metabox->add_field( [
 			'id'         => 'fggc_customizer_options',
 			'name'       => __( 'Customizer', 'fg-guitar-customizer' ),
 			'type'       => 'fggc_cmb2_customizer_options_field',

@@ -2,6 +2,7 @@ import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from '../../redux/store';
 
 export interface OptionData {
+    id: string;
     name: string;
     value: string;
     price: number;
@@ -32,17 +33,22 @@ export interface SectionData {
     groups: GroupData[];
 }
 
-export interface Guitar extends OptionData {
+export interface Guitar extends Omit<OptionData, 'id' | 'default'> {
+    basePrice: number;
 }
 
 interface FormState {
     guitars: Guitar[];
     sections: SectionData[];
+    totalPrice: number;
+    selectedOptions: [];
 }
 
 const initialState: FormState = {
     guitars: [],
     sections: [],
+    totalPrice: 0,
+    selectedOptions: [],
 }
 
 const formSlice = createSlice({
@@ -52,13 +58,16 @@ const formSlice = createSlice({
         load_data: (state: FormState, action: PayloadAction<FormState>) => {
             state.guitars = action.payload.guitars;
             state.sections = action.payload.sections;
-        }
+        },
+        setTotalPrice: (state: FormState, action: PayloadAction<Pick<FormState, 'totalPrice'>>) => {
+            state.totalPrice = action.payload.totalPrice;
+        },
     }
 });
 
 export default formSlice.reducer;
 
-export const {load_data} = formSlice.actions;
+export const {load_data, setTotalPrice} = formSlice.actions;
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
     try {
@@ -96,3 +105,7 @@ export const selectGuitarsArray = (rootState: RootState) => {
 export const selectSectionsArray = (rootState: RootState) => {
     return selectDataState(rootState).sections;
 };
+
+export const selectTotalPrice = (rootState: RootState) => {
+    return selectDataState(rootState).totalPrice;
+}
