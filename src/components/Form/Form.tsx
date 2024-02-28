@@ -4,7 +4,7 @@ import RadioField from "../Fields/RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
 import {useSelector} from "react-redux";
-import {FieldData, GroupData, SectionData, loadData, setTotalPrice, selectGuitarsArray, selectSectionsArray, selectTotalPrice} from "./formSlice";
+import {FieldData, GroupData, SectionData, loadData, setTotalPrice, selectGuitarsArray, selectSectionsArray, selectTotalPrice, selectSelectedOptions} from "./formSlice";
 import {useAppDispatch} from "../../redux/store";
 import TextareaField from "../Fields/TexteareaField/TexteareaField";
 import Loader from "../Loader/Loader";
@@ -26,10 +26,12 @@ const Form: React.FC<Props> = ({}) => {
 
     const [loading, setLoading] = useState(true);
     const [selectedGuitarID, setSelectedGuitarID] = useState('');
-    // const [totalPrice, setTotalPrice] = useState(0);
+    const [basePrice, setBasePrice] = useState(0);
+
     const guitars = useSelector(selectGuitarsArray);
     const sections = useSelector(selectSectionsArray);
     const totalPrice = useSelector(selectTotalPrice);
+    const selectedOptions = useSelector(selectSelectedOptions);
 
     const getData = (value = '') => {
         setLoading(true);
@@ -48,11 +50,31 @@ const Form: React.FC<Props> = ({}) => {
             return guitar.value == selectedGuitarID;
         });
 
-        const _totalPrice = selectedGuitar && selectedGuitar.basePrice ? selectedGuitar.basePrice : 0;
+        const _basePrice = selectedGuitar && selectedGuitar.basePrice ? selectedGuitar.basePrice : 0;
+
+        setBasePrice(_basePrice);
+
+        dispatch(setTotalPrice({totalPrice: _basePrice}));
+
+    }, [selectedGuitarID]);
+
+    useEffect(() => {
+        const allIDs = selectedOptions.ids;
+        const allSelectedOptions = selectedOptions.entities;
+
+        let addedPrice = 0;
+
+        allIDs.forEach((id) => {
+            if (allSelectedOptions[id].option) {
+                addedPrice += Number(allSelectedOptions[id].option.price);
+            }
+        })
+
+        const _totalPrice = Number(basePrice) + Number(addedPrice);
 
         dispatch(setTotalPrice({totalPrice: _totalPrice}));
 
-    }, [selectedGuitarID]);
+    }, [selectedOptions]);
 
     const getField = (field: FieldData, index: string) => {
         let fieldComponent;

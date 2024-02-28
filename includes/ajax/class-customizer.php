@@ -109,6 +109,7 @@ class Customizer {
 
 		foreach ( $posts as $post ) {
 			$guitars[] = [
+				'id'        => $post->ID,
 				'value'     => $post->ID,
 				'name'      => $post->post_title,
 				'basePrice' => get_post_meta( $post->ID, 'fggc_customizer_price', true ),

@@ -1,10 +1,9 @@
 import React, {ChangeEvent, ChangeEventHandler, useEffect, useState} from 'react';
 import FieldWrapper from "../../FieldWrapper/FieldWrapper";
-import {FieldData, selectTotalPrice, setTotalPrice} from "../../Form/formSlice";
+import {FieldData, OptionData, SelectedOption, selectTotalPrice, setTotalPrice, upsertSelectedOptions} from "../../Form/formSlice";
 import './styles.scss';
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import {useAppDispatch} from "../../../redux/store";
-import {useSelector} from "react-redux";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined
@@ -14,17 +13,28 @@ const RadioField: React.FC<Props> = ({id, label, fieldName, isRequired, options,
 
     const dispatch = useAppDispatch();
 
-    const totalPrice = useSelector(selectTotalPrice);
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
         options.map((option) => {
             if (option.default) {
-                setOptionChecked(option.value);
+                setOptionChecked(option.id);
             }
             return option;
         })
     }, [options]);
+
+    useEffect(() => {
+        const selectedOption: SelectedOption = {
+            id: id,
+            option: options.find((option) => {
+                return option.id == optionChecked;
+            }) as OptionData
+        }
+
+        dispatch(upsertSelectedOptions(selectedOption));
+
+    }, [optionChecked]);
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 
@@ -35,10 +45,9 @@ const RadioField: React.FC<Props> = ({id, label, fieldName, isRequired, options,
             const target = e.target;
             const name = target.name;
             const value = target.value;
-            const price = Number(totalPrice) + Number(target.dataset.price);
+            const optionID = target.dataset.id as string;
 
-            setOptionChecked(value);
-            dispatch(setTotalPrice({totalPrice: price}));
+            setOptionChecked(optionID);
         }
     }
 
@@ -46,10 +55,10 @@ const RadioField: React.FC<Props> = ({id, label, fieldName, isRequired, options,
         <FieldWrapper label={label} isTextControls={true}>
             {options.map((option) => {
                 return (
-                    <div key={option.value} className="fggc-field__radio">
+                    <div key={option.id} className="fggc-field__radio">
                         <label>
                             <input className="uk-radio" type="radio" name={fieldName} value={option.value} required={isRequired}
-                                   checked={optionChecked === option.value}
+                                   checked={optionChecked == option.id}
                                    data-id={option.id}
                                    data-price={option.price}
                                    onChange={handleOnChange}/>

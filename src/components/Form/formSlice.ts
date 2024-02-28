@@ -1,4 +1,4 @@
-import {createSlice, PayloadAction} from '@reduxjs/toolkit';
+import {createEntityAdapter, createSlice, PayloadAction} from '@reduxjs/toolkit';
 import {AppDispatch, RootState} from '../../redux/store';
 
 export interface OptionData {
@@ -33,22 +33,31 @@ export interface SectionData {
     groups: GroupData[];
 }
 
-export interface Guitar extends Omit<OptionData, 'id' | 'default'> {
+export interface Guitar extends OptionData {
     basePrice: number;
 }
+
+export interface SelectedOption {
+    id:string;
+    option: OptionData;
+}
+
+export const optionDataAdapter = createEntityAdapter<SelectedOption>()
+
+const optionDataInitialState = optionDataAdapter.getInitialState();
 
 interface FormState {
     guitars: Guitar[];
     sections: SectionData[];
     totalPrice: number;
-    selectedOptions: [];
+    selectedOptions: typeof optionDataInitialState;
 }
 
 const initialState: FormState = {
     guitars: [],
     sections: [],
     totalPrice: 0,
-    selectedOptions: [],
+    selectedOptions: optionDataInitialState,
 }
 
 const formSlice = createSlice({
@@ -62,12 +71,19 @@ const formSlice = createSlice({
         setTotalPrice: (state: FormState, action: PayloadAction<Pick<FormState, 'totalPrice'>>) => {
             state.totalPrice = action.payload.totalPrice;
         },
+        upsertSelectedOptions: (state: FormState, action: PayloadAction<SelectedOption>) => {
+            optionDataAdapter.upsertOne(state.selectedOptions, action);
+        },
     }
 });
 
 export default formSlice.reducer;
 
-export const {load_data, setTotalPrice} = formSlice.actions;
+export const {
+    load_data,
+    setTotalPrice,
+    upsertSelectedOptions
+} = formSlice.actions;
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
     try {
@@ -108,4 +124,8 @@ export const selectSectionsArray = (rootState: RootState) => {
 
 export const selectTotalPrice = (rootState: RootState) => {
     return selectDataState(rootState).totalPrice;
+}
+
+export const selectSelectedOptions = (rootState: RootState) => {
+    return selectDataState(rootState).selectedOptions;
 }
