@@ -34,14 +34,24 @@ class Customizer {
 
 		$guitars = $this->get_guitars();
 
-		$selected_guitar_id = ! empty( $_GET['model'] ) ? $_GET['model'] : ( ! empty( $guitars ) ? array_key_first( $guitars ) : '' );
+		$selected_model = ! empty( $_GET['model'] ) ? $_GET['model'] : 0;
+
+		$selected_guitar_id = ! empty( $guitars[ $selected_model ] ) ? $guitars[ $selected_model ]['id'] : array_key_first( $guitars );
+		
+		$guitars = array_map( function ( $guitar ) use ( $selected_guitar_id ) {
+			if ( ! empty( $guitar['id'] ) && $guitar['id'] == $selected_guitar_id ) {
+				$guitar['default'] = true;
+			}
+
+			return $guitar;
+		}, $guitars );
 
 		$this->customizer_options = get_post_meta( $selected_guitar_id, 'fggc_customizer_options', true );
 
 		$sections = $this->get_sections();
 
 		wp_send_json( [
-			'guitars'  => $guitars,
+			'guitars'  => array_values( $guitars ),
 			'sections' => $sections,
 		] );
 	}
@@ -108,7 +118,13 @@ class Customizer {
 
 
 		foreach ( $posts as $post ) {
-			$guitars[] = [
+			$options = get_post_meta( $post->ID, 'fggc_customizer_options', true );
+
+			if ( empty( $options ) ) {
+				continue;
+			}
+
+			$guitars[ $post->ID ] = [
 				'id'        => $post->ID,
 				'value'     => $post->ID,
 				'name'      => $post->post_title,

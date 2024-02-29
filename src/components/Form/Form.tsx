@@ -4,7 +4,7 @@ import RadioField from "../Fields/RadioField/RadioField";
 import Section from "../Section/Section";
 import Group from "../Group/Group";
 import {useSelector} from "react-redux";
-import {FieldData, GroupData, SectionData, loadData, setTotalPrice, selectGuitarsArray, selectSectionsArray, selectTotalPrice, selectSelectedOptions} from "./formSlice";
+import {FieldData, GroupData, SectionData, loadData, setTotalPrice, selectGuitarsArray, selectSectionsArray, selectTotalPrice, selectSelectedOptions, deleteSelectedOptions, selectSelectedGuitarID, setSelectedGuitarID} from "./formSlice";
 import {useAppDispatch} from "../../redux/store";
 import TextareaField from "../Fields/TexteareaField/TexteareaField";
 import Loader from "../Loader/Loader";
@@ -25,24 +25,30 @@ const Form: React.FC<Props> = ({}) => {
     const dispatch = useAppDispatch();
 
     const [loading, setLoading] = useState(true);
-    const [selectedGuitarID, setSelectedGuitarID] = useState('');
+    // const [selectedGuitarID, setSelectedGuitarID] = useState('');
     const [basePrice, setBasePrice] = useState(0);
 
     const guitars = useSelector(selectGuitarsArray);
     const sections = useSelector(selectSectionsArray);
     const totalPrice = useSelector(selectTotalPrice);
+    const selectedGuitarID = useSelector(selectSelectedGuitarID);
     const selectedOptions = useSelector(selectSelectedOptions);
 
-    const getData = (value = '') => {
+    const getData = (value?: string) => {
         setLoading(true);
 
+        dispatch(deleteSelectedOptions());
         dispatch(loadData(value)).finally(() => {
             setLoading(false);
         });
     }
 
     useEffect(() => {
-        getData();
+        const queryString = window.location.search;
+        const urlParams = new URLSearchParams(queryString);
+        const model = urlParams.get('model') as string | undefined;
+
+        getData(model);
     }, [dispatch]);
 
     useEffect(() => {
@@ -50,7 +56,7 @@ const Form: React.FC<Props> = ({}) => {
             return guitar.value == selectedGuitarID;
         });
 
-        const _basePrice = selectedGuitar && selectedGuitar.basePrice ? selectedGuitar.basePrice : 0;
+        const _basePrice = Number(selectedGuitar && selectedGuitar.basePrice ? selectedGuitar.basePrice : 0);
 
         setBasePrice(_basePrice);
 
@@ -65,7 +71,7 @@ const Form: React.FC<Props> = ({}) => {
         let addedPrice = 0;
 
         allIDs.forEach((id) => {
-            if (allSelectedOptions[id].option) {
+            if (allSelectedOptions[id].option?.price) {
                 addedPrice += Number(allSelectedOptions[id].option.price);
             }
         })
@@ -74,7 +80,7 @@ const Form: React.FC<Props> = ({}) => {
 
         dispatch(setTotalPrice({totalPrice: _totalPrice}));
 
-    }, [selectedOptions]);
+    }, [basePrice, selectedOptions]);
 
     const getField = (field: FieldData, index: string) => {
         let fieldComponent;
@@ -133,7 +139,8 @@ const Form: React.FC<Props> = ({}) => {
 
         if ('model' === name) {
             getData(value);
-            setSelectedGuitarID(value);
+            // setSelectedGuitarID(value);
+            dispatch(setSelectedGuitarID({selectedGuitarID: value}))
         }
     }
 

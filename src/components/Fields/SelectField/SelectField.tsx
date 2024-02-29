@@ -12,12 +12,14 @@ const SelectField: React.FC<Props> = ({id, label, fieldName, isRequired, options
 
     const dispatch = useAppDispatch();
 
+    const [optionIDChecked, setOptionIDChecked] = useState('');
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
-        options.map((option) => {
+        options.forEach((option) => {
             if (option.default) {
-                setOptionChecked(option.id);
+                setOptionChecked(option.value);
+                setOptionIDChecked(option.id);
             }
             return option;
         })
@@ -27,13 +29,13 @@ const SelectField: React.FC<Props> = ({id, label, fieldName, isRequired, options
         const selectedOption: SelectedOption = {
             id: id,
             option: options.find((option) => {
-                return option.id == optionChecked;
+                return option.id == optionIDChecked;
             }) as OptionData
         }
 
         dispatch(upsertSelectedOptions(selectedOption));
 
-    }, [optionChecked]);
+    }, [optionChecked, optionIDChecked]);
 
     const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
 
@@ -46,17 +48,17 @@ const SelectField: React.FC<Props> = ({id, label, fieldName, isRequired, options
             const value = target.value;
             const optionID = target.options[target.selectedIndex].dataset.id as string;
 
-            setOptionChecked(optionID);
+            setOptionIDChecked(optionID);
+            setOptionChecked(value);
         }
     }
 
     return (
         <FieldWrapper label={label}>
-            <select name={fieldName} className="uk-select" onChange={handleOnChange} required={isRequired}>
+            <select name={fieldName} className="uk-select" onChange={handleOnChange} required={isRequired} value={optionChecked}>
                 {options.map((option) => {
                     return (
                         <option key={option.id} value={option.value}
-                                defaultValue={option.default ? option.value : ''}
                                 data-id={option.id}
                                 data-price={option.price}>
                             {option.name} <PriceAdded price={option.price}/>

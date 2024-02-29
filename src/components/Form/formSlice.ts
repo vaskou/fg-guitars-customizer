@@ -38,7 +38,7 @@ export interface Guitar extends OptionData {
 }
 
 export interface SelectedOption {
-    id:string;
+    id: string;
     option: OptionData;
 }
 
@@ -50,6 +50,7 @@ interface FormState {
     guitars: Guitar[];
     sections: SectionData[];
     totalPrice: number;
+    selectedGuitarID: string;
     selectedOptions: typeof optionDataInitialState;
 }
 
@@ -57,6 +58,7 @@ const initialState: FormState = {
     guitars: [],
     sections: [],
     totalPrice: 0,
+    selectedGuitarID: '',
     selectedOptions: optionDataInitialState,
 }
 
@@ -71,8 +73,14 @@ const formSlice = createSlice({
         setTotalPrice: (state: FormState, action: PayloadAction<Pick<FormState, 'totalPrice'>>) => {
             state.totalPrice = action.payload.totalPrice;
         },
+        setSelectedGuitarID: (state: FormState, action: PayloadAction<Pick<FormState, 'selectedGuitarID'>>) => {
+            state.selectedGuitarID = action.payload.selectedGuitarID;
+        },
         upsertSelectedOptions: (state: FormState, action: PayloadAction<SelectedOption>) => {
             optionDataAdapter.upsertOne(state.selectedOptions, action);
+        },
+        deleteSelectedOptions: (state: FormState) => {
+            optionDataAdapter.removeAll(state.selectedOptions);
         },
     }
 });
@@ -82,7 +90,9 @@ export default formSlice.reducer;
 export const {
     load_data,
     setTotalPrice,
-    upsertSelectedOptions
+    setSelectedGuitarID,
+    upsertSelectedOptions,
+    deleteSelectedOptions,
 } = formSlice.actions;
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
@@ -104,6 +114,18 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
             const data: FormState = await response.json();
             console.log(data)
             dispatch(load_data(data));
+
+            let selectedGuitar = data.guitars.find((guitar) => {
+                return guitar.id == model;
+            });
+
+            if (!selectedGuitar) {
+                selectedGuitar = data.guitars[0]
+            }
+
+            if (selectedGuitar) {
+                dispatch(setSelectedGuitarID({selectedGuitarID: selectedGuitar.id}));
+            }
         }
 
     } catch (e) {
@@ -124,6 +146,10 @@ export const selectSectionsArray = (rootState: RootState) => {
 
 export const selectTotalPrice = (rootState: RootState) => {
     return selectDataState(rootState).totalPrice;
+}
+
+export const selectSelectedGuitarID = (rootState: RootState) => {
+    return selectDataState(rootState).selectedGuitarID;
 }
 
 export const selectSelectedOptions = (rootState: RootState) => {
