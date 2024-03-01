@@ -62,7 +62,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
                                    data-id={option.id}
                                    data-price={option.price}
                                    onChange={handleOnChange}/>
-                            <span className="label"> {option.name} <PriceAdded price={option.price}/></span>
+                            <span className="label"> {option.label} <PriceAdded price={option.price}/></span>
                         </label>
                     </div>
                 );

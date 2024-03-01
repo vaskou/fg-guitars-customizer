@@ -133,7 +133,7 @@ class Customizer {
 			$guitars[ $post->ID ] = [
 				'id'        => $post->ID,
 				'value'     => $post->ID,
-				'name'      => $post->post_title,
+				'label'      => $post->post_title,
 				'basePrice' => get_post_meta( $post->ID, 'fggc_customizer_price', true ),
 			];
 		}
@@ -205,7 +205,7 @@ class Customizer {
 			$field_data[] = [
 				'id'         => $field_id,
 				'label'      => $field_title,
-				'fieldName'  => $field_name,
+				'fieldName'  => $field_id,//$field_name,
 				'type'       => $field_type,
 				'isRequired' => ! empty( $this->customizer_options[ $field_id ]['required'] ),
 				'options'    => $option_data,
@@ -229,8 +229,8 @@ class Customizer {
 
 			$option_data[] = [
 				'id'      => $option_id,
-				'name'    => $option_post->post_title,
-				'value'   => $option_post->post_name,
+				'label'    => $option_post->post_title,
+				'value'   => $option_id,//$option_post->post_name,
 				'price'   => $this->customizer_options[ $option_id ]['price'],
 				'default' => ! empty( $this->customizer_options[ $option_id ]['default'] ),
 			];

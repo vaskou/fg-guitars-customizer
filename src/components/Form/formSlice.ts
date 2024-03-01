@@ -3,7 +3,7 @@ import { AppDispatch, RootState } from '../../redux/store';
 
 export interface OptionData {
     id: string;
-    name: string;
+    label: string;
     value: string;
     price: number;
     default: boolean;

@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, FormEventHandler, useEffect, useState } from 'react';
 import Section, { SectionTypes } from "../Section/Section";
 import Group from "../Group/Group";
 import { useSelector } from "react-redux";
@@ -104,11 +104,18 @@ const Form: React.FC<Props> = ({}) => {
         }
     }
 
+    const handleOnFormChange: FormEventHandler<HTMLFormElement> = (e: ChangeEvent<HTMLFormElement>) => {
+        const target = e.target;
+        console.log(e)
+        console.log(target.name)
+        console.log(target.value)
+    }
+
     return (
         <div className="fggc-form">
             {loading && <Loader/>}
             {error && <div className="fggc-form-error">{error}</div>}
-            <form>
+            <form onChange={handleOnFormChange}>
                 <GuitarsSection guitars={guitars} sections={sections} onChange={handleOnChange}/>
 
                 {sections && sections.map((section: SectionData) => {
