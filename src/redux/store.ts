@@ -1,5 +1,5 @@
-import {configureStore, combineReducers} from "@reduxjs/toolkit";
-import {useDispatch} from "react-redux";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
 import formReducer from "../components/Form/formSlice";
 
 const rootReducer = combineReducers({

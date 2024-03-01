@@ -1,5 +1,5 @@
-import {createEntityAdapter, createSlice, PayloadAction} from '@reduxjs/toolkit';
-import {AppDispatch, RootState} from '../../redux/store';
+import { createEntityAdapter, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppDispatch, RootState } from '../../redux/store';
 
 export interface OptionData {
     id: string;
@@ -52,6 +52,7 @@ interface FormState {
     totalPrice: number;
     selectedGuitarID: string;
     selectedOptions: typeof optionDataInitialState;
+    error: string;
 }
 
 const initialState: FormState = {
@@ -60,6 +61,7 @@ const initialState: FormState = {
     totalPrice: 0,
     selectedGuitarID: '',
     selectedOptions: optionDataInitialState,
+    error: '',
 }
 
 const formSlice = createSlice({
@@ -82,6 +84,10 @@ const formSlice = createSlice({
         deleteSelectedOptions: (state: FormState) => {
             optionDataAdapter.removeAll(state.selectedOptions);
         },
+        setError: (state: FormState, action: PayloadAction<FormState>) => {
+            // state = {...action.payload};
+            return { ...action.payload }
+        },
     }
 });
 
@@ -93,6 +99,7 @@ export const {
     setSelectedGuitarID,
     upsertSelectedOptions,
     deleteSelectedOptions,
+    setError,
 } = formSlice.actions;
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
@@ -109,7 +116,7 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
         const response = await fetch(url);
 
         if (response.status >= 400 && response.status < 500) {
-
+            throw new Error()
         } else {
             const data: FormState = await response.json();
             console.log(data)
@@ -124,12 +131,13 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
             }
 
             if (selectedGuitar) {
-                dispatch(setSelectedGuitarID({selectedGuitarID: selectedGuitar.id}));
+                dispatch(setSelectedGuitarID({ selectedGuitarID: selectedGuitar.id }));
             }
         }
 
     } catch (e) {
-
+        const message = fggc_customizer_data.error_message
+        dispatch(setError({ ...initialState, error: message }));
     }
 }
 
@@ -154,4 +162,8 @@ export const selectSelectedGuitarID = (rootState: RootState) => {
 
 export const selectSelectedOptions = (rootState: RootState) => {
     return selectDataState(rootState).selectedOptions;
+}
+
+export const selectError = (rootState: RootState) => {
+    return selectDataState(rootState).error;
 }

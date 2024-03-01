@@ -1,15 +1,15 @@
-import React, {ChangeEvent, ChangeEventHandler, useEffect, useState} from 'react';
+import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
 import FieldWrapper from "../../FieldWrapper/FieldWrapper";
-import {FieldData, OptionData, SelectedOption, selectTotalPrice, setTotalPrice, upsertSelectedOptions} from "../../Form/formSlice";
-import './styles.scss';
+import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
-import {useAppDispatch} from "../../../redux/store";
+import { useAppDispatch } from "../../../redux/store";
+import './styles.scss';
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined
 }
 
-const RadioField: React.FC<Props> = ({id, label, fieldName, isRequired, options, onChange}) => {
+const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
 
     const dispatch = useAppDispatch();
 

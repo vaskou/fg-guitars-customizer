@@ -1,12 +1,12 @@
-import React, {ChangeEvent, ChangeEventHandler} from 'react';
+import React, { ChangeEvent, ChangeEventHandler } from 'react';
 import FieldWrapper from "../../FieldWrapper/FieldWrapper";
-import {FieldData} from "../../Form/formSlice";
+import { FieldData } from "../../Form/formSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLTextAreaElement> | undefined
 }
 
-const TextareaField: React.FC<Props> = ({label, fieldName, onChange}) => {
+const TextareaField: React.FC<Props> = ({ label, fieldName, onChange }) => {
 
     const handleOnChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
 

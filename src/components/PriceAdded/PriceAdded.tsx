@@ -5,7 +5,7 @@ interface Props {
     price: number;
 }
 
-const PriceAdded: React.FC<Props> = ({price}) => {
+const PriceAdded: React.FC<Props> = ({ price }) => {
 
     return (
         <>

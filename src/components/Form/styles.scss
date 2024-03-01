@@ -1,0 +1,7 @@
+.fggc-form-guitar-section {
+  &:empty {
+    ~ * {
+      display: none;
+    }
+  }
+}

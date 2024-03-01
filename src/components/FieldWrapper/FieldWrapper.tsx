@@ -6,7 +6,7 @@ interface Props {
     children?: any;
 }
 
-const FieldWrapper: React.FC<Props> = ({label, isTextControls, children}) => {
+const FieldWrapper: React.FC<Props> = ({ label, isTextControls, children }) => {
     const textControlsClass = isTextControls ? 'uk-form-controls-text' : '';
 
     return (

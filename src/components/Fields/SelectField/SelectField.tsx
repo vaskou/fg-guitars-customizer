@@ -1,14 +1,14 @@
-import React, {ChangeEvent, ChangeEventHandler, useEffect, useState} from 'react';
+import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
 import FieldWrapper from "../../FieldWrapper/FieldWrapper";
-import {FieldData, OptionData, SelectedOption, upsertSelectedOptions} from "../../Form/formSlice";
+import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
-import {useAppDispatch} from "../../../redux/store";
+import { useAppDispatch } from "../../../redux/store";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLSelectElement> | undefined
 }
 
-const SelectField: React.FC<Props> = ({id, label, fieldName, isRequired, options, onChange}) => {
+const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
 
     const dispatch = useAppDispatch();
 

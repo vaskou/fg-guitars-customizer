@@ -1,21 +1,28 @@
-import React, {ChangeEvent, useEffect, useState} from 'react';
-import SelectField from "../Fields/SelectField/SelectField";
-import RadioField from "../Fields/RadioField/RadioField";
-import Section from "../Section/Section";
+import React, { ChangeEvent, useEffect, useState } from 'react';
+import Section, { SectionTypes } from "../Section/Section";
 import Group from "../Group/Group";
-import {useSelector} from "react-redux";
-import {FieldData, GroupData, SectionData, loadData, setTotalPrice, selectGuitarsArray, selectSectionsArray, selectTotalPrice, selectSelectedOptions, deleteSelectedOptions, selectSelectedGuitarID, setSelectedGuitarID} from "./formSlice";
-import {useAppDispatch} from "../../redux/store";
-import TextareaField from "../Fields/TexteareaField/TexteareaField";
+import { useSelector } from "react-redux";
+import {
+    deleteSelectedOptions,
+    FieldData,
+    GroupData,
+    loadData,
+    SectionData,
+    selectError,
+    selectGuitarsArray,
+    selectSectionsArray,
+    selectSelectedGuitarID,
+    selectSelectedOptions,
+    selectTotalPrice,
+    setSelectedGuitarID,
+    setTotalPrice
+} from "./formSlice";
+import { useAppDispatch } from "../../redux/store";
 import Loader from "../Loader/Loader";
-import EmailField from "../Fields/EmailField/EmailField";
-import TextField from "../Fields/TextField/TextField";
 import PriceEstimate from "../PriceEstimate/PriceEstimate";
-
-enum SectionTypes {
-    GUITARS = 'guitars',
-    FIELDS = 'fields',
-}
+import './styles.scss';
+import Field from "../Field/Field";
+import GuitarsSection from "../Section/GuitarsSection";
 
 interface Props {
 }
@@ -33,14 +40,17 @@ const Form: React.FC<Props> = ({}) => {
     const totalPrice = useSelector(selectTotalPrice);
     const selectedGuitarID = useSelector(selectSelectedGuitarID);
     const selectedOptions = useSelector(selectSelectedOptions);
+    const error = useSelector(selectError);
 
     const getData = (value?: string) => {
         setLoading(true);
 
         dispatch(deleteSelectedOptions());
-        dispatch(loadData(value)).finally(() => {
-            setLoading(false);
-        });
+
+        dispatch(loadData(value))
+            .finally(() => {
+                setLoading(false);
+            });
     }
 
     useEffect(() => {
@@ -49,7 +59,7 @@ const Form: React.FC<Props> = ({}) => {
         const model = urlParams.get('model') as string | undefined;
 
         getData(model);
-    }, [dispatch]);
+    }, []);
 
     useEffect(() => {
         const selectedGuitar = guitars.find((guitar) => {
@@ -60,7 +70,7 @@ const Form: React.FC<Props> = ({}) => {
 
         setBasePrice(_basePrice);
 
-        dispatch(setTotalPrice({totalPrice: _basePrice}));
+        dispatch(setTotalPrice({ totalPrice: _basePrice }));
 
     }, [selectedGuitarID]);
 
@@ -78,59 +88,9 @@ const Form: React.FC<Props> = ({}) => {
 
         const _totalPrice = Number(basePrice) + Number(addedPrice);
 
-        dispatch(setTotalPrice({totalPrice: _totalPrice}));
+        dispatch(setTotalPrice({ totalPrice: _totalPrice }));
 
     }, [basePrice, selectedOptions]);
-
-    const getField = (field: FieldData, index: string) => {
-        let fieldComponent;
-
-        switch (field.type) {
-            case 'select':
-                fieldComponent = <SelectField key={index} {...field}/>
-                break;
-            case 'radio':
-                fieldComponent = <RadioField key={index} {...field}/>
-                break;
-            case 'textarea':
-                fieldComponent = <TextareaField key={index} {...field}/>
-                break;
-            case 'email':
-                fieldComponent = <EmailField key={index} {...field}/>
-                break;
-            case 'text':
-                fieldComponent = <TextField key={index} {...field}/>
-                break;
-        }
-
-        return fieldComponent;
-    }
-
-    const getGuitarsSection = (sections: SectionData[]) => {
-        let guitarsSection = sections.find((section: SectionData) => {
-            return section.type === SectionTypes.GUITARS;
-        })
-
-        return (
-            <div className={"fggc-form-guitar-section"}>
-                {
-                    guitarsSection && guitarsSection.groups.length > 0 &&
-                    <Section key={guitarsSection.id} title={guitarsSection.title}>
-                        {guitarsSection.groups.map((group: GroupData) => {
-                            return (
-                                <Group key={group.id} {...group}>
-                                    <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={handleOnChange}/>
-                                    {group.fields.map((field: FieldData) => {
-                                        return (getField(field, field.id));
-                                    })}
-                                </Group>
-                            )
-                        })}
-                    </Section>
-                }
-            </div>
-        )
-    }
 
     const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const target = e.target;
@@ -140,15 +100,16 @@ const Form: React.FC<Props> = ({}) => {
         if ('model' === name) {
             getData(value);
             // setSelectedGuitarID(value);
-            dispatch(setSelectedGuitarID({selectedGuitarID: value}))
+            dispatch(setSelectedGuitarID({ selectedGuitarID: value }))
         }
     }
 
     return (
         <div className="fggc-form">
             {loading && <Loader/>}
+            {error && <div className="fggc-form-error">{error}</div>}
             <form>
-                {getGuitarsSection(sections)}
+                <GuitarsSection guitars={guitars} sections={sections} onChange={handleOnChange}/>
 
                 {sections && sections.map((section: SectionData) => {
                     return (
@@ -158,7 +119,7 @@ const Form: React.FC<Props> = ({}) => {
                                 return (
                                     <Group key={group.id} {...group}>
                                         {group.fields.map((field: FieldData) => {
-                                            return (getField(field, field.id));
+                                            return <Field key={field.id} field={field} index={field.id}/>
                                         })}
                                     </Group>
                                 )
@@ -170,7 +131,7 @@ const Form: React.FC<Props> = ({}) => {
 
                 {!!totalPrice && <PriceEstimate totalPrice={totalPrice}/>}
 
-                {!loading && <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"}>{"Submit"}</button>}
+                <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"}>{"Submit"}</button>
             </form>
         </div>
     );

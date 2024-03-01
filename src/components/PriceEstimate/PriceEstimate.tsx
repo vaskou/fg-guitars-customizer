@@ -5,7 +5,7 @@ interface Props {
     totalPrice: number;
 }
 
-const PriceEstimate: React.FC<Props> = ({totalPrice}) => {
+const PriceEstimate: React.FC<Props> = ({ totalPrice }) => {
 
 
     return (

@@ -30,6 +30,7 @@ class Customizer {
 			'url'                     => admin_url( 'admin-ajax.php' ),
 			'price_estimate_label'    => __( 'Price estimate', 'fg-guitars-customizer' ),
 			'price_estimate_tax_text' => __( 'excludes regional taxes', 'fg-guitars-customizer' ),
+			'error_message'           => __( 'Something wrong happened. Please try later.', 'fg-guitars-customizer' ),
 		];
 		wp_localize_script( 'fgcc-scripts', 'fggc_customizer_data', $data );
 

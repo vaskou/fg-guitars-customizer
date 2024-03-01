@@ -3,6 +3,7 @@ export interface ExternalCustomizerData {
     url: string;
     price_estimate_label: string;
     price_estimate_tax_text: string;
+    error_message: string;
 }
 
 export declare global {
