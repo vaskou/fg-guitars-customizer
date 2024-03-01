@@ -39,7 +39,7 @@ class Customizer_Field_Option {
 			'archives'              => __( 'FG Guitar Customizer Field Option Archives', 'fg-guitars-customizer' ),
 			'attributes'            => __( 'FG Guitar Customizer Field Option Attributes', 'fg-guitars-customizer' ),
 			'parent_item_colon'     => __( 'Parent FG Guitar Customizer Field Option:', 'fg-guitars-customizer' ),
-			'all_items'             => __( 'All FG Guitar Customizer Field Options', 'fg-guitars-customizer' ),
+			'all_items'             => __( 'Options', 'fg-guitars-customizer' ),
 			'add_new_item'          => __( 'Add New FG Guitar Customizer Field Option', 'fg-guitars-customizer' ),
 			'add_new'               => __( 'Add New', 'fg-guitars-customizer' ),
 			'new_item'              => __( 'New FG Guitar Customizer Field Option', 'fg-guitars-customizer' ),

@@ -26,6 +26,7 @@ class Customizer_Fields_Group {
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
+		add_action( 'admin_menu', [ $this, 'remove_submenu' ] );
 	}
 
 	/**
@@ -35,12 +36,12 @@ class Customizer_Fields_Group {
 		$labels = array(
 			'name'                  => _x( 'FG Guitar Customizer Fields Groups', 'FG Guitar Customizer Fields Groups General Name', 'fg-guitars-customizer' ),
 			'singular_name'         => _x( 'FG Guitar Customizer Fields Group', 'FG Guitar Customizer Fields Group Singular Name', 'fg-guitars-customizer' ),
-			'menu_name'             => __( 'FG Guitar Customizer Fields Groups', 'fg-guitars-customizer' ),
+			'menu_name'             => __( 'FG Guitar Customizer', 'fg-guitars-customizer' ),
 			'name_admin_bar'        => __( 'FG Guitar Customizer Fields Groups', 'fg-guitars-customizer' ),
 			'archives'              => __( 'FG Guitar Customizer Fields Group Archives', 'fg-guitars-customizer' ),
 			'attributes'            => __( 'FG Guitar Customizer Fields Group Attributes', 'fg-guitars-customizer' ),
 			'parent_item_colon'     => __( 'Parent FG Guitar Customizer Fields Group:', 'fg-guitars-customizer' ),
-			'all_items'             => __( 'All FG Guitar Customizer Fields Groups', 'fg-guitars-customizer' ),
+			'all_items'             => __( 'Groups', 'fg-guitars-customizer' ),
 			'add_new_item'          => __( 'Add New FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
 			'add_new'               => __( 'Add New', 'fg-guitars-customizer' ),
 			'new_item'              => __( 'New FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
@@ -169,5 +170,13 @@ class Customizer_Fields_Group {
 		$query = new \WP_Query( $args );
 
 		return $query->get_posts();
+	}
+
+	public function remove_submenu() {
+		global $submenu;
+
+		$menu_item = sprintf( 'edit.php?post_type=%s', self::POST_TYPE_NAME );
+
+		unset( $submenu[ $menu_item ][10] );
 	}
 }

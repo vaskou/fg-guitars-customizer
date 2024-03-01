@@ -41,7 +41,7 @@ class Customizer_Section {
 			'update_item'       => __( 'Update Customizer Section', 'fg-guitars-customizer' ),
 			'add_new_item'      => __( 'Add New Customizer Section', 'fg-guitars-customizer' ),
 			'new_item_name'     => __( 'New Customizer Section Name', 'fg-guitars-customizer' ),
-			'menu_name'         => __( 'Customizer Sections', 'fg-guitars-customizer' ),
+			'menu_name'         => __( 'Sections', 'fg-guitars-customizer' ),
 		);
 
 		$rewrite = array(
@@ -80,15 +80,15 @@ class Customizer_Section {
 			'new_term_section' => true,
 		) );
 
-		$metabox->add_field( array(
-			'name'    => __( 'Order', 'fg-guitars-customizer' ),
-			'id'      => self::ORDER_META_KEY,
-			'type'    => 'text',
-			'default' => 0,
-			'column'  => [
-				'position' => 100,
-			]
-		) );
+//		$metabox->add_field( array(
+//			'name'    => __( 'Order', 'fg-guitars-customizer' ),
+//			'id'      => self::ORDER_META_KEY,
+//			'type'    => 'text',
+//			'default' => 0,
+//			'column'  => [
+//				'position' => 100,
+//			]
+//		) );
 	}
 
 	/**
@@ -100,10 +100,10 @@ class Customizer_Section {
 
 		$default = array(
 			'taxonomy'  => self::TAXONOMY_NAME,
-			'orderby'   => 'meta_value',
-			'order'     => 'ASC',
-			'meta_key'  => self::ORDER_META_KEY,
-			'meta_type' => 'NUMERIC',
+//			'orderby'   => 'meta_value',
+//			'order'     => 'ASC',
+//			'meta_key'  => self::ORDER_META_KEY,
+//			'meta_type' => 'NUMERIC',
 		);
 
 		$args = wp_parse_args( $args, $default );

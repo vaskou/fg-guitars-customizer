@@ -40,7 +40,7 @@ class Customizer_Field {
 			'archives'              => __( 'FG Guitar Customizer Field Archives', 'fg-guitars-customizer' ),
 			'attributes'            => __( 'FG Guitar Customizer Field Attributes', 'fg-guitars-customizer' ),
 			'parent_item_colon'     => __( 'Parent FG Guitar Customizer Field:', 'fg-guitars-customizer' ),
-			'all_items'             => __( 'All FG Guitar Customizer Fields', 'fg-guitars-customizer' ),
+			'all_items'             => __( 'Fields', 'fg-guitars-customizer' ),
 			'add_new_item'          => __( 'Add New FG Guitar Customizer Field', 'fg-guitars-customizer' ),
 			'add_new'               => __( 'Add New', 'fg-guitars-customizer' ),
 			'new_item'              => __( 'New FG Guitar Customizer Field', 'fg-guitars-customizer' ),

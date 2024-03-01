@@ -37,7 +37,7 @@ class Customizer {
 		$selected_model = ! empty( $_GET['model'] ) ? $_GET['model'] : 0;
 
 		$selected_guitar_id = ! empty( $guitars[ $selected_model ] ) ? $guitars[ $selected_model ]['id'] : array_key_first( $guitars );
-		
+
 		$guitars = array_map( function ( $guitar ) use ( $selected_guitar_id ) {
 			if ( ! empty( $guitar['id'] ) && $guitar['id'] == $selected_guitar_id ) {
 				$guitar['default'] = true;
@@ -118,6 +118,12 @@ class Customizer {
 
 
 		foreach ( $posts as $post ) {
+			$exclude = get_post_meta( $post->ID, 'fggc_customizer_exclude', true );
+
+			if ( ! empty( $exclude ) ) {
+				continue;
+			}
+
 			$options = get_post_meta( $post->ID, 'fggc_customizer_options', true );
 
 			if ( empty( $options ) ) {
@@ -153,6 +159,10 @@ class Customizer {
 			$group_has_guitar_selection_field = Customizer_Fields_Group::get_has_guitar_selection_field( $group_id );
 
 			$field_data = $this->_get_group_fields_data( $group_id );
+
+			if ( empty( $field_data ) ) {
+				continue;
+			}
 
 			$group_data[] = [
 				'id'                      => $group_id,
