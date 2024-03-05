@@ -32,8 +32,9 @@ const Form: React.FC<Props> = ({}) => {
     const dispatch = useAppDispatch();
 
     const [loading, setLoading] = useState(true);
-    // const [selectedGuitarID, setSelectedGuitarID] = useState('');
     const [basePrice, setBasePrice] = useState(0);
+    const [formData, setFormData] = useState({});
+    const [errorMessage, setErrorMessage] = useState('');
 
     const guitars = useSelector(selectGuitarsArray);
     const sections = useSelector(selectSectionsArray);
@@ -92,6 +93,10 @@ const Form: React.FC<Props> = ({}) => {
 
     }, [basePrice, selectedOptions]);
 
+    useEffect(() => {
+        setFormData({ ...formData, ['model']: selectedGuitarID, });
+    }, [selectedGuitarID]);
+
     const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const target = e.target;
         const name = target.name;
@@ -99,23 +104,70 @@ const Form: React.FC<Props> = ({}) => {
 
         if ('model' === name) {
             getData(value);
-            // setSelectedGuitarID(value);
+            setFormData({ ...formData, [name]: value, });
             dispatch(setSelectedGuitarID({ selectedGuitarID: value }))
         }
     }
 
     const handleOnFormChange: FormEventHandler<HTMLFormElement> = (e: ChangeEvent<HTMLFormElement>) => {
         const target = e.target;
-        console.log(e)
-        console.log(target.name)
-        console.log(target.value)
+        const name = target.name;
+        const value = target.value;
+
+        setFormData({ ...formData, [name]: value, });
+    }
+
+    const handleOnSubmit: FormEventHandler<HTMLFormElement> = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        formSubmit();
+    }
+
+    const formSubmit = async () => {
+        const requestAction = fggc_customizer_data.form_submit_action;
+        const security = fggc_customizer_data.security;
+        const adminURL = fggc_customizer_data.url;
+
+        const url = `${adminURL}`
+
+        const data = new URLSearchParams();
+        data.append('security', security);
+        data.append('action', requestAction);
+        data.append('data', JSON.stringify(formData));
+
+        const requestParams: RequestInit = {
+            body: data,
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            method: "POST",
+        }
+
+        try {
+            const response = await fetch(url, requestParams);
+
+            if (response.status >= 400 && response.status < 500) {
+                throw new Error()
+            } else {
+                const data = await response.json();
+                console.log(data)
+                setErrorMessage(data?.message);
+            }
+        } catch (error) {
+            const message = fggc_customizer_data.error_message
+            setErrorMessage(message);
+        }
     }
 
     return (
         <div className="fggc-form">
             {loading && <Loader/>}
+
             {error && <div className="fggc-form-error">{error}</div>}
-            <form onChange={handleOnFormChange}>
+
+            {errorMessage && <div className="fggc-form-error">{errorMessage}</div>}
+
+            <form onChange={handleOnFormChange} onSubmit={handleOnSubmit}>
                 <GuitarsSection guitars={guitars} sections={sections} onChange={handleOnChange}/>
 
                 {sections && sections.map((section: SectionData) => {

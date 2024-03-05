@@ -40,6 +40,7 @@ class FG_Guitars_Customizer {
 
 		// Ajax
 		Ajax\Customizer::instance();
+		Ajax\Form_Submit::instance();
 
 		// CMB2 Custom Fields
 		Cmb2_Custom_Fields\Customizer_Options::instance();

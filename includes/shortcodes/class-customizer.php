@@ -3,6 +3,7 @@
 namespace FG_Guitars_Customizer\Shortcodes;
 
 use FG_Guitars_Customizer\Ajax\Customizer as Customizer_Ajax;
+use FG_Guitars_Customizer\Ajax\Form_Submit;
 
 class Customizer {
 
@@ -27,6 +28,8 @@ class Customizer {
 	public function html() {
 		$data = [
 			'action'                  => Customizer_Ajax::ACTION,
+			'security'                => wp_create_nonce( Form_Submit::ACTION ),
+			'form_submit_action'      => Form_Submit::ACTION,
 			'url'                     => admin_url( 'admin-ajax.php' ),
 			'price_estimate_label'    => __( 'Price estimate', 'fg-guitars-customizer' ),
 			'price_estimate_tax_text' => __( 'excludes regional taxes', 'fg-guitars-customizer' ),
