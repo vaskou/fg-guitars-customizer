@@ -16,11 +16,12 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
-        options.map((option) => {
+        setOptionChecked('');
+
+        options.forEach((option) => {
             if (option.default) {
                 setOptionChecked(option.id);
             }
-            return option;
         })
     }, [options]);
 

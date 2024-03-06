@@ -10,6 +10,19 @@ use FG_Guitars_Customizer\Taxonomies\Customizer_Section;
 class Helpers {
 
 	/**
+	 * @param $post_id
+	 *
+	 * @return string
+	 */
+	public static function get_post_title( $post_id ) {
+		if ( empty( $post_id ) ) {
+			return '';
+		}
+
+		return get_post_field( 'post_title', $post_id );
+	}
+
+	/**
 	 * @param $field_id
 	 *
 	 * @return \WP_Post[]

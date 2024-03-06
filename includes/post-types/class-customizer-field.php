@@ -201,6 +201,10 @@ class Customizer_Field {
 		return $query->get_posts();
 	}
 
+	public static function get_field_group( $field_id ) {
+		return get_post_meta( $field_id, self::GROUP_META_KEY, true );
+	}
+
 	public static function get_field_type( $field_id ) {
 		return get_post_meta( $field_id, self::FIELD_TYPE_META_KEY, true );
 	}

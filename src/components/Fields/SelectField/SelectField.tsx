@@ -16,12 +16,13 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
+        setOptionChecked('');
+        setOptionIDChecked('');
         options.forEach((option) => {
             if (option.default) {
                 setOptionChecked(option.value);
                 setOptionIDChecked(option.id);
             }
-            return option;
         })
     }, [options]);
 
