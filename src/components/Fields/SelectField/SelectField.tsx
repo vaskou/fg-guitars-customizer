@@ -5,10 +5,11 @@ import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
 
 interface Props extends Omit<FieldData, 'type'> {
-    onChange?: ChangeEventHandler<HTMLSelectElement> | undefined
+    onChange?: ChangeEventHandler<HTMLSelectElement> | undefined,
+    onChangeValue?: (name: string, value: string) => void,
 }
 
-const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
+const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onChangeValue }) => {
 
     const dispatch = useAppDispatch();
 
@@ -16,8 +17,9 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
-        setOptionChecked('');
-        setOptionIDChecked('');
+        setOptionChecked(options[0].value);
+        setOptionIDChecked(options[0].id);
+
         options.forEach((option) => {
             if (option.default) {
                 setOptionChecked(option.value);
@@ -25,6 +27,12 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
             }
         })
     }, [options]);
+
+    useEffect(() => {
+        if (onChangeValue) {
+            onChangeValue(fieldName, optionIDChecked);
+        }
+    }, [options, optionIDChecked]);
 
     useEffect(() => {
         const selectedOption: SelectedOption = {
@@ -36,7 +44,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
 
         dispatch(upsertSelectedOptions(selectedOption));
 
-    }, [optionChecked, optionIDChecked]);
+    }, [options, optionChecked, optionIDChecked]);
 
     const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
 

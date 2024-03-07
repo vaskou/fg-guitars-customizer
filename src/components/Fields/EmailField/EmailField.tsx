@@ -23,7 +23,7 @@ const EmailField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
 
     return (
         <FieldWrapper label={label}>
-            <input type="email" name={fieldName} className="uk-input" onChange={handleOnChange} placeholder={label} required={isRequired}/>
+            <input type="email" name={fieldName} className="uk-input" onChange={handleOnChange} placeholder={label} required={isRequired} autoComplete="off"/>
         </FieldWrapper>
     );
 }

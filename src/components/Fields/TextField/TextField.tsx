@@ -23,7 +23,7 @@ const TextField: React.FC<Props> = ({ id, label, fieldName, isRequired, options,
 
     return (
         <FieldWrapper label={label}>
-            <input type="text" name={fieldName} className="uk-input" onChange={handleOnChange} placeholder={label} required={isRequired}/>
+            <input type="text" name={fieldName} className="uk-input" onChange={handleOnChange} placeholder={label} required={isRequired} autoComplete="off"/>
         </FieldWrapper>
     );
 }

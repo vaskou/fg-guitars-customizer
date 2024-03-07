@@ -6,10 +6,11 @@ import { useAppDispatch } from "../../../redux/store";
 import './styles.scss';
 
 interface Props extends Omit<FieldData, 'type'> {
-    onChange?: ChangeEventHandler<HTMLInputElement> | undefined
+    onChange?: ChangeEventHandler<HTMLInputElement> | undefined,
+    onChangeValue?: (name: string, value: string) => void,
 }
 
-const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
+const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onChangeValue }) => {
 
     const dispatch = useAppDispatch();
 
@@ -24,6 +25,12 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
             }
         })
     }, [options]);
+
+    useEffect(() => {
+        if (onChangeValue) {
+            onChangeValue(fieldName, optionChecked);
+        }
+    }, [optionChecked]);
 
     useEffect(() => {
         const selectedOption: SelectedOption = {

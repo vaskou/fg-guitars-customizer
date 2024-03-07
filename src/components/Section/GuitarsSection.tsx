@@ -8,10 +8,11 @@ import Field from "../Field/Field";
 interface Props {
     guitars: OptionData[]
     sections: SectionData[]
-    onChange: ChangeEventHandler<HTMLSelectElement>
+    onGuitarChange: ChangeEventHandler<HTMLSelectElement>
+    onChangeValue?: (name: string, value: string) => void,
 }
 
-const GuitarsSection: React.FC<Props> = ({ guitars, sections, onChange }) => {
+const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange, onChangeValue }) => {
     let guitarsSection = sections.find((section: SectionData) => {
         return section.type === SectionTypes.GUITARS;
     })
@@ -24,9 +25,9 @@ const GuitarsSection: React.FC<Props> = ({ guitars, sections, onChange }) => {
                     {guitarsSection.groups.map((group: GroupData) => {
                         return (
                             <Group key={group.id} {...group}>
-                                <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={onChange}/>
+                                <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={onGuitarChange} onChangeValue={onChangeValue}/>
                                 {group.fields.map((field: FieldData) => {
-                                    return <Field key={field.id} field={field} index={field.id}/>
+                                    return <Field key={field.id} field={field} index={field.id} onChangeValue={onChangeValue}/>
                                 })}
                             </Group>
                         )

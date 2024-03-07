@@ -97,7 +97,7 @@ const Form: React.FC<Props> = ({}) => {
         setFormData({ ...formData, ['model']: selectedGuitarID, });
     }, [selectedGuitarID]);
 
-    const handleOnChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const handleOnGuitarChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const target = e.target;
         const name = target.name;
         const value = target.value;
@@ -114,6 +114,10 @@ const Form: React.FC<Props> = ({}) => {
         const name = target.name;
         const value = target.value;
 
+        setFormData({ ...formData, [name]: value, });
+    }
+
+    const handleOnChangeValue = (name: string, value: string) => {
         setFormData({ ...formData, [name]: value, });
     }
 
@@ -168,7 +172,7 @@ const Form: React.FC<Props> = ({}) => {
             {errorMessage && <div className="fggc-form-error">{errorMessage}</div>}
 
             <form onChange={handleOnFormChange} onSubmit={handleOnSubmit}>
-                <GuitarsSection guitars={guitars} sections={sections} onChange={handleOnChange}/>
+                <GuitarsSection guitars={guitars} sections={sections} onGuitarChange={handleOnGuitarChange} onChangeValue={handleOnChangeValue}/>
 
                 {sections && sections.map((section: SectionData) => {
                     return (
@@ -178,7 +182,7 @@ const Form: React.FC<Props> = ({}) => {
                                 return (
                                     <Group key={group.id} {...group}>
                                         {group.fields.map((field: FieldData) => {
-                                            return <Field key={field.id} field={field} index={field.id}/>
+                                            return <Field key={field.id} field={field} index={field.id} onChangeValue={handleOnChangeValue}/>
                                         })}
                                     </Group>
                                 )
