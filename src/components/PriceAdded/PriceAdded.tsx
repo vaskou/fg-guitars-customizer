@@ -2,7 +2,7 @@ import React from "react";
 import Price from "../Price/Price";
 
 interface Props {
-    price: number;
+    price: string;
 }
 
 const PriceAdded: React.FC<Props> = ({ price }) => {

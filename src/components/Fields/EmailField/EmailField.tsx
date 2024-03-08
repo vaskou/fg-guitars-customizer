@@ -1,6 +1,8 @@
-import React, { ChangeEvent, ChangeEventHandler } from 'react';
+import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
 import FieldWrapper from "../../FieldWrapper/FieldWrapper";
 import { FieldData } from "../../Form/formSlice";
+import { useAppDispatch } from "../../../redux/store";
+import { selectItem, upsertData } from "../../Form/formSubmitSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined
@@ -8,22 +10,36 @@ interface Props extends Omit<FieldData, 'type'> {
 
 const EmailField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
 
+    const dispatch = useAppDispatch();
+
+    const [valueState, setValueState] = useState('');
+
+    useEffect(() => {
+        if (selectItem(fieldName)?.value) {
+            setValueState(selectItem(fieldName)?.value);
+        } else {
+            setValueState('');
+        }
+
+    }, [selectItem(fieldName)]);
+
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
 
         if (onChange) {
             onChange(e);
-        } else {
-
-            const target = e.target;
-            const name = target.name;
-            const value = target.value;
-
         }
+
+        const target = e.target;
+        const name = target.name;
+        const value = target.value;
+
+        setValueState(value);
+        dispatch(upsertData({ id: name, value: value }))
     }
 
     return (
         <FieldWrapper label={label}>
-            <input type="email" name={fieldName} className="uk-input" onChange={handleOnChange} placeholder={label} required={isRequired} autoComplete="off"/>
+            <input type="email" name={fieldName} className="uk-input" value={valueState} onChange={handleOnChange} placeholder={label} required={isRequired} autoComplete="off"/>
         </FieldWrapper>
     );
 }

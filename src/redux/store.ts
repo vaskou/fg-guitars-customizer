@@ -1,9 +1,11 @@
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { useDispatch } from "react-redux";
 import formReducer from "../components/Form/formSlice";
+import formSubmitReducer from "../components/Form/formSubmitSlice";
 
 const rootReducer = combineReducers({
-    data: formReducer
+    data: formReducer,
+    formSubmitData: formSubmitReducer,
 });
 
 const store = configureStore({

@@ -3,13 +3,13 @@ import FieldWrapper from "../../FieldWrapper/FieldWrapper";
 import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
+import { upsertData } from "../../Form/formSubmitSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLSelectElement> | undefined,
-    onChangeValue?: (name: string, value: string) => void,
 }
 
-const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onChangeValue }) => {
+const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
 
     const dispatch = useAppDispatch();
 
@@ -29,12 +29,6 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     }, [options]);
 
     useEffect(() => {
-        if (onChangeValue) {
-            onChangeValue(fieldName, optionIDChecked);
-        }
-    }, [options, optionIDChecked]);
-
-    useEffect(() => {
         const selectedOption: SelectedOption = {
             id: id,
             option: options.find((option) => {
@@ -43,6 +37,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
         }
 
         dispatch(upsertSelectedOptions(selectedOption));
+        dispatch(upsertData({ id: fieldName, value: optionChecked }))
 
     }, [options, optionChecked, optionIDChecked]);
 
@@ -50,16 +45,14 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
 
         if (onChange) {
             onChange(e);
-        } else {
-
-            const target = e.target;
-            const name = target.name;
-            const value = target.value;
-            const optionID = target.options[target.selectedIndex].dataset.id as string;
-
-            setOptionIDChecked(optionID);
-            setOptionChecked(value);
         }
+
+        const target = e.target;
+        const value = target.value;
+        const optionID = target.options[target.selectedIndex].dataset.id as string;
+
+        setOptionIDChecked(optionID);
+        setOptionChecked(value);
     }
 
     return (
@@ -70,7 +63,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
                         <option key={option.id} value={option.value}
                                 data-id={option.id}
                                 data-price={option.price}>
-                            {option.label} <PriceAdded price={option.price}/>
+                            {option.label} <PriceAdded price={option.price?.toString()}/>
                         </option>
                     );
                 })}

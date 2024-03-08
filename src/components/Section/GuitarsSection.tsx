@@ -9,10 +9,9 @@ interface Props {
     guitars: OptionData[]
     sections: SectionData[]
     onGuitarChange: ChangeEventHandler<HTMLSelectElement>
-    onChangeValue?: (name: string, value: string) => void,
 }
 
-const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange, onChangeValue }) => {
+const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange }) => {
     let guitarsSection = sections.find((section: SectionData) => {
         return section.type === SectionTypes.GUITARS;
     })
@@ -25,9 +24,9 @@ const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange, on
                     {guitarsSection.groups.map((group: GroupData) => {
                         return (
                             <Group key={group.id} {...group}>
-                                <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={onGuitarChange} onChangeValue={onChangeValue}/>
+                                <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={onGuitarChange}/>
                                 {group.fields.map((field: FieldData) => {
-                                    return <Field key={field.id} field={field} index={field.id} onChangeValue={onChangeValue}/>
+                                    return <Field key={field.id} field={field} index={field.id}/>
                                 })}
                             </Group>
                         )

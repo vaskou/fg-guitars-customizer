@@ -23,6 +23,7 @@ import PriceEstimate from "../PriceEstimate/PriceEstimate";
 import './styles.scss';
 import Field from "../Field/Field";
 import GuitarsSection from "../Section/GuitarsSection";
+import { clearData, selectItemsArray } from "./formSubmitSlice";
 
 interface Props {
 }
@@ -33,7 +34,6 @@ const Form: React.FC<Props> = ({}) => {
 
     const [loading, setLoading] = useState(true);
     const [basePrice, setBasePrice] = useState(0);
-    const [formData, setFormData] = useState({});
     const [errorMessage, setErrorMessage] = useState('');
 
     const guitars = useSelector(selectGuitarsArray);
@@ -43,13 +43,18 @@ const Form: React.FC<Props> = ({}) => {
     const selectedOptions = useSelector(selectSelectedOptions);
     const error = useSelector(selectError);
 
+    const formData = useSelector(selectItemsArray);
+
     const getData = (value?: string) => {
         setLoading(true);
 
-        dispatch(deleteSelectedOptions());
+        // dispatch(deleteSelectedOptions());
+        // dispatch(clearData());
 
         dispatch(loadData(value))
             .finally(() => {
+                dispatch(deleteSelectedOptions());
+                dispatch(clearData());
                 setLoading(false);
             });
     }
@@ -93,10 +98,6 @@ const Form: React.FC<Props> = ({}) => {
 
     }, [basePrice, selectedOptions]);
 
-    useEffect(() => {
-        setFormData({ ...formData, ['model']: selectedGuitarID, });
-    }, [selectedGuitarID]);
-
     const handleOnGuitarChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const target = e.target;
         const name = target.name;
@@ -104,7 +105,6 @@ const Form: React.FC<Props> = ({}) => {
 
         if ('model' === name) {
             getData(value);
-            setFormData({ ...formData, [name]: value, });
             dispatch(setSelectedGuitarID({ selectedGuitarID: value }))
         }
     }
@@ -114,11 +114,7 @@ const Form: React.FC<Props> = ({}) => {
         const name = target.name;
         const value = target.value;
 
-        setFormData({ ...formData, [name]: value, });
-    }
 
-    const handleOnChangeValue = (name: string, value: string) => {
-        setFormData({ ...formData, [name]: value, });
     }
 
     const handleOnSubmit: FormEventHandler<HTMLFormElement> = (e: FormEvent<HTMLFormElement>) => {
@@ -137,7 +133,7 @@ const Form: React.FC<Props> = ({}) => {
         const data = new URLSearchParams();
         data.append('security', security);
         data.append('action', requestAction);
-        data.append('data', JSON.stringify(formData));
+        data.append('data', JSON.stringify(formData.entities));
 
         const requestParams: RequestInit = {
             body: data,
@@ -172,7 +168,7 @@ const Form: React.FC<Props> = ({}) => {
             {errorMessage && <div className="fggc-form-error">{errorMessage}</div>}
 
             <form onChange={handleOnFormChange} onSubmit={handleOnSubmit}>
-                <GuitarsSection guitars={guitars} sections={sections} onGuitarChange={handleOnGuitarChange} onChangeValue={handleOnChangeValue}/>
+                <GuitarsSection guitars={guitars} sections={sections} onGuitarChange={handleOnGuitarChange}/>
 
                 {sections && sections.map((section: SectionData) => {
                     return (
@@ -182,7 +178,7 @@ const Form: React.FC<Props> = ({}) => {
                                 return (
                                     <Group key={group.id} {...group}>
                                         {group.fields.map((field: FieldData) => {
-                                            return <Field key={field.id} field={field} index={field.id} onChangeValue={handleOnChangeValue}/>
+                                            return <Field key={field.id} field={field} index={field.id}/>
                                         })}
                                     </Group>
                                 )
@@ -192,7 +188,7 @@ const Form: React.FC<Props> = ({}) => {
                     );
                 })}
 
-                {!!totalPrice && <PriceEstimate totalPrice={totalPrice}/>}
+                {!!totalPrice && <PriceEstimate totalPrice={totalPrice.toString()}/>}
 
                 <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"}>{"Submit"}</button>
             </form>

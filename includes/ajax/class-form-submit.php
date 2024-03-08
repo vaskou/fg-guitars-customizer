@@ -4,6 +4,7 @@ namespace FG_Guitars_Customizer\Ajax;
 
 use FG_Guitars_Customizer\Helpers\Helpers;
 use FG_Guitars_Customizer\Post_Types\Customizer_Field;
+use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
 
 class Form_Submit {
 
@@ -32,13 +33,13 @@ class Form_Submit {
 		$form_data = ! empty( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : '';
 
 		$data = json_decode( $form_data, true );
-		error_log( print_r( $data, 1 ) );
+//		error_log( print_r( $data, 1 ) );
 		$body    = $this->get_mail_body( $data );
 		$to      = 'vaskou@yesinternet.gr';
 		$subject = 'Guitar customizer';
 		$headers = [ 'Content-Type:text/html' ];
-		error_log( print_r( $body, 1 ) );
-//		wp_mail( $to, $subject, $body, $headers );
+//		error_log( print_r( $body, 1 ) );
+		wp_mail( $to, $subject, $body, $headers );
 
 		wp_send_json( 'test' );
 	}
@@ -50,51 +51,94 @@ class Form_Submit {
 
 		$guitar_selected_options = [];
 
-		if ( ! empty( $data['model'] ) ) {
-			$label = __( 'Guitar', 'fg-guitar-customizer' );
+		$tree = Helpers::get_group_field_option_tree();
 
-			$value = Helpers::get_post_title( $data['model'] );
+		foreach ( $tree as $section ) {
+			if ( empty( $section['groups'] ) ) {
+				continue;
+			}
 
-			$guitar_selected_options[][] = [
+			foreach ( $section['groups'] as $group ) {
+				if ( empty( $group['group_id'] || empty( $group['fields'] ) ) ) {
+					continue;
+				}
+
+				$group_has_guitar_selection_field = Customizer_Fields_Group::get_has_guitar_selection_field( $group['group_id'] );
+
+				if ( $group_has_guitar_selection_field ) {
+					if ( ! empty( $data['model'] ) ) {
+						$label = __( 'Guitar', 'fg-guitar-customizer' );
+
+						$value = Helpers::get_post_title( $data['model']['value'] );
+
+						$guitar_selected_options[ $group['group_id'] ][] = [
+							'type'  => 'text',
+							'label' => $label,
+							'value' => $value,
+						];
+					}
+				}
+
+				foreach ( $group['fields'] as $field ) {
+					if ( empty( $field['field_id'] ) ) {
+						continue;
+					}
+
+					$field_id = $field['field_id'];
+
+					if ( empty( $data[ $field_id ] ) ) {
+						continue;
+					}
+					$item = $data[ $field_id ];
+
+					$field_group = $group['group_id'];
+					$field_type  = Customizer_Field::get_field_type( $field_id );
+
+					$label = Helpers::get_post_title( $field_id );
+
+					if ( empty( $label ) ) {
+						continue;
+					}
+
+					if ( in_array( $field_type, [ 'text', 'email', 'textarea' ] ) ) {
+						$value = $item['value'];
+					} else {
+						$value = Helpers::get_post_title( $item['value'] );
+					}
+
+					$guitar_selected_options[ $field_group ][] = [
+						'type'  => $field_type,
+						'label' => $label,
+						'value' => $value,
+					];
+				}
+			}
+
+		}
+
+		if ( ! empty( $data['price_estimate'] ) ) {
+			$label = __( 'Price Estimate', 'fg-guitar-customizer' );
+
+			$value = $data['price_estimate']['value'];
+
+			$guitar_selected_options['price_estimate'][] = [
 				'type'  => 'text',
 				'label' => $label,
 				'value' => $value,
 			];
 		}
 
-		foreach ( $data as $field_id => $option_id ) {
-			$field_group = Customizer_Field::get_field_group( $field_id );
-			$field_type  = Customizer_Field::get_field_type( $field_id );
-
-			$label = Helpers::get_post_title( $field_id );
-
-			if ( empty( $label ) ) {
-				continue;
-			}
-
-			if ( in_array( $field_type, [ 'text', 'email', 'textarea' ] ) ) {
-				$value = $option_id;
-			} else {
-				$value = Helpers::get_post_title( $option_id );
-			}
-
-			$group = Helpers::get_post_title( $field_group );
-
-			$guitar_selected_options[ $field_group ][] = [
-				'group' => $group,
-				'type'  => $field_type,
-				'label' => $label,
-				'value' => $value,
-			];
-		}
-
+//		error_log( print_r( $guitar_selected_options, 1 ) );
 		ob_start();
 		?>
 
-		<?php foreach ( $guitar_selected_options as $groups ):
-            ?>
+		<?php foreach ( $guitar_selected_options as $group_id => $group ): ?>
 
-			<?php foreach ( $groups as $option ): ?>
+			<?php $group_title = Helpers::get_post_title( $group_id ); ?>
+
+            <h3><?php echo $group_title; ?></h3>
+
+			<?php foreach ( $group as $option ): ?>
 
 				<?php if ( $option['type'] == 'textarea' ): ?>
                     <div>
@@ -114,5 +158,21 @@ class Form_Submit {
 		<?php
 
 		return ob_get_clean();
+	}
+
+	private function _get_fields_order() {
+		$fields = Customizer_Field::get_items();
+
+		if ( empty( $fields ) ) {
+			return [];
+		}
+
+		$order = [];
+
+		foreach ( $fields as $field ) {
+			$order[] = $field->ID;
+		}
+
+		return $order;
 	}
 }

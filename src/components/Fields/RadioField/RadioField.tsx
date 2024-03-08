@@ -4,13 +4,13 @@ import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "..
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
 import './styles.scss';
+import { upsertData } from "../../Form/formSubmitSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined,
-    onChangeValue?: (name: string, value: string) => void,
 }
 
-const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onChangeValue }) => {
+const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
 
     const dispatch = useAppDispatch();
 
@@ -27,12 +27,6 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
     }, [options]);
 
     useEffect(() => {
-        if (onChangeValue) {
-            onChangeValue(fieldName, optionChecked);
-        }
-    }, [optionChecked]);
-
-    useEffect(() => {
         const selectedOption: SelectedOption = {
             id: id,
             option: options.find((option) => {
@@ -41,6 +35,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
         }
 
         dispatch(upsertSelectedOptions(selectedOption));
+        dispatch(upsertData({ id: fieldName, value: optionChecked }))
 
     }, [optionChecked]);
 
@@ -70,7 +65,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
                                    data-id={option.id}
                                    data-price={option.price}
                                    onChange={handleOnChange}/>
-                            <span className="label"> {option.label} <PriceAdded price={option.price}/></span>
+                            <span className="label"> {option.label} <PriceAdded price={option.price.toString()}/></span>
                         </label>
                     </div>
                 );
