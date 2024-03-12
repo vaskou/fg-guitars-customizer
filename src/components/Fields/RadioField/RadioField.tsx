@@ -35,7 +35,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
         }
 
         dispatch(upsertSelectedOptions(selectedOption));
-        dispatch(upsertData({ id: fieldName, value: optionChecked }))
+        dispatch(upsertData({ id: fieldName, value: optionChecked, price: selectedOption?.option?.price }))
 
     }, [optionChecked]);
 

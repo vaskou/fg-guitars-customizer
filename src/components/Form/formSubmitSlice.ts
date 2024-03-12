@@ -5,6 +5,7 @@ import store, { RootState } from "../../redux/store";
 export interface FieldSubmitData {
     id: string;
     value: string;
+    price?: number | string;
 }
 
 export const fieldSubmitDataAdapter = createEntityAdapter<FieldSubmitData>();

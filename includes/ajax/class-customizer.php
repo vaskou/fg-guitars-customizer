@@ -130,10 +130,18 @@ class Customizer {
 				continue;
 			}
 
+			$has_enabled_options = array_filter( $options, function ( $option ) {
+				return ! empty( $option['enable'] );
+			} );
+
+			if ( ! $has_enabled_options ) {
+				continue;
+			}
+
 			$guitars[ $post->ID ] = [
 				'id'        => $post->ID,
 				'value'     => $post->ID,
-				'label'      => $post->post_title,
+				'label'     => $post->post_title,
 				'basePrice' => get_post_meta( $post->ID, 'fggc_customizer_price', true ),
 			];
 		}
@@ -229,7 +237,7 @@ class Customizer {
 
 			$option_data[] = [
 				'id'      => $option_id,
-				'label'    => $option_post->post_title,
+				'label'   => $option_post->post_title,
 				'value'   => $option_id,//$option_post->post_name,
 				'price'   => $this->customizer_options[ $option_id ]['price'],
 				'default' => ! empty( $this->customizer_options[ $option_id ]['default'] ),

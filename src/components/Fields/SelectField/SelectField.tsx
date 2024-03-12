@@ -37,7 +37,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
         }
 
         dispatch(upsertSelectedOptions(selectedOption));
-        dispatch(upsertData({ id: fieldName, value: optionChecked }))
+        dispatch(upsertData({ id: fieldName, value: optionChecked, price: selectedOption?.option?.price }))
 
     }, [options, optionChecked, optionIDChecked]);
 

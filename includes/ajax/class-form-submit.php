@@ -106,10 +106,13 @@ class Form_Submit {
 						$value = Helpers::get_post_title( $item['value'] );
 					}
 
+					$price = ! empty( $item['price'] ) ? $item['price'] : 0;
+
 					$guitar_selected_options[ $field_group ][] = [
 						'type'  => $field_type,
 						'label' => $label,
 						'value' => $value,
+						'price' => $price,
 					];
 				}
 			}
@@ -146,8 +149,12 @@ class Form_Submit {
                         <div><?php echo wpautop( $option['value'] ); ?></div>
                     </div>
 				<?php else: ?>
+					<?php $price = ! empty( $option['price'] ) ? $option['price'] : ''; ?>
                     <div>
                         <span><strong><?php echo $option['label']; ?>:</strong></span> <span><?php echo $option['value']; ?></span>
+						<?php if ( ! empty( $price ) ): ?>
+                            <span><?php echo sprintf( __( '(+%s €)', 'fg-guitars-customizer' ), $price ) ?></span>
+						<?php endif; ?>
                     </div>
 				<?php endif; ?>
 

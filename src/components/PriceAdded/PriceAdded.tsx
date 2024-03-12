@@ -9,7 +9,7 @@ const PriceAdded: React.FC<Props> = ({ price }) => {
 
     return (
         <>
-            {price && <>+<Price price={price}/></>}
+            {price && <>(+<Price price={price}/>)</>}
         </>
     );
 

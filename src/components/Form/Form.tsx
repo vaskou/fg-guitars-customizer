@@ -130,6 +130,8 @@ const Form: React.FC<Props> = ({}) => {
 
         const url = `${adminURL}`
 
+        setLoading(true);
+
         const data = new URLSearchParams();
         data.append('security', security);
         data.append('action', requestAction);
@@ -152,10 +154,12 @@ const Form: React.FC<Props> = ({}) => {
                 const data = await response.json();
                 console.log(data)
                 setErrorMessage(data?.message);
+                setLoading(false);
             }
         } catch (error) {
             const message = fggc_customizer_data.error_message
             setErrorMessage(message);
+            setLoading(false);
         }
     }
 

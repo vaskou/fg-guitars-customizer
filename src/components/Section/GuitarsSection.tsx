@@ -2,7 +2,6 @@ import React, { ChangeEventHandler } from "react";
 import { FieldData, GroupData, OptionData, SectionData } from "../Form/formSlice";
 import Section, { SectionTypes } from "./Section";
 import Group from "../Group/Group";
-import SelectField from "../Fields/SelectField/SelectField";
 import Field from "../Field/Field";
 
 interface Props {
@@ -22,9 +21,17 @@ const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange }) 
                 guitarsSection && guitarsSection.groups.length > 0 &&
                 <Section key={guitarsSection.id} title={guitarsSection.title}>
                     {guitarsSection.groups.map((group: GroupData) => {
+                        const modelField: FieldData = {
+                            id: 'model',
+                            label: 'Model',
+                            fieldName: 'model',
+                            isRequired: true,
+                            options: guitars,
+                            type: 'select',
+                        }
                         return (
                             <Group key={group.id} {...group}>
-                                <SelectField id={'model'} label={'Model'} fieldName={'model'} isRequired={true} options={guitars} onChange={onGuitarChange}/>
+                                <Field field={modelField} index={'model'} onChange={onGuitarChange}/>
                                 {group.fields.map((field: FieldData) => {
                                     return <Field key={field.id} field={field} index={field.id}/>
                                 })}
