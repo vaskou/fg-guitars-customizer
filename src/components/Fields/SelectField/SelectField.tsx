@@ -1,5 +1,4 @@
 import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
-import FieldWrapper from "../../FieldWrapper/FieldWrapper";
 import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
@@ -56,7 +55,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     }
 
     return (
-        <FieldWrapper label={label}>
+        <>
             <select name={fieldName} className="uk-select" onChange={handleOnChange} required={isRequired} value={optionChecked}>
                 {options.map((option) => {
                     return (
@@ -68,7 +67,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
                     );
                 })}
             </select>
-        </FieldWrapper>
+        </>
     );
 }
 

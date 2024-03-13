@@ -1,5 +1,4 @@
 import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
-import FieldWrapper from "../../FieldWrapper/FieldWrapper";
 import { FieldData } from "../../Form/formSlice";
 import { useAppDispatch } from "../../../redux/store";
 import { selectItem, upsertData } from "../../Form/formSubmitSlice";
@@ -38,9 +37,9 @@ const EmailField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
     }
 
     return (
-        <FieldWrapper label={label}>
+        <>
             <input type="email" name={fieldName} className="uk-input" value={valueState} onChange={handleOnChange} placeholder={label} required={isRequired} autoComplete="off"/>
-        </FieldWrapper>
+        </>
     );
 }
 

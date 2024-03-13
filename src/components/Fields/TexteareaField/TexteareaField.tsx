@@ -1,5 +1,4 @@
 import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
-import FieldWrapper from "../../FieldWrapper/FieldWrapper";
 import { FieldData } from "../../Form/formSlice";
 import { useAppDispatch } from "../../../redux/store";
 import { selectItem, upsertData } from "../../Form/formSubmitSlice";
@@ -38,10 +37,10 @@ const TextareaField: React.FC<Props> = ({ label, fieldName, onChange }) => {
     }
 
     return (
-        <FieldWrapper label={label}>
+        <>
             <textarea name={fieldName} className="uk-textarea" value={valueState} onChange={handleOnChange} placeholder={label}>
             </textarea>
-        </FieldWrapper>
+        </>
     );
 }
 
