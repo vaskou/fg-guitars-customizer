@@ -1,8 +1,9 @@
 import React, { ChangeEventHandler } from "react";
-import { FieldData, GroupData, OptionData, SectionData } from "../Form/formSlice";
+import { FieldData, GroupData, OptionData, SectionData, selectSelectedGuitarID } from "../Form/formSlice";
 import Section, { SectionTypes } from "./Section";
 import Group from "../Group/Group";
 import Field from "../Field/Field";
+import { useSelector } from "react-redux";
 
 interface Props {
     guitars: OptionData[]
@@ -11,6 +12,8 @@ interface Props {
 }
 
 const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange }) => {
+    const selectedGuitarID = useSelector(selectSelectedGuitarID);
+
     let guitarsSection = sections.find((section: SectionData) => {
         return section.type === SectionTypes.GUITARS;
     })
@@ -33,7 +36,7 @@ const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange }) 
                             <Group key={group.id} {...group}>
                                 <Field field={modelField} index={'model'} onChange={onGuitarChange}/>
                                 {group.fields.map((field: FieldData) => {
-                                    return <Field key={field.id} field={field} index={field.id}/>
+                                    return <Field key={field.id} field={field} index={`${selectedGuitarID}-${field.id}`}/>
                                 })}
                             </Group>
                         )

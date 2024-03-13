@@ -1,4 +1,4 @@
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
+import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, useEffect, useState } from 'react';
 import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
@@ -6,9 +6,10 @@ import { upsertData } from "../../Form/formSubmitSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLSelectElement> | undefined,
+    onInvalid?: FormEventHandler<HTMLSelectElement> | undefined,
 }
 
-const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
+const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onInvalid }) => {
 
     const dispatch = useAppDispatch();
 
@@ -54,9 +55,15 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
         setOptionChecked(value);
     }
 
+    const handleOnInvalid = (e: FormEvent<HTMLSelectElement>) => {
+        if (onInvalid) {
+            onInvalid(e);
+        }
+    }
+
     return (
         <>
-            <select name={fieldName} className="uk-select" onChange={handleOnChange} required={isRequired} value={optionChecked}>
+            <select name={fieldName} className="uk-select" onChange={handleOnChange} onInvalid={handleOnInvalid} required={isRequired} value={optionChecked}>
                 {options.map((option) => {
                     return (
                         <option key={option.id} value={option.value}

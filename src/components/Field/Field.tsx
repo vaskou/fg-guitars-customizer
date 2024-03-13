@@ -6,6 +6,7 @@ import TextareaField from "../Fields/TexteareaField/TexteareaField";
 import EmailField from "../Fields/EmailField/EmailField";
 import TextField from "../Fields/TextField/TextField";
 import FieldWrapper from "../FieldWrapper/FieldWrapper";
+import './styles.scss';
 
 interface Props {
     field: FieldData,
@@ -15,14 +16,58 @@ interface Props {
 
 const Field: React.FC<Props> = ({ field, index, onChange }) => {
 
+    const [fieldComponent, setFieldComponent] = useState<JSX.Element | undefined>();
     const [isTextControls, setIsTextControls] = useState(false);
     const [isInvalid, setIsInvalid] = useState(false);
+    const [validationMessage, setValidationMessage] = useState('');
 
     useEffect(() => {
-        if (field.type === 'radio') {
-            setIsTextControls(true);
+        let _fieldComponent: JSX.Element | undefined;
+
+        switch (field.type) {
+            case 'select':
+                _fieldComponent = <SelectField key={index} {...field} onChange={handleOnChange} onInvalid={handleOnInvalid}/>
+                break;
+            case 'radio':
+                _fieldComponent = <RadioField key={index} {...field} onChange={handleOnChange} onInvalid={handleOnInvalid}/>
+                setIsTextControls(true);
+                break;
+            case 'textarea':
+                _fieldComponent = <TextareaField key={index} {...field} onChange={handleOnChange} onInvalid={handleOnInvalid}/>
+                break;
+            case 'email':
+                _fieldComponent = <EmailField key={index} {...field} onChange={handleOnChange} onInvalid={handleOnInvalid}/>
+                break;
+            case 'text':
+                _fieldComponent = <TextField key={index} {...field} onChange={handleOnChange} onInvalid={handleOnInvalid}/>
+                break;
         }
-    }, [field]);
+
+        setFieldComponent(_fieldComponent);
+    }, [index, field, onChange]);
+
+    useEffect(() => {
+        if (!isInvalid) {
+            setValidationMessage('');
+            return;
+        }
+
+        switch (field.type) {
+            case 'select':
+            case 'radio':
+                setValidationMessage(fggc_customizer_data.option_validation_message);
+                break;
+            case 'textarea':
+            case 'email':
+            case 'text':
+                setValidationMessage(fggc_customizer_data.text_validation_message);
+                break;
+        }
+    }, [index, isInvalid, field]);
+
+    useEffect(() => {
+        setIsInvalid(false);
+    }, [index]);
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         if (onChange) {
@@ -30,39 +75,14 @@ const Field: React.FC<Props> = ({ field, index, onChange }) => {
         }
         setIsInvalid(false);
     }
-    const handleOnInvalid = (e: FormEvent<HTMLInputElement>) => {
-        // console.log(e.target)
-        // e.preventDefault();
+    const handleOnInvalid = (e: FormEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        e.preventDefault();
         setIsInvalid(true);
     }
 
-    const getField = (field: FieldData, index: string) => {
-        let fieldComponent;
-
-        switch (field.type) {
-            case 'select':
-                fieldComponent = <SelectField key={index} {...field} onChange={onChange}/>
-                break;
-            case 'radio':
-                fieldComponent = <RadioField key={index} {...field} onChange={handleOnChange} onInvalid={handleOnInvalid}/>
-                break;
-            case 'textarea':
-                fieldComponent = <TextareaField key={index} {...field} onChange={onChange}/>
-                break;
-            case 'email':
-                fieldComponent = <EmailField key={index} {...field} onChange={onChange}/>
-                break;
-            case 'text':
-                fieldComponent = <TextField key={index} {...field} onChange={onChange}/>
-                break;
-        }
-
-        return fieldComponent;
-    }
-
     return (
-        <FieldWrapper label={field.label} isTextControls={isTextControls} isInvalid={isInvalid}>
-            {getField(field, index)}
+        <FieldWrapper label={field.label} isTextControls={isTextControls} isInvalid={isInvalid} validationMessage={validationMessage}>
+            {fieldComponent}
         </FieldWrapper>
     );
 }

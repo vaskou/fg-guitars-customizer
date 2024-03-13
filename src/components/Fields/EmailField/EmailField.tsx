@@ -1,13 +1,14 @@
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
+import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, useEffect, useState } from 'react';
 import { FieldData } from "../../Form/formSlice";
 import { useAppDispatch } from "../../../redux/store";
 import { selectItem, upsertData } from "../../Form/formSubmitSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
-    onChange?: ChangeEventHandler<HTMLInputElement> | undefined
+    onChange?: ChangeEventHandler<HTMLInputElement> | undefined,
+    onInvalid?: FormEventHandler<HTMLInputElement> | undefined,
 }
 
-const EmailField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange }) => {
+const EmailField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onInvalid }) => {
 
     const dispatch = useAppDispatch();
 
@@ -36,9 +37,16 @@ const EmailField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
         dispatch(upsertData({ id: name, value: value }))
     }
 
+    const handleOnInvalid = (e: FormEvent<HTMLInputElement>) => {
+        if (onInvalid) {
+            onInvalid(e);
+        }
+    }
+
     return (
         <>
-            <input type="email" name={fieldName} className="uk-input" value={valueState} onChange={handleOnChange} placeholder={label} required={isRequired} autoComplete="off"/>
+            <input type="email" name={fieldName} className="uk-input" value={valueState} onChange={handleOnChange} onInvalid={handleOnInvalid}
+                   placeholder={label} required={isRequired} autoComplete="off"/>
         </>
     );
 }

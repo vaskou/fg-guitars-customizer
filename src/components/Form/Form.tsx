@@ -1,22 +1,8 @@
-import React, { ChangeEvent, FormEvent, FormEventHandler, useEffect, useState } from 'react';
+import React, { ChangeEvent, FormEvent, FormEventHandler, MouseEventHandler, useEffect, useState } from 'react';
 import Section, { SectionTypes } from "../Section/Section";
 import Group from "../Group/Group";
 import { useSelector } from "react-redux";
-import {
-    deleteSelectedOptions,
-    FieldData,
-    GroupData,
-    loadData,
-    SectionData,
-    selectError,
-    selectGuitarsArray,
-    selectSectionsArray,
-    selectSelectedGuitarID,
-    selectSelectedOptions,
-    selectTotalPrice,
-    setSelectedGuitarID,
-    setTotalPrice
-} from "./formSlice";
+import { deleteSelectedOptions, FieldData, GroupData, loadData, SectionData, selectError, selectGuitarsArray, selectSectionsArray, selectSelectedGuitarID, selectSelectedOptions, selectTotalPrice, setTotalPrice } from "./formSlice";
 import { useAppDispatch } from "../../redux/store";
 import Loader from "../Loader/Loader";
 import PriceEstimate from "../PriceEstimate/PriceEstimate";
@@ -35,6 +21,7 @@ const Form: React.FC<Props> = ({}) => {
     const [loading, setLoading] = useState(true);
     const [basePrice, setBasePrice] = useState(0);
     const [errorMessage, setErrorMessage] = useState('');
+    const [isInvalid, setIsInvalid] = useState(false);
 
     const guitars = useSelector(selectGuitarsArray);
     const sections = useSelector(selectSectionsArray);
@@ -105,7 +92,7 @@ const Form: React.FC<Props> = ({}) => {
 
         if ('model' === name) {
             getData(value);
-            dispatch(setSelectedGuitarID({ selectedGuitarID: value }))
+            // dispatch(setSelectedGuitarID({ selectedGuitarID: value }))
         }
     }
 
@@ -115,6 +102,25 @@ const Form: React.FC<Props> = ({}) => {
         const value = target.value;
 
 
+    }
+
+    const handleOnInvalid: FormEventHandler<HTMLFormElement> = (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault();
+
+        const target = e.target as HTMLFormElement;
+
+        if (target?.name && !isInvalid) {
+            const elem = document.getElementsByName(target.name)
+            const top = elem[0].offsetTop - 200;
+
+            window.scroll({ behavior: "smooth", top: top });
+
+            setIsInvalid(true);
+        }
+    }
+
+    const handleOnSubmitClick: MouseEventHandler<HTMLButtonElement> = (e) => {
+        setIsInvalid(false);
     }
 
     const handleOnSubmit: FormEventHandler<HTMLFormElement> = (e: FormEvent<HTMLFormElement>) => {
@@ -171,7 +177,7 @@ const Form: React.FC<Props> = ({}) => {
 
             {errorMessage && <div className="fggc-form-error">{errorMessage}</div>}
 
-            <form onChange={handleOnFormChange} onSubmit={handleOnSubmit}>
+            <form onChange={handleOnFormChange} onSubmit={handleOnSubmit} onInvalid={handleOnInvalid}>
                 <GuitarsSection guitars={guitars} sections={sections} onGuitarChange={handleOnGuitarChange}/>
 
                 {sections && sections.map((section: SectionData) => {
@@ -182,7 +188,7 @@ const Form: React.FC<Props> = ({}) => {
                                 return (
                                     <Group key={group.id} {...group}>
                                         {group.fields.map((field: FieldData) => {
-                                            return <Field key={field.id} field={field} index={field.id}/>
+                                            return <Field key={field.id} field={field} index={`${selectedGuitarID}-${field.id}`}/>
                                         })}
                                     </Group>
                                 )
@@ -194,7 +200,7 @@ const Form: React.FC<Props> = ({}) => {
 
                 {!!totalPrice && <PriceEstimate totalPrice={totalPrice.toString()}/>}
 
-                <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"}>{"Submit"}</button>
+                <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"} onClick={handleOnSubmitClick}>{"Submit"}</button>
             </form>
         </div>
     );

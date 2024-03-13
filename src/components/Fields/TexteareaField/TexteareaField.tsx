@@ -1,13 +1,14 @@
-import React, { ChangeEvent, ChangeEventHandler, useEffect, useState } from 'react';
+import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, useEffect, useState } from 'react';
 import { FieldData } from "../../Form/formSlice";
 import { useAppDispatch } from "../../../redux/store";
 import { selectItem, upsertData } from "../../Form/formSubmitSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
-    onChange?: ChangeEventHandler<HTMLTextAreaElement> | undefined
+    onChange?: ChangeEventHandler<HTMLTextAreaElement> | undefined,
+    onInvalid?: FormEventHandler<HTMLTextAreaElement> | undefined,
 }
 
-const TextareaField: React.FC<Props> = ({ label, fieldName, onChange }) => {
+const TextareaField: React.FC<Props> = ({ label, fieldName, isRequired, onChange, onInvalid }) => {
 
     const dispatch = useAppDispatch();
 
@@ -36,9 +37,16 @@ const TextareaField: React.FC<Props> = ({ label, fieldName, onChange }) => {
         dispatch(upsertData({ id: name, value: value }))
     }
 
+    const handleOnInvalid = (e: FormEvent<HTMLTextAreaElement>) => {
+        if (onInvalid) {
+            onInvalid(e);
+        }
+    }
+
     return (
         <>
-            <textarea name={fieldName} className="uk-textarea" value={valueState} onChange={handleOnChange} placeholder={label}>
+            <textarea name={fieldName} className="uk-textarea" value={valueState} required={isRequired} onChange={handleOnChange} onInvalid={handleOnInvalid}
+                      placeholder={label}>
             </textarea>
         </>
     );
