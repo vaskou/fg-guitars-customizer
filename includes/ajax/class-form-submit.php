@@ -33,15 +33,22 @@ class Form_Submit {
 		$form_data = ! empty( $_POST['data'] ) ? wp_unslash( $_POST['data'] ) : '';
 
 		$data = json_decode( $form_data, true );
-//		error_log( print_r( $data, 1 ) );
+
 		$body    = $this->get_mail_body( $data );
 		$to      = 'vaskou@yesinternet.gr';
 		$subject = 'Guitar customizer';
 		$headers = [ 'Content-Type:text/html' ];
-//		error_log( print_r( $body, 1 ) );
-		wp_mail( $to, $subject, $body, $headers );
 
-		wp_send_json( 'test' );
+		$mail_sent = wp_mail( $to, $subject, $body, $headers );
+
+		$response = [
+			'success' => $mail_sent,
+			'message' => $mail_sent ?
+				__( 'Thank you for your submission', 'fg-guitar-customizer' ) :
+				__( 'Something wrong happened. Please try later.', 'fg-guitars-customizer' ),
+		];
+
+		wp_send_json( $response );
 	}
 
 	public function get_mail_body( $data ) {
@@ -131,7 +138,6 @@ class Form_Submit {
 			];
 		}
 
-//		error_log( print_r( $guitar_selected_options, 1 ) );
 		ob_start();
 		?>
 

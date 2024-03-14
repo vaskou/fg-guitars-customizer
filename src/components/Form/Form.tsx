@@ -10,6 +10,7 @@ import './styles.scss';
 import Field from "../Field/Field";
 import GuitarsSection from "../Section/GuitarsSection";
 import { clearData, selectItemsArray } from "./formSubmitSlice";
+import SubmitMessage from "../SubmitMessage/SubmitMessage";
 
 interface Props {
 }
@@ -20,7 +21,8 @@ const Form: React.FC<Props> = ({}) => {
 
     const [loading, setLoading] = useState(true);
     const [basePrice, setBasePrice] = useState(0);
-    const [errorMessage, setErrorMessage] = useState('');
+    const [submitMessage, setSubmitMessage] = useState('');
+    const [submitIsSuccess, setSubmitIsSuccess] = useState(false);
     const [isInvalid, setIsInvalid] = useState(false);
 
     const guitars = useSelector(selectGuitarsArray);
@@ -34,6 +36,7 @@ const Form: React.FC<Props> = ({}) => {
 
     const getData = (value?: string) => {
         setLoading(true);
+        setSubmitMessage('');
 
         // dispatch(deleteSelectedOptions());
         // dispatch(clearData());
@@ -137,6 +140,7 @@ const Form: React.FC<Props> = ({}) => {
         const url = `${adminURL}`
 
         setLoading(true);
+        setSubmitMessage('');
 
         const data = new URLSearchParams();
         data.append('security', security);
@@ -159,12 +163,16 @@ const Form: React.FC<Props> = ({}) => {
             } else {
                 const data = await response.json();
                 console.log(data)
-                setErrorMessage(data?.message);
+
+                setSubmitIsSuccess(!!data.success);
+                setSubmitMessage(data.message);
                 setLoading(false);
             }
         } catch (error) {
             const message = fggc_customizer_data.error_message
-            setErrorMessage(message);
+
+            setSubmitIsSuccess(false);
+            setSubmitMessage(message);
             setLoading(false);
         }
     }
@@ -174,8 +182,6 @@ const Form: React.FC<Props> = ({}) => {
             {loading && <Loader/>}
 
             {error && <div className="fggc-form-error">{error}</div>}
-
-            {errorMessage && <div className="fggc-form-error">{errorMessage}</div>}
 
             <form onChange={handleOnFormChange} onSubmit={handleOnSubmit} onInvalid={handleOnInvalid}>
                 <GuitarsSection guitars={guitars} sections={sections} onGuitarChange={handleOnGuitarChange}/>
@@ -202,6 +208,8 @@ const Form: React.FC<Props> = ({}) => {
 
                 <button type={"submit"} className={"uk-button uk-button-primary uk-margin-top"} onClick={handleOnSubmitClick}>{"Submit"}</button>
             </form>
+
+            <SubmitMessage submitMessage={submitMessage} isSuccess={submitIsSuccess}/>
         </div>
     );
 }

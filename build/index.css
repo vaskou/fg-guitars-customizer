@@ -4,4 +4,5 @@
 .fggc-form-guitar-section:empty~*{display:none}
 .fggc-field__radio .uk-radio{border-radius:0}
 .fggc-field__validation-message{border:1px solid;margin-top:5px;padding:2px 5px}
+.fggc-form-submit-message{border:1px solid;display:inline-block;margin-top:20px;padding:10px 15px}.fggc-form-submit-message.hide{display:none}.fggc-form-submit-message.show{animation:scale-in-center .5s cubic-bezier(.25,.46,.45,.94) both;display:inline-block}@keyframes scale-in-center{0%{opacity:1;transform:scale(0)}to{opacity:1;transform:scale(1)}}
 
