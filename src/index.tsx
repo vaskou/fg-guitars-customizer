@@ -6,9 +6,11 @@ import './main.scss';
 
 const element = document.getElementById('app') as Element;
 
-const root = createRoot(element);
-root.render(
-    <Provider store={store}>
-        <App/>
-    </Provider>
-);
+if (element) {
+    const root = createRoot(element);
+    root.render(
+        <Provider store={store}>
+            <App/>
+        </Provider>
+    );
+}
