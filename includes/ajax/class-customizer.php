@@ -28,13 +28,26 @@ class Customizer {
 
 		add_action( "wp_ajax_{$action}", [ $this, 'get_customizer_data' ] );
 		add_action( "wp_ajax_nopriv_{$action}", [ $this, 'get_customizer_data' ] );
+
+		add_action( 'rest_api_init', [ $this, 'register_rest_routes' ] );
 	}
 
-	public function get_customizer_data() {
+	public function register_rest_routes() {
+		$namespace = 'fg-guitars-customizer/v1';
+		$endpoint  = '/get_customizer_data';
+		$args      = [
+			'methods'             => 'GET',
+			'callback'            => [ $this, 'get_customizer_data' ],
+			'permission_callback' => '__return_true',
+		];
+		register_rest_route( $namespace, $endpoint, $args );
+	}
+
+	public function get_customizer_data( $data ) {
 
 		$guitars = $this->get_guitars();
 
-		$selected_model = ! empty( $_GET['model'] ) ? $_GET['model'] : 0;
+		$selected_model = ! empty( $data['model'] ) ? $data['model'] : 0;//! empty( $_GET['model'] ) ? $_GET['model'] : 0;
 
 		$selected_guitar_id = ! empty( $guitars[ $selected_model ] ) ? $guitars[ $selected_model ]['id'] : array_key_first( $guitars );
 
@@ -50,10 +63,14 @@ class Customizer {
 
 		$sections = $this->get_sections();
 
-		wp_send_json( [
+		return [
 			'guitars'  => array_values( $guitars ),
 			'sections' => $sections,
-		] );
+		];
+//		wp_send_json( [
+//			'guitars'  => array_values( $guitars ),
+//			'sections' => $sections,
+//		] );
 	}
 
 	public function get_sections() {

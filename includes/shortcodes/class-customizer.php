@@ -30,7 +30,7 @@ class Customizer {
 			'action'                    => Customizer_Ajax::ACTION,
 			'security'                  => wp_create_nonce( Form_Submit::ACTION ),
 			'form_submit_action'        => Form_Submit::ACTION,
-			'url'                       => admin_url( 'admin-ajax.php' ),
+			'url'                       => esc_url_raw( rest_url('fg-guitars-customizer/v1/get_customizer_data') ),//admin_url( 'admin-ajax.php' ),
 			'price_estimate_label'      => __( 'Price estimate', 'fg-guitars-customizer' ),
 			'price_estimate_tax_text'   => __( 'excludes regional taxes', 'fg-guitars-customizer' ),
 			'error_message'             => __( 'Something wrong happened. Please try later.', 'fg-guitars-customizer' ),
