@@ -2,20 +2,11 @@
 
 namespace FG_Guitars_Customizer\Metaboxes;
 
-use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
+use FG_Guitars_Customizer\Helpers\Helpers;
 
 class Customizer_Metabox {
 
-	private $fields = [];
-
 	private static $_instance;
-
-	/**
-	 * @return string
-	 */
-	public function getPrefixMetaboxId() {
-		return $this->prefix_metabox_id;
-	}
 
 	public static function instance() {
 		if ( is_null( self::$_instance ) ) {
@@ -34,118 +25,38 @@ class Customizer_Metabox {
 			return;
 		}
 
-		$this->fields = [
-			'body' => [
-				'name'       => __( 'Body', 'fg-guitars-customizer' ),
-				'type'       => 'group',
-				'repeatable' => false,
-				'fields'     => [
-					'type' => [
-						'name'              => __( 'Type', 'fg-guitars-customizer' ),
-						'type'              => 'multicheck',
-						'options'           => [
-							'check1' => 'Check One',
-							'check2' => 'Check Two',
-							'check3' => 'Check Three',
-						],
-						'select_all_button' => false,
-					]
-				]
-			]
-		];
-
-		$fields = Customizer_Fields_Group::get_fields_array();
-
-		$this->fields = $fields;
-
-		$metabox = $this->_addMetabox( 'fg_guitars' );
-
-		$this->_addMetaboxFields( $metabox );
-	}
-
-	protected function _addMetabox( $post_type, $context = 'normal', $priority = 'high' ) {
-		return new_cmb2_box( array(
+		$metabox = new_cmb2_box( [
 			'id'           => 'fg_guitars_customizer',
 			'title'        => __( 'Customizer', 'fg-guitars-customizer' ),
-			'object_types' => array( $post_type ), // Post type
-			'context'      => $context,
-			'priority'     => $priority,
+			'object_types' => array( 'fg_guitars' ), // Post type
+			'context'      => 'normal',
+			'priority'     => 'high',
 			'show_names'   => true, // Show field names on the left
-		) );
+		] );
+
+		$metabox->add_field( [
+			'id'   => 'fggc_customizer_price',
+			'name' => __( 'Base Price', 'fg-guitar-customizer' ),
+			'type' => 'text_small',
+		] );
+
+		$metabox->add_field( [
+			'id'   => 'fggc_customizer_exclude',
+			'name' => __( 'Exclude', 'fg-guitar-customizer' ),
+			'type' => 'checkbox',
+		] );
+
+		$metabox->add_field( [
+			'id'         => 'fggc_customizer_options',
+			'name'       => __( 'Customizer', 'fg-guitar-customizer' ),
+			'type'       => 'fggc_cmb2_customizer_options_field',
+			'options_cb' => [ $this, 'get_group_field_option_tree' ],
+			'show_names' => false,
+		] );
+
 	}
 
-	/**
-	 * @param $metabox \CMB2
-	 */
-	protected function _addMetaboxFields( $metabox ) {
-		if ( empty( $metabox ) ) {
-			return;
-		}
-
-		foreach ( $this->fields as $id => $values ) {
-
-			$defaults = array(
-				'id' => 'fggc_' . $id,
-			);
-
-			$args = wp_parse_args( $values, $defaults );
-
-			if ( 'group' == $values['type'] ) {
-				$this->_addMetaboxGroupField( $metabox, $args );
-			} else {
-				$metabox->add_field( $args );
-			}
-
-		}
-	}
-
-	/**
-	 * @param $metabox \CMB2
-	 */
-	private function _addMetaboxGroupField( $metabox, $args ) {
-		if ( empty( $metabox ) ) {
-			return;
-		}
-
-		$group_title = $args['name'];
-
-		$group_id = $metabox->add_field( array(
-			'id'         => $args['id'],
-			'type'       => 'group',
-			'options'    => array(
-				'group_title'   => $group_title . ' {#}',
-				'add_button'    => sprintf( __( 'Add Another %s', 'fg-guitars-customizer' ), $group_title ),
-				'remove_button' => sprintf( __( 'Remove %s', 'fg-guitars-customizer' ), $group_title ),
-				'sortable'      => true,
-				// 'closed'         => true, // true to have the groups closed by default
-				// 'remove_confirm' => esc_html__( 'Are you sure you want to remove?', 'cmb2' ), // Performs confirmation before removing group.
-			),
-			'repeatable' => isset( $args['repeatable'] ) ? $args['repeatable'] : true,
-		) );
-
-		$this->_addMetaboxGroupFields( $metabox, $group_id, $args );
-	}
-
-	/**
-	 * @param $metabox \CMB2
-	 * @param $group_id integer
-	 */
-	private function _addMetaboxGroupFields( $metabox, $group_id, $args ) {
-		if ( empty( $metabox ) ) {
-			return;
-		}
-
-		foreach ( $args['fields'] as $id => $values ) {
-
-			$defaults = array(
-				'id' => $id,
-			);
-
-			$args = wp_parse_args( $values, $defaults );
-
-			$metabox->add_group_field( $group_id, $args );
-
-		}
-
+	public function get_group_field_option_tree() {
+		return Helpers::get_group_field_option_tree();
 	}
 }

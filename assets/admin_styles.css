@@ -1,0 +1,38 @@
+:root {
+    --label-color: #222222;
+    --border-color: #e9e9e9;
+    --title-bg-color: #e9e9e9;
+}
+
+.fggc-group-wrapper,
+.fggc-field-wrapper,
+.fggc-option-content {
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.fggc-group-wrapper:last-child,
+.fggc-field-wrapper:last-child,
+.fggc-option-content:last-child {
+    margin-bottom: 0;
+}
+
+.fggc-group-label,
+.fggc-field-label,
+.fggc-option-label {
+    background: var(--title-bg-color);
+    color: var(--label-color);
+    display: block;
+    font-weight: 600;
+    padding: 5px;
+}
+
+.fggc-group-content,
+.fggc-field-content,
+.fggc-option-content {
+    padding: 10px;
+}
+
+.fggc-option-content > .cmb-row {
+    padding-bottom: 0 !important;
+}

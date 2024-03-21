@@ -2,15 +2,16 @@
 
 namespace FG_Guitars_Customizer\Post_Types;
 
+use FG_Guitars_Customizer\Taxonomies\Customizer_Section;
+
 class Customizer_Fields_Group {
 
 	const POST_TYPE_NAME = 'fggc_fields_group';
-
 	const POST_TYPE_SLUG = 'customizer_fields_group';
-
-	const GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY = 'fggc_group_fields';
-
-	const GUITAR_CUSTOMIZER_GROUP_FIELD_OPTIONS_META_KEY = 'fggc_group_field_options';
+	const SECTION_META_KEY = 'section';
+	const HIDE_TITLE_META_KEY = 'hide_title';
+	const GUITAR_SELECTION_FIELD_META_KEY = 'has_guitar_selection_field';
+	const WIDTH_META_KEY = 'width';
 
 	private static $_instance;
 
@@ -25,6 +26,7 @@ class Customizer_Fields_Group {
 	private function __construct() {
 		add_action( 'init', [ $this, 'register_post_type' ] );
 		add_action( 'cmb2_admin_init', [ $this, 'add_metaboxes' ] );
+		add_action( 'admin_menu', [ $this, 'remove_submenu' ] );
 	}
 
 	/**
@@ -34,12 +36,12 @@ class Customizer_Fields_Group {
 		$labels = array(
 			'name'                  => _x( 'FG Guitar Customizer Fields Groups', 'FG Guitar Customizer Fields Groups General Name', 'fg-guitars-customizer' ),
 			'singular_name'         => _x( 'FG Guitar Customizer Fields Group', 'FG Guitar Customizer Fields Group Singular Name', 'fg-guitars-customizer' ),
-			'menu_name'             => __( 'FG Guitar Customizer Fields Groups', 'fg-guitars-customizer' ),
+			'menu_name'             => __( 'FG Guitar Customizer', 'fg-guitars-customizer' ),
 			'name_admin_bar'        => __( 'FG Guitar Customizer Fields Groups', 'fg-guitars-customizer' ),
 			'archives'              => __( 'FG Guitar Customizer Fields Group Archives', 'fg-guitars-customizer' ),
 			'attributes'            => __( 'FG Guitar Customizer Fields Group Attributes', 'fg-guitars-customizer' ),
 			'parent_item_colon'     => __( 'Parent FG Guitar Customizer Fields Group:', 'fg-guitars-customizer' ),
-			'all_items'             => __( 'All FG Guitar Customizer Fields Groups', 'fg-guitars-customizer' ),
+			'all_items'             => __( 'Groups', 'fg-guitars-customizer' ),
 			'add_new_item'          => __( 'Add New FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
 			'add_new'               => __( 'Add New', 'fg-guitars-customizer' ),
 			'new_item'              => __( 'New FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
@@ -94,104 +96,87 @@ class Customizer_Fields_Group {
 		}
 
 		$metabox = new_cmb2_box( array(
-			'id'           => 'fggc_fields_group',
-			'title'        => __( 'FG Guitar Customizer Fields Group', 'fg-guitars-customizer' ),
+			'id'           => 'fggc_group_belongs_to_section_meta_box',
+			'title'        => __( 'Section that belongs to', 'fg-guitars-customizer' ),
 			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
 			'context'      => 'normal',
 			'priority'     => 'high',
 			'show_names'   => true,
 		) );
 
-		$group_field_id = $metabox->add_field( array(
-			'name'    => __( 'Customizer Fields', 'fg-guitars-customizer' ),
-			'id'      => self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY,
-			'type'    => 'group',
+		$metabox->add_field( array(
+			'name'           => __( 'Section', 'fg-guitars-customizer' ),
+			'id'             => self::SECTION_META_KEY,
+			'taxonomy'       => Customizer_Section::TAXONOMY_NAME,
+			'type'           => 'taxonomy_select',
+			'remove_default' => true,
+		) );
+
+		$metabox = new_cmb2_box( array(
+			'id'           => 'fggc_group_settings_meta_box',
+			'title'        => __( 'Group Settings', 'fg-guitars-customizer' ),
+			'object_types' => array( self::POST_TYPE_NAME, ), // Post type
+			'context'      => 'normal',
+			'priority'     => 'high',
+			'show_names'   => true,
+		) );
+
+		$metabox->add_field( array(
+			'name' => __( 'Hide title', 'fg-guitars-customizer' ),
+			'id'   => self::HIDE_TITLE_META_KEY,
+			'type' => 'checkbox',
+		) );
+
+		$metabox->add_field( array(
+			'name' => __( 'Has guitar selection field', 'fg-guitars-customizer' ),
+			'id'   => self::GUITAR_SELECTION_FIELD_META_KEY,
+			'type' => 'checkbox',
+		) );
+
+		$metabox->add_field( array(
+			'name'    => __( 'Width', 'fg-guitars-customizer' ),
+			'id'      => self::WIDTH_META_KEY,
+			'type'    => 'select',
 			'options' => [
-				'group_title'   => __( 'Field {#}', 'fg-guitars-customizer' ),
-				'add_button'    => __( 'Add Another Field', 'fg-guitars-customizer' ),
-				'remove_button' => __( 'Remove Field', 'fg-guitars-customizer' ),
-				'sortable'      => true,
+				'uk-width-1-3@s' => __( '1/3', 'fg-guitars-customizer' ),
+				'uk-width-1-2@s' => __( '1/2', 'fg-guitars-customizer' )
 			],
-		) );
-
-		$metabox->add_group_field( $group_field_id, array(
-			'name' => __( 'Field title', 'fg-guitars-customizer' ),
-			'id'   => 'fggc_group_field_title',
-			'type' => 'text',
-		) );
-
-		$metabox->add_group_field( $group_field_id, array(
-			'name'       => __( 'Options', 'fg-guitars-customizer' ),
-			'id'         => self::GUITAR_CUSTOMIZER_GROUP_FIELD_OPTIONS_META_KEY,
-			'type'       => 'fggc_cmb2_field_option_field',
-			'repeatable' => true,
 		) );
 	}
 
-	public static function get_fields_array() {
-		$args = array(
+	public static function get_has_guitar_selection_field( $group_id ) {
+		return ! empty( get_post_meta( $group_id, self::GUITAR_SELECTION_FIELD_META_KEY, true ) );
+	}
+
+	public static function get_group_width( $group_id ) {
+		return get_post_meta( $group_id, self::WIDTH_META_KEY, true );
+	}
+
+	public static function get_hide_title( $group_id ) {
+		return get_post_meta( $group_id, self::HIDE_TITLE_META_KEY, true );
+	}
+
+	public static function get_items( $args = [] ) {
+		$default = array(
 			'post_type'      => self::POST_TYPE_NAME,
 			'post_status'    => 'publish',
 			'posts_per_page' => - 1,
-			'orderby'        => 'menu',
+			'orderby'        => 'menu_order',
 			'order'          => 'ASC'
 		);
 
+		$args = wp_parse_args( $args, $default );
+
 		$query = new \WP_Query( $args );
 
-		$fields = $query->get_posts();
+		return $query->get_posts();
+	}
 
-//		error_log( print_r( $fields, 1 ) );
+	public function remove_submenu() {
+		global $submenu;
 
-		$result = [];
+		$menu_item = sprintf( 'edit.php?post_type=%s', self::POST_TYPE_NAME );
 
-		if ( ! empty( $fields ) ) {
-			foreach ( $fields as $field ) {
-//				'body' => [
-//					'name'       => __( 'Body', 'fg-guitars-customizer' ),
-//					'type'       => 'group',
-//					'repeatable' => false,
-//					'fields'     => [
-//						'type' => [
-//							'name'              => __( 'Type', 'fg-guitars-customizer' ),
-//							'type'              => 'multicheck',
-//							'options'           => [
-//								'check1' => 'Check One',
-//								'check2' => 'Check Two',
-//								'check3' => 'Check Three',
-//							],
-//							'select_all_button' => false,
-//						]
-//					]
-//				]
-
-				$group_fields = get_post_meta( $field->ID, self::GUITAR_CUSTOMIZER_GROUP_FIELDS_META_KEY, true );
-
-				$g_fields = [];
-				foreach ( $group_fields as $group_field ) {
-					$options = [];
-
-					foreach ( $group_field['fggc_group_field_options'] as $option ) {
-						$options[ sanitize_title( $option['title'] ) ] = $option['title'];
-					}
-
-					$g_fields[ sanitize_title( $group_field['fggc_group_field_title'] ) ] = [
-						'name'              => $group_field['fggc_group_field_title'],
-						'type'              => 'multicheck',
-						'options'           => $options,
-						'select_all_button' => false,
-					];
-				}
-
-				$result[ $field->post_name ] = [
-					'name'       => $field->post_title,
-					'type'       => 'group',
-					'repeatable' => false,
-					'fields'     => $g_fields
-				];
-			}
-		}
-
-		return $result;
+		unset( $submenu[ $menu_item ][10] );
 	}
 }
