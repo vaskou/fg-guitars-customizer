@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "b9fd41a5020b437fd3677b1073ed39f8",
+    "content-hash": "fd3aa386ba1788d4b8595ad315eb555c",
     "packages": [
         {
             "name": "vaskou/autoloader",
@@ -41,6 +41,43 @@
                 "source": "https://github.com/vaskou/autoloader/tree/v1.0.1"
             },
             "time": "2022-11-07T10:12:27+00:00"
+        },
+        {
+            "name": "vaskou/wordpress-custom-settings",
+            "version": "v2.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vaskou/wordpress-custom-settings.git",
+                "reference": "e08fe7f984f523197e8c4b8e682d55e6eced8060"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vaskou/wordpress-custom-settings/zipball/e08fe7f984f523197e8c4b8e682d55e6eced8060",
+                "reference": "e08fe7f984f523197e8c4b8e682d55e6eced8060",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "WordpressCustomSettings/bootstrap_2_0_7.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Vasilis Koutsopoulos",
+                    "email": "vaskou@hotmail.com"
+                }
+            ],
+            "description": "Wordpress Custom Settings",
+            "support": {
+                "issues": "https://github.com/vaskou/wordpress-custom-settings/issues",
+                "source": "https://github.com/vaskou/wordpress-custom-settings/tree/v2.0.7"
+            },
+            "time": "2024-03-27T13:28:30+00:00"
         },
         {
             "name": "vaskou/wordpress-enqueue",

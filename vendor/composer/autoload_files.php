@@ -8,4 +8,5 @@ $baseDir = dirname($vendorDir);
 return array(
     'b8a2af4221ebb2dbb3e45637d95d0836' => $vendorDir . '/vaskou/autoloader/bootstrap_1_0_1.php',
     'e2318f951fca2db32da796aad50295b4' => $vendorDir . '/vaskou/wordpress-enqueue/WordpressEnqueue/bootstrap_1_0_0.php',
+    'ee007340052e8451f0f5662d5bb0aa91' => $vendorDir . '/vaskou/wordpress-custom-settings/WordpressCustomSettings/bootstrap_2_0_7.php',
 );

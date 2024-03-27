@@ -53,6 +53,9 @@ class FG_Guitars_Customizer {
 		Post_Types\Customizer_Field_Option::instance();
 		Post_Types\Customizer_Fields_Group::instance();
 
+		// Settings
+		Settings\Settings::instance();
+
 		// Shortcodes
 		Shortcodes\Customizer::instance();
 
