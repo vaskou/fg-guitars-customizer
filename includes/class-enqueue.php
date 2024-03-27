@@ -26,6 +26,7 @@ class Enqueue extends AEnqueue {
 		$this->wp_script_dependencies = ! empty( $app_assets['dependencies'] ) ? $app_assets['dependencies'] : [];
 
 		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_styles' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
@@ -42,6 +43,20 @@ class Enqueue extends AEnqueue {
 
 		foreach ( $styles as $style ) {
 			$this->_enqueue_style( $style );
+		}
+	}
+
+	public function admin_enqueue_scripts() {
+		$styles = array(
+			array(
+				'handle'        => 'fggc-admin-scripts',
+				'relative_path' => '/assets/admin_scripts.js',
+				'deps'          => [ 'jquery' ]
+			),
+		);
+
+		foreach ( $styles as $style ) {
+			$this->_enqueue_script( $style );
 		}
 	}
 
