@@ -30,7 +30,6 @@ class FG_Guitars_Customizer_Custom_Select extends \CMB2_Type_Select {
 			$options[''] = $option_none;
 		}
 		$options = $options + (array) $field->options();
-		error_log( print_r( $options, 1 ) );
 		foreach ( $options as $opt_value => $opt_label ) {
 
 			if ( ! is_array( $opt_label ) ) {
