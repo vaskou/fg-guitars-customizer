@@ -17,8 +17,10 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
-        setOptionChecked(options[0].value);
-        setOptionIDChecked(options[0].id);
+        if (isRequired) {
+            setOptionChecked(options[0].value);
+            setOptionIDChecked(options[0].id);
+        }
 
         options.forEach((option) => {
             if (option.default) {
@@ -64,6 +66,10 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     return (
         <>
             <select name={fieldName} className="uk-select" onChange={handleOnChange} onInvalid={handleOnInvalid} required={isRequired} value={optionChecked}>
+                {
+                    !isRequired &&
+                    <option key={0} value='' data-id={0} data-price=''>None</option>
+                }
                 {options.map((option) => {
                     return (
                         <option key={option.id} value={option.value}
