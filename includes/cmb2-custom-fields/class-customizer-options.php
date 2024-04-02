@@ -390,8 +390,8 @@ class Customizer_Options {
 		ob_start();
 		?>
         <div class="fggc-toggle">
-            <div class="fggc-close"><span class="dashicons dashicons-arrow-up"></span><?php echo __( 'Close', 'fg-guitars-customizer' ); ?></div>
-            <div class="fggc-open"><span class="dashicons dashicons-arrow-down"></span><?php echo __( 'Open', 'fg-guitars-customizer' ); ?></div>
+            <div class="fggc-close"><?php echo __( 'Close', 'fg-guitars-customizer' ); ?><span class="dashicons dashicons-arrow-up"></span></div>
+            <div class="fggc-open"><?php echo __( 'Open', 'fg-guitars-customizer' ); ?><span class="dashicons dashicons-arrow-down"></span></div>
         </div>
 		<?php
 		return ob_get_clean();

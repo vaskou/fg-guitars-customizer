@@ -65,5 +65,6 @@ class FG_Guitars_Customizer {
 
 	public function include_custom_multicheck_class() {
 		include 'cmb2-custom-fields/class-custom-multicheck.php';
+		include 'cmb2-custom-fields/class-custom-select.php';
 	}
 }

@@ -108,6 +108,7 @@ class Customizer_Field_Option {
 			'type'             => 'select',
 			'show_option_none' => true,
 			'options_cb'       => [ $this, 'get_options' ],
+			'render_class'     => 'FG_Guitars_Customizer_Custom_Select',
 			'column'           => [
 				'position' => 2,
 			]
@@ -164,10 +165,27 @@ class Customizer_Field_Option {
 	public function get_options( $field = '' ) {
 		$options = [];
 
-		$items = Customizer_Field::get_items();
 
-		foreach ( $items as $item ) {
-			$options[ $item->ID ] = $item->post_title;
+		$groups = Customizer_Fields_Group::get_items( [
+			'orderby' => 'title',
+		] );
+
+		foreach ( $groups as $group ) {
+			$option_items = Customizer_Field::get_items( [
+				'orderby'    => 'title',
+				'meta_key'   => Customizer_Field::GROUP_META_KEY,
+				'meta_value' => $group->ID,
+			] );
+
+			$items = [];
+			foreach ( $option_items as $option_item ) {
+				$items[ $option_item->ID ] = $option_item->post_title;
+			}
+
+			$options[ $group->ID ] = [
+				'label' => $group->post_title,
+				'items' => $items
+			];
 		}
 
 		return $options;
