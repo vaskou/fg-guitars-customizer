@@ -36,3 +36,21 @@
 .fggc-option-content > .cmb-row {
     padding-bottom: 0 !important;
 }
+
+.fggc-toggle {
+    float: right;
+}
+
+label.closed > .fggc-toggle > .fggc-close {
+    display: none;
+}
+
+.fggc-group-label.closed ~ div,
+.fggc-field-label.closed ~ div,
+.fggc-option-label.closed ~ div {
+    display: none;
+}
+
+label:not(.closed) > .fggc-toggle > .fggc-open {
+    display: none;
+}

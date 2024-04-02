@@ -1,5 +1,4 @@
-import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, useEffect, useState } from 'react';
-import FieldWrapper from "../../FieldWrapper/FieldWrapper";
+import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, MouseEvent, useEffect, useState } from 'react';
 import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
@@ -60,6 +59,16 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
         }
     }
 
+    const handleOnClick = (e: MouseEvent<HTMLInputElement>) => {
+        const target = e.target as EventTarget & HTMLInputElement;
+
+        const optionID = target.dataset.id as string;
+
+        if (optionChecked === optionID) {
+            setOptionChecked('');
+        }
+    }
+
     return (
         <>
             {options.map((option) => {
@@ -71,6 +80,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
                                    data-id={option.id}
                                    data-price={option.price}
                                    onChange={handleOnChange}
+                                   onClick={handleOnClick}
                                    onInvalid={handleOnInvalid}/>
                             <span className="label"> {option.label} <PriceAdded price={option.price.toString()}/></span>
                         </label>

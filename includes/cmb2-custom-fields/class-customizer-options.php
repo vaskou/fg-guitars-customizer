@@ -2,9 +2,6 @@
 
 namespace FG_Guitars_Customizer\Cmb2_Custom_Fields;
 
-use FG_Guitars_Customizer\Post_Types\Customizer_Field;
-use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
-
 class Customizer_Options {
 
 	private $field_type;
@@ -182,9 +179,10 @@ class Customizer_Options {
 
 			$fields = $group['fields'];
 
+			$closed_class = $this->_get_closed_class( 'fggc_id_' . esc_attr( $group_id ) );
 			?>
-            <div class="fggc-group-wrapper group-<?php echo $group_id; ?>">
-                <label class="fggc-group-label"><?php echo $group_title; ?></label>
+            <div id="fggc_id_<?php echo esc_attr( $group_id ); ?>" class="fggc-group-wrapper group-<?php echo $group_id; ?>">
+                <label class="fggc-group-label <?php echo $closed_class; ?>"><?php echo $group_title; ?><?php echo $this->_get_toggle_html(); ?></label>
 
 				<?php echo $this->_get_fields_html( $fields, $field_type, $escaped_value ); ?>
             </div>
@@ -225,10 +223,12 @@ class Customizer_Options {
 			} else {
 				$field_content = $this->_get_field_html( $field_id, $field_title, $f_type, $field_type, $escaped_value );
 			}
+
+			$closed_class = $this->_get_closed_class( 'fggc_id_' . esc_attr( $field_id ) );
 			?>
             <div class="fggc-group-content">
-                <div class="fggc-field-wrapper field-<?php echo $field_id; ?>">
-                    <label class="fggc-field-label"><?php echo $field_title; ?></label>
+                <div id="fggc_id_<?php echo esc_attr( $field_id ); ?>" class="fggc-field-wrapper field-<?php echo $field_id; ?>">
+                    <label class="fggc-field-label <?php echo $closed_class; ?>"><?php echo $field_title; ?><?php echo $this->_get_toggle_html(); ?></label>
                     <div class="fggc-field-content">
 						<?php echo $this->_get_required_html( $field_id, $field_type, $escaped_value ); ?>
 						<?php echo $field_content; ?>
@@ -344,33 +344,37 @@ class Customizer_Options {
 					'id'   => $field_type->_id( '_option_default_' . $option_key ),
 					'name' => $field_type->_name( '[' . $option_key . '][default]' ),
 				];
+
+				$closed_class = $this->_get_closed_class( 'fggc_id_' . esc_attr( $option_key ) );
 				?>
 
-                <label class="fggc-option-label"><?php echo $option; ?></label>
-                <div class="fggc-option-content option-<?php echo $option_args['id']; ?>">
-                    <div class="cmb-row">
-                        <div class="field" style="clear:both;">
-                            <div class="cmb-th">
-                                <label><?php echo __( 'Enable', 'fg-guitar-customizer' ); ?></label>
+                <div id="fggc_id_<?php echo esc_attr( $option_key ); ?>" class="fggc-option">
+                    <label class="fggc-option-label <?php echo $closed_class; ?>"><?php echo $option; ?><?php echo $this->_get_toggle_html(); ?></label>
+                    <div class="fggc-option-content option-<?php echo $option_args['id']; ?>">
+                        <div class="cmb-row">
+                            <div class="field" style="clear:both;">
+                                <div class="cmb-th">
+                                    <label><?php echo __( 'Enable', 'fg-guitar-customizer' ); ?></label>
+                                </div>
+                                <div class="cmb-td">
+									<?php echo $field_type->checkbox( $option_args, $is_enabled ); ?>
+                                </div>
                             </div>
-                            <div class="cmb-td">
-								<?php echo $field_type->checkbox( $option_args, $is_enabled ); ?>
+                            <div class="field" style="clear:both;">
+                                <div class="cmb-th">
+                                    <label><?php echo __( 'Price', 'fg-guitar-customizer' ); ?></label>
+                                </div>
+                                <div class="cmb-td">
+									<?php echo $field_type->input( $price_args ); ?>
+                                </div>
                             </div>
-                        </div>
-                        <div class="field" style="clear:both;">
-                            <div class="cmb-th">
-                                <label><?php echo __( 'Price', 'fg-guitar-customizer' ); ?></label>
-                            </div>
-                            <div class="cmb-td">
-								<?php echo $field_type->input( $price_args ); ?>
-                            </div>
-                        </div>
-                        <div class="field" style="clear:both;">
-                            <div class="cmb-th">
-                                <label><?php echo __( 'Is selected by default', 'fg-guitar-customizer' ); ?></label>
-                            </div>
-                            <div class="cmb-td">
-								<?php echo $field_type->checkbox( $is_default_args, $is_default ); ?>
+                            <div class="field" style="clear:both;">
+                                <div class="cmb-th">
+                                    <label><?php echo __( 'Is selected by default', 'fg-guitar-customizer' ); ?></label>
+                                </div>
+                                <div class="cmb-td">
+									<?php echo $field_type->checkbox( $is_default_args, $is_default ); ?>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -380,5 +384,23 @@ class Customizer_Options {
         </div>
 		<?php
 		return ob_get_clean();
+	}
+
+	private function _get_toggle_html() {
+		ob_start();
+		?>
+        <div class="fggc-toggle">
+            <div class="fggc-close"><span class="dashicons dashicons-arrow-up"></span><?php echo __( 'Close', 'fg-guitars-customizer' ); ?></div>
+            <div class="fggc-open"><span class="dashicons dashicons-arrow-down"></span><?php echo __( 'Open', 'fg-guitars-customizer' ); ?></div>
+        </div>
+		<?php
+		return ob_get_clean();
+	}
+
+	private function _get_closed_class( $box_id ) {
+		$screen = get_current_screen();
+		$page   = $screen->id;
+
+		return postbox_classes( $box_id, $page );
 	}
 }

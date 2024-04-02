@@ -5,7 +5,7 @@
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => '64a3234ca8ebbf90fbb49dbbf99d2675f2fb10cd',
+        'reference' => 'be1ae8a2390db5c29b963e39f5b522dd2a94d2d1',
         'name' => '__root__',
         'dev' => true,
     ),
@@ -16,7 +16,7 @@
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => '64a3234ca8ebbf90fbb49dbbf99d2675f2fb10cd',
+            'reference' => 'be1ae8a2390db5c29b963e39f5b522dd2a94d2d1',
             'dev_requirement' => false,
         ),
         'vaskou/autoloader' => array(
@@ -26,6 +26,15 @@
             'install_path' => __DIR__ . '/../vaskou/autoloader',
             'aliases' => array(),
             'reference' => 'aa0956e9c09105cc8077ae908c843c80d5f30e76',
+            'dev_requirement' => false,
+        ),
+        'vaskou/wordpress-custom-settings' => array(
+            'pretty_version' => 'v2.0.7',
+            'version' => '2.0.7.0',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../vaskou/wordpress-custom-settings',
+            'aliases' => array(),
+            'reference' => 'e08fe7f984f523197e8c4b8e682d55e6eced8060',
             'dev_requirement' => false,
         ),
         'vaskou/wordpress-enqueue' => array(

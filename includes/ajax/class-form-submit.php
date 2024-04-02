@@ -5,6 +5,7 @@ namespace FG_Guitars_Customizer\Ajax;
 use FG_Guitars_Customizer\Helpers\Helpers;
 use FG_Guitars_Customizer\Post_Types\Customizer_Field;
 use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
+use FG_Guitars_Customizer\Settings\Settings;
 
 class Form_Submit {
 
@@ -34,8 +35,13 @@ class Form_Submit {
 
 		$data = json_decode( $form_data, true );
 
-		$body    = $this->get_mail_body( $data );
-		$to      = 'vaskou@yesinternet.gr';
+		$body = $this->get_mail_body( $data );
+
+		$to = Settings::get_email();
+		if ( empty( $to ) || ! is_email( $to ) ) {
+			$to = get_option( 'admin_email' );
+		}
+
 		$subject = 'Guitar customizer';
 		$headers = [ 'Content-Type:text/html' ];
 
