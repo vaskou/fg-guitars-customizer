@@ -9,6 +9,9 @@ export interface OptionData {
     default: boolean;
 }
 
+export const optionDataAdapter = createEntityAdapter<OptionData>()
+const optionDataInitialState = optionDataAdapter.getInitialState();
+
 export interface FieldData {
     id: string;
     label: string;
@@ -16,7 +19,12 @@ export interface FieldData {
     type: string;
     isRequired: boolean;
     options: OptionData[];
+    optionIDs: string[];
+    connectedToOption: string;
 }
+
+export const fieldDataAdapter = createEntityAdapter<FieldData>()
+const fieldDataInitialState = fieldDataAdapter.getInitialState();
 
 export interface GroupData {
     id: string;
@@ -24,14 +32,22 @@ export interface GroupData {
     width: string;
     hideTitle: boolean;
     fields: FieldData[];
+    fieldIDs: string[];
 }
+
+export const groupDataAdapter = createEntityAdapter<GroupData>()
+const groupDataInitialState = groupDataAdapter.getInitialState();
 
 export interface SectionData {
     id: string;
     type: string;
     title: string;
     groups: GroupData[];
+    groupIDs: string[];
 }
+
+export const sectionDataAdapter = createEntityAdapter<SectionData>()
+const sectionDataInitialState = sectionDataAdapter.getInitialState();
 
 export interface Guitar extends OptionData {
     basePrice: number;
@@ -42,17 +58,21 @@ export interface SelectedOption {
     option: OptionData;
 }
 
-export const optionDataAdapter = createEntityAdapter<SelectedOption>()
+export const selectedOptionDataAdapter = createEntityAdapter<SelectedOption>()
 
-const optionDataInitialState = optionDataAdapter.getInitialState();
+const selectedOptionDataInitialState = selectedOptionDataAdapter.getInitialState();
 
 interface FormState {
     guitars: Guitar[];
     sections: SectionData[];
     totalPrice: number;
     selectedGuitarID: string;
-    selectedOptions: typeof optionDataInitialState;
+    selectedOptions: typeof selectedOptionDataInitialState;
     error: string;
+    newSections: typeof sectionDataInitialState;
+    groups: typeof groupDataInitialState;
+    fields: typeof fieldDataInitialState;
+    options: typeof optionDataInitialState;
 }
 
 const initialState: FormState = {
@@ -60,8 +80,12 @@ const initialState: FormState = {
     sections: [],
     totalPrice: 0,
     selectedGuitarID: '',
-    selectedOptions: optionDataInitialState,
+    selectedOptions: selectedOptionDataInitialState,
     error: '',
+    newSections: sectionDataInitialState,
+    groups: groupDataInitialState,
+    fields: fieldDataInitialState,
+    options: optionDataInitialState,
 }
 
 const formSlice = createSlice({
@@ -79,14 +103,20 @@ const formSlice = createSlice({
             state.selectedGuitarID = action.payload.selectedGuitarID;
         },
         upsertSelectedOptions: (state: FormState, action: PayloadAction<SelectedOption>) => {
-            optionDataAdapter.upsertOne(state.selectedOptions, action);
+            selectedOptionDataAdapter.upsertOne(state.selectedOptions, action);
         },
         deleteSelectedOptions: (state: FormState) => {
-            optionDataAdapter.removeAll(state.selectedOptions);
+            selectedOptionDataAdapter.removeAll(state.selectedOptions);
         },
         setError: (state: FormState, action: PayloadAction<FormState>) => {
             // state = {...action.payload};
             return { ...action.payload }
+        },
+        upsertSections: (state: FormState, action: PayloadAction<SectionData[]>) => {
+            sectionDataAdapter.upsertMany(state.newSections, action)
+        },
+        upsertGroups: (state: FormState, action: PayloadAction<GroupData[]>) => {
+            groupDataAdapter.upsertMany(state.groups, action)
         },
     }
 });
@@ -100,6 +130,8 @@ export const {
     upsertSelectedOptions,
     deleteSelectedOptions,
     setError,
+    upsertSections,
+    upsertGroups,
 } = formSlice.actions;
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
@@ -120,6 +152,14 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
         } else {
             const data: FormState = await response.json();
             console.log(data)
+
+            if (data.sections) {
+                let { newSections, newGroups } = dataFormat(data.sections)
+
+                dispatch(upsertSections(newSections))
+                dispatch(upsertGroups(newGroups))
+            }
+
             dispatch(load_data(data));
 
             let selectedGuitar = data.guitars.find((guitar) => {
@@ -139,6 +179,33 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
         const message = fggc_customizer_data.error_message
         dispatch(setError({ ...initialState, error: message }));
     }
+}
+
+const dataFormat = (sections: SectionData[]) => {
+    let newSections: Omit<SectionData, 'groups'>[] = [];
+    let newGroups: GroupData[] = [];
+
+    sections.forEach((section) => {
+        let { groups, ...newSection } = section;
+
+        newGroups = [...newGroups, ...groupDataFormat(groups)];
+
+        newSections = [...newSections, newSection];
+    })
+
+    return { newSections: sections, newGroups }
+}
+
+const groupDataFormat = (groups: GroupData[]) => {
+    let newGroups: GroupData[] = [];
+
+    groups.forEach((group) => {
+        // let { fields, ...newGroup } = group;
+
+        newGroups = [...newGroups, group];
+    })
+
+    return newGroups;
 }
 
 // Selectors
@@ -167,3 +234,13 @@ export const selectSelectedOptions = (rootState: RootState) => {
 export const selectError = (rootState: RootState) => {
     return selectDataState(rootState).error;
 }
+
+export const { selectAll: selectNewSectionsArray } = sectionDataAdapter.getSelectors((rootState: RootState) => rootState.data.newSections);
+
+export const selectGroups = (rootState: RootState) => {
+    return selectDataState(rootState).groups.entities;
+}
+export const { selectAll: selectGroupArray } = groupDataAdapter.getSelectors((rootState: RootState) => rootState.data.groups);
+
+export const { selectAll: selectFieldArray } = fieldDataAdapter.getSelectors((rootState: RootState) => rootState.data.fields);
+export const { selectAll: selectOptionArray } = optionDataAdapter.getSelectors((rootState: RootState) => rootState.data.options);

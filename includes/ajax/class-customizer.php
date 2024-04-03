@@ -87,11 +87,17 @@ class Customizer {
 				continue;
 			}
 
+			$groupIDs = [];
+			foreach ( $section_groups as $group ) {
+				$groupIDs[] = $group['id'];
+			}
+
 			$section_data[] = [
-				'id'     => $section_id,
-				'type'   => $section_type,
-				'title'  => $section_title,
-				'groups' => $section_groups,
+				'id'       => $section_id,
+				'type'     => $section_type,
+				'title'    => $section_title,
+				'groups'   => $section_groups,
+				'groupIDs' => $groupIDs,
 			];
 		}
 
@@ -172,6 +178,11 @@ class Customizer {
 				continue;
 			}
 
+			$fieldIDs = [];
+			foreach ( $field_data as $field ) {
+				$fieldIDs[] = $field['id'];
+			}
+
 			$group_data[] = [
 				'id'                      => $group_id,
 				'title'                   => $group_title,
@@ -179,6 +190,7 @@ class Customizer {
 				'hasGuitarSelectionField' => $group_has_guitar_selection_field,
 				'hideTitle'               => $group_hide_title,
 				'fields'                  => $field_data,
+				'fieldIDs'                => $fieldIDs,
 			];
 		}
 
@@ -196,13 +208,20 @@ class Customizer {
 			$field_name  = $field_post->post_name;
 			$field_type  = Customizer_Field::get_field_type( $field_id );
 
+			$connected_to_option = Customizer_Field::get_connected_to_option( $field_id );
+
 			$option_data = [];
+			$optionIDs   = [];
 
 			if ( in_array( $field_type, [ 'radio', 'select' ] ) ) {
 				$option_data = $this->_get_field_option_data( $field_id );
 
 				if ( empty( $option_data ) ) {
 					continue;
+				}
+
+				foreach ( $option_data as $option ) {
+					$optionIDs[] = $option['id'];
 				}
 			} else {
 				if ( empty( $this->customizer_options[ $field_id ]['enable'] ) ) {
@@ -211,12 +230,14 @@ class Customizer {
 			}
 
 			$field_data[] = [
-				'id'         => $field_id,
-				'label'      => $field_title,
-				'fieldName'  => $field_id,//$field_name,
-				'type'       => $field_type,
-				'isRequired' => ! empty( $this->customizer_options[ $field_id ]['required'] ),
-				'options'    => $option_data,
+				'id'                => $field_id,
+				'label'             => $field_title,
+				'fieldName'         => $field_id,//$field_name,
+				'type'              => $field_type,
+				'isRequired'        => ! empty( $this->customizer_options[ $field_id ]['required'] ),
+				'options'           => $option_data,
+				'optionIDs'         => $optionIDs,
+				'connectedToOption' => $connected_to_option,
 			];
 		}
 

@@ -218,6 +218,10 @@ class Customizer_Field {
 		return get_post_meta( $field_id, self::FIELD_TYPE_META_KEY, true );
 	}
 
+	public static function get_connected_to_option( $field_id ) {
+		return get_post_meta( $field_id, self::FIELD_CONNECTED_TO_OPTION_META_KEY, true );
+	}
+
 	public static function get_items_by_group_id( $group_id ) {
 		if ( empty( $group_id ) ) {
 			return [];

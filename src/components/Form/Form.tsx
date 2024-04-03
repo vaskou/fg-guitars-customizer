@@ -2,7 +2,24 @@ import React, { ChangeEvent, FormEvent, FormEventHandler, MouseEventHandler, use
 import Section, { SectionTypes } from "../Section/Section";
 import Group from "../Group/Group";
 import { useSelector } from "react-redux";
-import { deleteSelectedOptions, FieldData, GroupData, loadData, SectionData, selectError, selectGuitarsArray, selectSectionsArray, selectSelectedGuitarID, selectSelectedOptions, selectTotalPrice, setTotalPrice } from "./formSlice";
+import {
+    deleteSelectedOptions,
+    FieldData,
+    GroupData,
+    loadData,
+    SectionData,
+    selectError,
+    selectFieldArray,
+    selectGroupArray, selectGroups,
+    selectGuitarsArray,
+    selectNewSectionsArray,
+    selectOptionArray,
+    selectSectionsArray,
+    selectSelectedGuitarID,
+    selectSelectedOptions,
+    selectTotalPrice,
+    setTotalPrice
+} from "./formSlice";
 import { useAppDispatch } from "../../redux/store";
 import Loader from "../Loader/Loader";
 import PriceEstimate from "../PriceEstimate/PriceEstimate";
@@ -31,6 +48,11 @@ const Form: React.FC<Props> = ({}) => {
     const selectedGuitarID = useSelector(selectSelectedGuitarID);
     const selectedOptions = useSelector(selectSelectedOptions);
     const error = useSelector(selectError);
+    const newSections = useSelector(selectNewSectionsArray);
+    const groupsArray = useSelector(selectGroupArray);
+    const groups = useSelector(selectGroups);
+    const fields = useSelector(selectFieldArray);
+    const options = useSelector(selectOptionArray);
 
     const formData = useSelector(selectItemsArray);
 
@@ -87,6 +109,21 @@ const Form: React.FC<Props> = ({}) => {
         dispatch(setTotalPrice({ totalPrice: _totalPrice }));
 
     }, [basePrice, selectedOptions]);
+
+    const isOptionSelected = (optionID: string) => {
+        const allIDs = selectedOptions.ids;
+        const allSelectedOptions = selectedOptions.entities;
+
+        let isSelected = false;
+
+        allIDs.forEach((id) => {
+            if (allSelectedOptions[id].option?.id === optionID) {
+                isSelected = true;
+            }
+        })
+
+        return isSelected;
+    }
 
     const handleOnGuitarChange = (e: ChangeEvent<HTMLSelectElement>) => {
         const target = e.target;
@@ -184,13 +221,14 @@ const Form: React.FC<Props> = ({}) => {
             {error && <div className="fggc-form-error">{error}</div>}
 
             <form onChange={handleOnFormChange} onSubmit={handleOnSubmit} onInvalid={handleOnInvalid}>
-                <GuitarsSection guitars={guitars} sections={sections} onGuitarChange={handleOnGuitarChange}/>
+                <GuitarsSection guitars={guitars} sections={newSections} onGuitarChange={handleOnGuitarChange}/>
 
-                {sections && sections.map((section: SectionData) => {
+                {newSections && newSections.map((section: SectionData) => {
                     return (
-                        section.type === SectionTypes.FIELDS && section.groups.length > 0 &&
+                        section.type === SectionTypes.FIELDS && section.groupIDs.length > 0 &&
                         <Section key={section.id} title={section.title}>
-                            {section.groups.map((group: GroupData) => {
+                            {section.groupIDs.map( (groupID:string)=> {
+                                const group = groups[groupID];
                                 return (
                                     <Group key={group.id} {...group}>
                                         {group.fields.map((field: FieldData) => {
