@@ -21,6 +21,7 @@ export interface FieldData {
     options: OptionData[];
     optionIDs: string[];
     connectedToOption: string;
+    hidden: boolean;
 }
 
 export const fieldDataAdapter = createEntityAdapter<FieldData>()
@@ -118,6 +119,15 @@ const formSlice = createSlice({
         upsertGroups: (state: FormState, action: PayloadAction<GroupData[]>) => {
             groupDataAdapter.upsertMany(state.groups, action)
         },
+        upsertField: (state: FormState, action: PayloadAction<FieldData>) => {
+            fieldDataAdapter.upsertOne(state.fields, action)
+        },
+        upsertFields: (state: FormState, action: PayloadAction<FieldData[]>) => {
+            fieldDataAdapter.upsertMany(state.fields, action)
+        },
+        upsertOptions: (state: FormState, action: PayloadAction<OptionData[]>) => {
+            optionDataAdapter.upsertMany(state.options, action)
+        },
     }
 });
 
@@ -132,6 +142,9 @@ export const {
     setError,
     upsertSections,
     upsertGroups,
+    upsertField,
+    upsertFields,
+    upsertOptions,
 } = formSlice.actions;
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
@@ -154,10 +167,32 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
             console.log(data)
 
             if (data.sections) {
-                let { newSections, newGroups } = dataFormat(data.sections)
+                // let { newSections, newGroups } = dataFormat(data.sections, dispatch)
+                dataFormat(data.sections, dispatch);
 
-                dispatch(upsertSections(newSections))
-                dispatch(upsertGroups(newGroups))
+                // dispatch(upsertSections(newSections))
+                // dispatch(upsertGroups(newGroups))
+            }
+
+            if (data.guitars) {
+                let optionIDs: string[] = [];
+                data.guitars.forEach((option) => {
+                    optionIDs = [...optionIDs, option.id];
+                })
+                const modelField: FieldData = {
+                    id: 'model',
+                    label: 'Model',
+                    fieldName: 'model',
+                    isRequired: true,
+                    options: data.guitars,
+                    type: 'select',
+                    optionIDs: optionIDs,
+                    connectedToOption: '',
+                    hidden: false,
+                }
+
+                dispatch(upsertField(modelField))
+                dispatch(upsertOptions(data.guitars))
             }
 
             dispatch(load_data(data));
@@ -181,31 +216,35 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
     }
 }
 
-const dataFormat = (sections: SectionData[]) => {
+const dataFormat = (sections: SectionData[], dispatch: AppDispatch) => {
     let newSections: Omit<SectionData, 'groups'>[] = [];
     let newGroups: GroupData[] = [];
+
+    dispatch(upsertSections(sections));
 
     sections.forEach((section) => {
         let { groups, ...newSection } = section;
 
-        newGroups = [...newGroups, ...groupDataFormat(groups)];
+        dispatch(upsertGroups(groups));
 
-        newSections = [...newSections, newSection];
+        groups.forEach((group) => {
+            let { fields, ...newGroup } = group;
+
+            dispatch(upsertFields(fields));
+
+            fields.forEach((field) => {
+                let { options, ...newfield } = field;
+
+                dispatch(upsertOptions(options));
+            });
+        });
+
+        // newGroups = [...newGroups, ...groupDataFormat(groups)];
+        //
+        // newSections = [...newSections, newSection];
     })
 
-    return { newSections: sections, newGroups }
-}
-
-const groupDataFormat = (groups: GroupData[]) => {
-    let newGroups: GroupData[] = [];
-
-    groups.forEach((group) => {
-        // let { fields, ...newGroup } = group;
-
-        newGroups = [...newGroups, group];
-    })
-
-    return newGroups;
+    // return { newSections: sections, newGroups }
 }
 
 // Selectors
@@ -235,12 +274,13 @@ export const selectError = (rootState: RootState) => {
     return selectDataState(rootState).error;
 }
 
-export const { selectAll: selectNewSectionsArray } = sectionDataAdapter.getSelectors((rootState: RootState) => rootState.data.newSections);
+export const { selectAll: selectNewSectionsArray, selectEntities: selectSections } = sectionDataAdapter.getSelectors((rootState: RootState) => rootState.data.newSections);
 
-export const selectGroups = (rootState: RootState) => {
-    return selectDataState(rootState).groups.entities;
-}
-export const { selectAll: selectGroupArray } = groupDataAdapter.getSelectors((rootState: RootState) => rootState.data.groups);
+// Groups selectors
+export const { selectAll: selectGroupArray, selectEntities: selectGroups } = groupDataAdapter.getSelectors((rootState: RootState) => rootState.data.groups);
 
-export const { selectAll: selectFieldArray } = fieldDataAdapter.getSelectors((rootState: RootState) => rootState.data.fields);
-export const { selectAll: selectOptionArray } = optionDataAdapter.getSelectors((rootState: RootState) => rootState.data.options);
+// Fields selectors
+export const { selectAll: selectFieldArray, selectEntities: selectFields } = fieldDataAdapter.getSelectors((rootState: RootState) => rootState.data.fields);
+
+// Options selectors
+export const { selectAll: selectOptionArray, selectEntities: selectOptions } = optionDataAdapter.getSelectors((rootState: RootState) => rootState.data.options);

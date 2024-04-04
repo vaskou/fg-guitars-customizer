@@ -4,21 +4,23 @@ import Group from "../Group/Group";
 import { useSelector } from "react-redux";
 import {
     deleteSelectedOptions,
-    FieldData,
-    GroupData,
     loadData,
     SectionData,
     selectError,
     selectFieldArray,
-    selectGroupArray, selectGroups,
+    selectFields,
+    selectGroupArray,
+    selectGroups,
     selectGuitarsArray,
     selectNewSectionsArray,
     selectOptionArray,
+    selectOptions,
     selectSectionsArray,
     selectSelectedGuitarID,
     selectSelectedOptions,
     selectTotalPrice,
-    setTotalPrice
+    setTotalPrice,
+    upsertField
 } from "./formSlice";
 import { useAppDispatch } from "../../redux/store";
 import Loader from "../Loader/Loader";
@@ -51,8 +53,10 @@ const Form: React.FC<Props> = ({}) => {
     const newSections = useSelector(selectNewSectionsArray);
     const groupsArray = useSelector(selectGroupArray);
     const groups = useSelector(selectGroups);
-    const fields = useSelector(selectFieldArray);
-    const options = useSelector(selectOptionArray);
+    const fieldsArray = useSelector(selectFieldArray);
+    const fields = useSelector(selectFields);
+    const optionsArray = useSelector(selectOptionArray);
+    const options = useSelector(selectOptions);
 
     const formData = useSelector(selectItemsArray);
 
@@ -109,6 +113,42 @@ const Form: React.FC<Props> = ({}) => {
         dispatch(setTotalPrice({ totalPrice: _totalPrice }));
 
     }, [basePrice, selectedOptions]);
+
+    useEffect(() => {
+        const allIDs = selectedOptions.ids;
+        const allSelectedOptions = selectedOptions.entities;
+        const selectedOptionFieldID = (optionID: string) => {
+            let fieldID;
+            allIDs.forEach((id) => {
+                if (allSelectedOptions[id]?.option?.id == optionID) {
+                    fieldID = id;
+                }
+            })
+
+            return fieldID;
+        }
+
+        fieldsArray.forEach((field) => {
+            console.log(field)
+            if (field.connectedToOption) {
+                const fieldID = selectedOptionFieldID(field.connectedToOption);
+
+                if (fieldID) {
+                    dispatch(upsertField({
+                        ...field,
+                        hidden: false
+                    }));
+                } else {
+                    dispatch(upsertField({
+                        ...field,
+                        hidden: true
+                    }));
+                }
+            }
+        })
+
+
+    }, [selectedOptions]);
 
     const isOptionSelected = (optionID: string) => {
         const allIDs = selectedOptions.ids;
@@ -227,11 +267,17 @@ const Form: React.FC<Props> = ({}) => {
                     return (
                         section.type === SectionTypes.FIELDS && section.groupIDs.length > 0 &&
                         <Section key={section.id} title={section.title}>
-                            {section.groupIDs.map( (groupID:string)=> {
+                            {section.groupIDs.map((groupID: string) => {
                                 const group = groups[groupID];
                                 return (
                                     <Group key={group.id} {...group}>
-                                        {group.fields.map((field: FieldData) => {
+                                        {group.fieldIDs.map((fieldID: string) => {
+                                            const field = fields[fieldID];
+                                            // TODO: remove data from submission
+                                            if(field.hidden){
+                                                return ;
+                                            }
+
                                             return <Field key={field.id} field={field} index={`${selectedGuitarID}-${field.id}`}/>
                                         })}
                                     </Group>

@@ -1,28 +1,34 @@
 import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, useEffect, useState } from 'react';
-import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
+import { FieldData, OptionData, SelectedOption, selectOptionArray, selectOptions, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
 import { upsertData } from "../../Form/formSubmitSlice";
+import { useSelector } from "react-redux";
 
-interface Props extends Omit<FieldData, 'type'> {
+interface Props extends Omit<FieldData, 'type' | 'options'> {
     onChange?: ChangeEventHandler<HTMLSelectElement> | undefined,
     onInvalid?: FormEventHandler<HTMLSelectElement> | undefined,
 }
 
-const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onInvalid }) => {
+const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, optionIDs, onChange, onInvalid }) => {
 
     const dispatch = useAppDispatch();
+
+    const optionsArray = useSelector(selectOptionArray);
+    const options = useSelector(selectOptions);
 
     const [optionIDChecked, setOptionIDChecked] = useState('');
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
         if (isRequired) {
-            setOptionChecked(options[0].value);
-            setOptionIDChecked(options[0].id);
+            const firstOptionID = optionIDs[0];
+            setOptionChecked(options[firstOptionID].value);
+            setOptionIDChecked(options[firstOptionID].id);
         }
 
-        options.forEach((option) => {
+        optionIDs.forEach((optionID) => {
+            const option = options[optionID];
             if (option.default) {
                 setOptionChecked(option.value);
                 setOptionIDChecked(option.id);
@@ -33,7 +39,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     useEffect(() => {
         const selectedOption: SelectedOption = {
             id: id,
-            option: options.find((option) => {
+            option: optionsArray.find((option) => {
                 return option.id == optionIDChecked;
             }) as OptionData
         }
@@ -70,7 +76,8 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
                     !isRequired &&
                     <option key={0} value='' data-id={0} data-price=''>None</option>
                 }
-                {options.map((option) => {
+                {optionIDs.map((optionID) => {
+                    const option = options[optionID];
                     return (
                         <option key={option.id} value={option.value}
                                 data-id={option.id}

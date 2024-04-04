@@ -1,27 +1,31 @@
 import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, MouseEvent, useEffect, useState } from 'react';
-import { FieldData, OptionData, SelectedOption, upsertSelectedOptions } from "../../Form/formSlice";
+import { FieldData, OptionData, SelectedOption, selectOptionArray, selectOptions, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
 import './styles.scss';
 import { upsertData } from "../../Form/formSubmitSlice";
+import { useSelector } from "react-redux";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLInputElement> | undefined,
     onInvalid?: FormEventHandler<HTMLInputElement> | undefined,
 }
 
-const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options, onChange, onInvalid }) => {
+const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, optionIDs, onChange, onInvalid }) => {
 
     const dispatch = useAppDispatch();
+    const optionsArray = useSelector(selectOptionArray);
+    const options = useSelector(selectOptions);
 
     const [optionChecked, setOptionChecked] = useState('');
 
     useEffect(() => {
         setOptionChecked('');
 
-        options.forEach((option) => {
+        optionIDs.forEach((optionID) => {
+            const option = options[optionID];
             if (option.default) {
-                setOptionChecked(option.id);
+                setOptionChecked(`${option.id}`);
             }
         })
     }, [options]);
@@ -29,7 +33,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
     useEffect(() => {
         const selectedOption: SelectedOption = {
             id: id,
-            option: options.find((option) => {
+            option: optionsArray.find((option) => {
                 return option.id == optionChecked;
             }) as OptionData
         }
@@ -71,7 +75,8 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, options
 
     return (
         <>
-            {options.map((option) => {
+            {optionIDs.map((optionID) => {
+                const option = options[optionID];
                 return (
                     <div key={option.id} className="fggc-field__radio">
                         <label>
