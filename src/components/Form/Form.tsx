@@ -28,7 +28,7 @@ import PriceEstimate from "../PriceEstimate/PriceEstimate";
 import './styles.scss';
 import Field from "../Field/Field";
 import GuitarsSection from "../Section/GuitarsSection";
-import { clearData, selectItemsArray } from "./formSubmitSlice";
+import { clearData, removeOne, selectItemsArray } from "./formSubmitSlice";
 import SubmitMessage from "../SubmitMessage/SubmitMessage";
 
 interface Props {
@@ -129,7 +129,6 @@ const Form: React.FC<Props> = ({}) => {
         }
 
         fieldsArray.forEach((field) => {
-            console.log(field)
             if (field.connectedToOption) {
                 const fieldID = selectedOptionFieldID(field.connectedToOption);
 
@@ -143,6 +142,7 @@ const Form: React.FC<Props> = ({}) => {
                         ...field,
                         hidden: true
                     }));
+                    dispatch(removeOne(field.id));
                 }
             }
         })
@@ -273,9 +273,9 @@ const Form: React.FC<Props> = ({}) => {
                                     <Group key={group.id} {...group}>
                                         {group.fieldIDs.map((fieldID: string) => {
                                             const field = fields[fieldID];
-                                            // TODO: remove data from submission
-                                            if(field.hidden){
-                                                return ;
+
+                                            if (field.hidden) {
+                                                return;
                                             }
 
                                             return <Field key={field.id} field={field} index={`${selectedGuitarID}-${field.id}`}/>

@@ -109,6 +109,7 @@ class Customizer_Field_Option {
 			'show_option_none' => true,
 			'options_cb'       => [ $this, 'get_options' ],
 			'render_class'     => 'FG_Guitars_Customizer_Custom_Select',
+			'display_cb'       => [ $this, 'column_display' ],
 			'column'           => [
 				'position' => 2,
 			]
@@ -127,8 +128,20 @@ class Customizer_Field_Option {
 		?>
         <select name="<?php echo self::FIELD_META_KEY; ?>">
             <option value=""><?php echo __( 'All Fields', 'fg-guitars-customizer' ); ?></option>
-			<?php foreach ( $options as $option_value => $option_label ): ?>
-                <option value="<?php echo esc_attr( $option_value ); ?>" <?php selected( $selected, $option_value ); ?>><?php echo esc_html( $option_label ); ?></option>
+			<?php foreach ( $options as $option_value => $option_data ): ?>
+				<?php
+				$label = $option_data['label'];
+				$items = $option_data['items'];
+
+				if ( empty( $items ) ) {
+					continue;
+				}
+				?>
+                <optgroup label="<?php echo $label; ?>">
+					<?php foreach ( $items as $item_value => $item_label ) : ?>
+                        <option value="<?php echo esc_attr( $item_value ); ?>" <?php selected( $selected, $item_value ); ?>><?php echo esc_html( $item_label ); ?></option>
+					<?php endforeach; ?>
+                </optgroup>
 			<?php endforeach; ?>
         </select>
 		<?php
@@ -189,6 +202,23 @@ class Customizer_Field_Option {
 		}
 
 		return $options;
+	}
+
+	/**
+	 * @param array $field_args Array of field arguments.
+	 * @param \CMB2_Field $field The field object
+	 */
+	public function column_display( $field_args, $field ) {
+		$field_id = $field->escaped_value();
+
+		$post = get_post( $field_id );
+
+		if ( ! $post ) {
+			echo $field_id;
+		} else {
+			echo $post->post_title;
+		}
+
 	}
 
 	public static function get_items( $args = [] ) {

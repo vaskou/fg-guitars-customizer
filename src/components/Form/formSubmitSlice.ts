@@ -27,6 +27,10 @@ const formSubmitSlice = createSlice({
         upsertData: (state: FormSubmitData, action: PayloadAction<FieldSubmitData>) => {
             fieldSubmitDataAdapter.upsertOne(state.items, action);
         },
+        removeOne: (state: FormSubmitData, action: PayloadAction<string>) => {
+            console.log(action)
+            fieldSubmitDataAdapter.removeOne(state.items, action.payload)
+        },
         clearData: (state: FormSubmitData) => {
             fieldSubmitDataAdapter.removeAll(state.items);
         }
@@ -37,6 +41,7 @@ export default formSubmitSlice.reducer;
 
 export const {
     upsertData,
+    removeOne,
     clearData
 } = formSubmitSlice.actions;
 
