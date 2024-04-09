@@ -100,6 +100,30 @@ class Helpers {
 
 	}
 
+	public static function is_active_for_guitar_customizer( $guitar_id ) {
+		$exclude = get_post_meta( $guitar_id, 'fggc_customizer_exclude', true );
+
+		if ( ! empty( $exclude ) ) {
+			return false;
+		}
+
+		$options = get_post_meta( $guitar_id, 'fggc_customizer_options', true );
+
+		if ( empty( $options ) ) {
+			return false;
+		}
+
+		$has_enabled_options = array_filter( $options, function ( $option ) {
+			return ! empty( $option['enable'] );
+		} );
+
+		if ( ! $has_enabled_options ) {
+			return false;
+		}
+
+		return true;
+	}
+
 	private static function _get_section_groups_data( $section_id ) {
 		$group_data = [];
 

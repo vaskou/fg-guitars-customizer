@@ -124,23 +124,27 @@ class Customizer {
 
 
 		foreach ( $posts as $post ) {
-			$exclude = get_post_meta( $post->ID, 'fggc_customizer_exclude', true );
+//			$exclude = get_post_meta( $post->ID, 'fggc_customizer_exclude', true );
+//
+//			if ( ! empty( $exclude ) ) {
+//				continue;
+//			}
+//
+//			$options = get_post_meta( $post->ID, 'fggc_customizer_options', true );
+//
+//			if ( empty( $options ) ) {
+//				continue;
+//			}
+//
+//			$has_enabled_options = array_filter( $options, function ( $option ) {
+//				return ! empty( $option['enable'] );
+//			} );
+//
+//			if ( ! $has_enabled_options ) {
+//				continue;
+//			}
 
-			if ( ! empty( $exclude ) ) {
-				continue;
-			}
-
-			$options = get_post_meta( $post->ID, 'fggc_customizer_options', true );
-
-			if ( empty( $options ) ) {
-				continue;
-			}
-
-			$has_enabled_options = array_filter( $options, function ( $option ) {
-				return ! empty( $option['enable'] );
-			} );
-
-			if ( ! $has_enabled_options ) {
+			if ( ! Helpers::is_active_for_guitar_customizer( $post->ID ) ) {
 				continue;
 			}
 
