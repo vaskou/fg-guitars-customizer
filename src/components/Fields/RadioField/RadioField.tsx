@@ -3,7 +3,7 @@ import { FieldData, OptionData, SelectedOption, selectOptionArray, selectOptions
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
 import './styles.scss';
-import { upsertData } from "../../Form/formSubmitSlice";
+import { upsertOneFieldData } from "../../Form/formSubmitSlice";
 import { useSelector } from "react-redux";
 
 interface Props extends Omit<FieldData, 'type'> {
@@ -39,7 +39,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, optionI
         }
 
         dispatch(upsertSelectedOptions(selectedOption));
-        dispatch(upsertData({ id: fieldName, value: optionChecked, price: selectedOption?.option?.price }))
+        dispatch(upsertOneFieldData({ id: fieldName, value: optionChecked, price: selectedOption?.option?.price }))
 
     }, [optionChecked]);
 

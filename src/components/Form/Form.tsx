@@ -28,7 +28,7 @@ import PriceEstimate from "../PriceEstimate/PriceEstimate";
 import './styles.scss';
 import Field from "../Field/Field";
 import GuitarsSection from "../Section/GuitarsSection";
-import { clearData, removeOne, selectItemsArray } from "./formSubmitSlice";
+import { clearFormSubmitData, removeOneFieldData, selectItemsArray } from "./formSubmitSlice";
 import SubmitMessage from "../SubmitMessage/SubmitMessage";
 
 interface Props {
@@ -70,7 +70,7 @@ const Form: React.FC<Props> = ({}) => {
         dispatch(loadData(value))
             .finally(() => {
                 dispatch(deleteSelectedOptions());
-                dispatch(clearData());
+                dispatch(clearFormSubmitData());
                 setLoading(false);
             });
     }
@@ -142,7 +142,7 @@ const Form: React.FC<Props> = ({}) => {
                         ...field,
                         hidden: true
                     }));
-                    dispatch(removeOne(field.id));
+                    dispatch(removeOneFieldData(field.id));
                 }
             }
         })
@@ -239,7 +239,7 @@ const Form: React.FC<Props> = ({}) => {
                 throw new Error()
             } else {
                 const data = await response.json();
-                console.log(data)
+                console.log(data) //TODO: remove
 
                 setSubmitIsSuccess(!!data.success);
                 setSubmitMessage(data.message);

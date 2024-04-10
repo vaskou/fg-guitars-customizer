@@ -2,7 +2,7 @@ import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, us
 import { FieldData, OptionData, SelectedOption, selectOptionArray, selectOptions, upsertSelectedOptions } from "../../Form/formSlice";
 import PriceAdded from "../../PriceAdded/PriceAdded";
 import { useAppDispatch } from "../../../redux/store";
-import { upsertData } from "../../Form/formSubmitSlice";
+import { upsertOneFieldData } from "../../Form/formSubmitSlice";
 import { useSelector } from "react-redux";
 
 interface Props extends Omit<FieldData, 'type' | 'options'> {
@@ -45,7 +45,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
         }
 
         dispatch(upsertSelectedOptions(selectedOption));
-        dispatch(upsertData({ id: fieldName, value: optionChecked, price: selectedOption?.option?.price }))
+        dispatch(upsertOneFieldData({ id: fieldName, value: optionChecked, price: selectedOption?.option?.price }))
 
     }, [options, optionChecked, optionIDChecked]);
 

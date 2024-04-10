@@ -38,6 +38,7 @@ class Customizer {
 			'text_validation_message'   => __( 'Please fill this field', 'fg-guitars-customizer' ),
 		];
 		wp_localize_script( 'fgcc-scripts', 'fggc_customizer_data', $data );
+        wp_enqueue_script( 'fgcc-scripts' );
 
 		ob_start();
 		?>

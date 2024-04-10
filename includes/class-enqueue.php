@@ -30,7 +30,8 @@ class Enqueue extends AEnqueue {
 
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_styles' ) );
 
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+//		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'register_scripts' ) );
 	}
 
 	public function admin_enqueue_styles() {
@@ -72,6 +73,22 @@ class Enqueue extends AEnqueue {
 
 		foreach ( $styles as $style ) {
 			$this->_enqueue_style( $style );
+		}
+	}
+
+	public function register_scripts() {
+		$prefix = $this->_get_assets_prefix();
+
+		$scripts = array(
+			array(
+				'handle'        => 'fgcc-scripts',
+				'relative_path' => '/build/index.js',
+				'deps'          => $this->wp_script_dependencies
+			),
+		);
+
+		foreach ( $scripts as $script ) {
+			$this->_register_script( $script );
 		}
 	}
 

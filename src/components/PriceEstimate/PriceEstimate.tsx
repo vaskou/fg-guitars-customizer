@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect } from "react";
 import Price from "../Price/Price";
 import { useAppDispatch } from "../../redux/store";
-import { upsertData } from "../Form/formSubmitSlice";
+import { upsertOneFieldData } from "../Form/formSubmitSlice";
 
 interface Props {
     totalPrice: string;
@@ -12,7 +12,7 @@ const PriceEstimate: React.FC<Props> = ({ totalPrice }) => {
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        dispatch(upsertData({ id: "price_estimate", value: totalPrice }))
+        dispatch(upsertOneFieldData({ id: "price_estimate", value: totalPrice }))
     }, [totalPrice]);
 
     const handleOnChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -20,7 +20,7 @@ const PriceEstimate: React.FC<Props> = ({ totalPrice }) => {
         const name = target.name;
         const value = target.value;
 
-        dispatch(upsertData({ id: name, value: value }))
+        dispatch(upsertOneFieldData({ id: name, value: value }))
     }
 
     return (

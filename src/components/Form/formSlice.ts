@@ -128,6 +128,12 @@ const formSlice = createSlice({
         upsertOptions: (state: FormState, action: PayloadAction<OptionData[]>) => {
             optionDataAdapter.upsertMany(state.options, action)
         },
+        clearAllData: (state: FormState) => {
+            sectionDataAdapter.removeAll(state.newSections);
+            groupDataAdapter.removeAll(state.groups);
+            fieldDataAdapter.removeAll(state.fields);
+            optionDataAdapter.removeAll(state.options);
+        }
     }
 });
 
@@ -145,6 +151,7 @@ export const {
     upsertField,
     upsertFields,
     upsertOptions,
+    clearAllData,
 } = formSlice.actions;
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
@@ -164,7 +171,9 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
             throw new Error()
         } else {
             const data: FormState = await response.json();
-            console.log(data)
+            console.log(data) //TODO: remove
+
+            dispatch(clearAllData());
 
             if (data.sections) {
                 // let { newSections, newGroups } = dataFormat(data.sections, dispatch)
@@ -217,9 +226,6 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
 }
 
 const dataFormat = (sections: SectionData[], dispatch: AppDispatch) => {
-    let newSections: Omit<SectionData, 'groups'>[] = [];
-    let newGroups: GroupData[] = [];
-
     dispatch(upsertSections(sections));
 
     sections.forEach((section) => {
@@ -238,13 +244,7 @@ const dataFormat = (sections: SectionData[], dispatch: AppDispatch) => {
                 dispatch(upsertOptions(options));
             });
         });
-
-        // newGroups = [...newGroups, ...groupDataFormat(groups)];
-        //
-        // newSections = [...newSections, newSection];
     })
-
-    // return { newSections: sections, newGroups }
 }
 
 // Selectors
