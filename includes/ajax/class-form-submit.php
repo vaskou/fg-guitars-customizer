@@ -140,7 +140,7 @@ class Form_Submit {
 			$guitar_selected_options['price_estimate'][] = [
 				'type'  => 'text',
 				'label' => $label,
-				'value' => $value,
+				'value' => sprintf( __( '%s €', 'fg-guitars-customizer' ), $value ),
 			];
 		}
 

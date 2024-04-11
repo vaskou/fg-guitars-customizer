@@ -1,7 +1,7 @@
 import React, { ChangeEvent, ChangeEventHandler, FormEvent, FormEventHandler, useEffect, useState } from 'react';
 import { FieldData } from "../../Form/formSlice";
 import { useAppDispatch } from "../../../redux/store";
-import { selectItem, upsertData } from "../../Form/formSubmitSlice";
+import { selectItem, upsertOneFieldData } from "../../Form/formSubmitSlice";
 
 interface Props extends Omit<FieldData, 'type'> {
     onChange?: ChangeEventHandler<HTMLTextAreaElement> | undefined,
@@ -34,7 +34,7 @@ const TextareaField: React.FC<Props> = ({ label, fieldName, isRequired, onChange
         const value = target.value;
 
         setValueState(value)
-        dispatch(upsertData({ id: name, value: value }))
+        dispatch(upsertOneFieldData({ id: name, value: value }))
     }
 
     const handleOnInvalid = (e: FormEvent<HTMLTextAreaElement>) => {

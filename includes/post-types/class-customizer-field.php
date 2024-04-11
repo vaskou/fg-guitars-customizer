@@ -8,6 +8,7 @@ class Customizer_Field {
 	const POST_TYPE_SLUG = 'customizer_field';
 	const GROUP_META_KEY = 'group';
 	const FIELD_TYPE_META_KEY = 'field_type';
+	const FIELD_CONNECTED_TO_OPTION_META_KEY = 'field_connected_to_option';
 
 	private static $_instance;
 
@@ -136,6 +137,14 @@ class Customizer_Field {
 				'textarea' => __( 'Textarea', 'fg-guitars-customizer' ),
 			],
 		) );
+
+		$metabox->add_field( array(
+			'name'         => __( 'Field connected to Option', 'fg-guitars-customizer' ),
+			'id'           => self::FIELD_CONNECTED_TO_OPTION_META_KEY,
+			'type'         => 'select',
+			'options_cb'   => [ $this, 'get_option_items' ],
+			'render_class' => 'FG_Guitars_Customizer_Custom_Select',
+		) );
 	}
 
 	public function field_filter( $post_type ) {
@@ -209,6 +218,10 @@ class Customizer_Field {
 		return get_post_meta( $field_id, self::FIELD_TYPE_META_KEY, true );
 	}
 
+	public static function get_connected_to_option( $field_id ) {
+		return get_post_meta( $field_id, self::FIELD_CONNECTED_TO_OPTION_META_KEY, true );
+	}
+
 	public static function get_items_by_group_id( $group_id ) {
 		if ( empty( $group_id ) ) {
 			return [];
@@ -231,10 +244,60 @@ class Customizer_Field {
 	public function get_group_options( $field = '' ) {
 		$options = [];
 
-		$items = Customizer_Fields_Group::get_items();
+		$items = Customizer_Fields_Group::get_items( [
+			'orderby' => 'title'
+		] );
 
 		foreach ( $items as $item ) {
 			$options[ $item->ID ] = $item->post_title;
+		}
+
+		return $options;
+	}
+
+	/**
+	 * @param \CMB2_Field $field
+	 *
+	 * @return array
+	 */
+	public function get_option_items( $field = '' ) {
+		$options = [
+			'' => __( 'None', 'fg-guitars-customizer' )
+		];
+
+		if ( empty( $_GET['post'] ) ) {
+			return $options;
+		}
+
+		$field_id = $_GET['post'];
+
+		$field_group = self::get_field_group( $field_id );
+
+		$fields = Customizer_Field::get_items( [
+			'meta_key'   => self::GROUP_META_KEY,
+			'meta_value' => $field_group,
+		] );
+
+		$fields = array_filter( $fields, function ( $field ) use ( $field_id ) {
+			return $field->ID != $field_id;
+		} );
+
+		foreach ( $fields as $field ) {
+			$option_items = Customizer_Field_Option::get_items( [
+				'orderby'    => 'title',
+				'meta_key'   => Customizer_Field_Option::FIELD_META_KEY,
+				'meta_value' => $field->ID,
+			] );
+
+			$items = [];
+			foreach ( $option_items as $option_item ) {
+				$items[ $option_item->ID ] = $option_item->post_title;
+			}
+
+			$options[ $field->ID ] = [
+				'label' => $field->post_title,
+				'items' => $items
+			];
 		}
 
 		return $options;

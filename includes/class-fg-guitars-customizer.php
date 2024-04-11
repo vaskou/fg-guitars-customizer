@@ -45,6 +45,9 @@ class FG_Guitars_Customizer {
 		// CMB2 Custom Fields
 		Cmb2_Custom_Fields\Customizer_Options::instance();
 
+		// Hooks
+		Hooks\Fg_Theme::instance();
+
 		// Metaboxes
 		Metaboxes\Customizer_Metabox::instance();
 
@@ -65,5 +68,6 @@ class FG_Guitars_Customizer {
 
 	public function include_custom_multicheck_class() {
 		include 'cmb2-custom-fields/class-custom-multicheck.php';
+		include 'cmb2-custom-fields/class-custom-select.php';
 	}
 }

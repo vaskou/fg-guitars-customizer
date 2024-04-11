@@ -12,6 +12,19 @@
         }
       }
     }
+
+    &.uk-width-1-2\@s {
+      .fggc-form__group__content {
+        border-right-width: 0;
+      }
+
+      &:nth-child(2n),
+      &:last-child {
+        .fggc-form__group__content {
+          border-right-width: 1px;
+        }
+      }
+    }
   }
 
   &__title {

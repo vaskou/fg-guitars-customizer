@@ -1,5 +1,5 @@
 import React, { ChangeEventHandler } from "react";
-import { FieldData, GroupData, OptionData, SectionData, selectSelectedGuitarID } from "../Form/formSlice";
+import { OptionData, SectionData, selectFieldArray, selectFields, selectGroupArray, selectGroups, selectSelectedGuitarID } from "../Form/formSlice";
 import Section, { SectionTypes } from "./Section";
 import Group from "../Group/Group";
 import Field from "../Field/Field";
@@ -13,6 +13,10 @@ interface Props {
 
 const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange }) => {
     const selectedGuitarID = useSelector(selectSelectedGuitarID);
+    const groupsArray = useSelector(selectGroupArray);
+    const groups = useSelector(selectGroups);
+    const fieldsArray = useSelector(selectFieldArray);
+    const fields = useSelector(selectFields);
 
     let guitarsSection = sections.find((section: SectionData) => {
         return section.type === SectionTypes.GUITARS;
@@ -21,21 +25,18 @@ const GuitarsSection: React.FC<Props> = ({ guitars, sections, onGuitarChange }) 
     return (
         <div className={"fggc-form-guitar-section"}>
             {
-                guitarsSection && guitarsSection.groups.length > 0 &&
+                guitarsSection && guitarsSection.groupIDs.length > 0 &&
                 <Section key={guitarsSection.id} title={guitarsSection.title}>
-                    {guitarsSection.groups.map((group: GroupData) => {
-                        const modelField: FieldData = {
-                            id: 'model',
-                            label: 'Model',
-                            fieldName: 'model',
-                            isRequired: true,
-                            options: guitars,
-                            type: 'select',
-                        }
+                    {guitarsSection.groupIDs.map((groupID: string) => {
+
+                        const group = groups[groupID];
+                        const modelField = fields['model'];
+
                         return (
                             <Group key={group.id} {...group}>
                                 <Field field={modelField} index={'model'} onChange={onGuitarChange}/>
-                                {group.fields.map((field: FieldData) => {
+                                {group.fieldIDs.map((fieldID: string) => {
+                                    const field = fields[fieldID];
                                     return <Field key={field.id} field={field} index={`${selectedGuitarID}-${field.id}`}/>
                                 })}
                             </Group>
