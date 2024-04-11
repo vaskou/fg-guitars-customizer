@@ -24,7 +24,7 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, optionI
 
         optionIDs.forEach((optionID) => {
             const option = options[optionID];
-            if (option.default) {
+            if (option?.default) {
                 setOptionChecked(`${option.id}`);
             }
         })

@@ -29,7 +29,7 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
 
         optionIDs.forEach((optionID) => {
             const option = options[optionID];
-            if (option.default) {
+            if (option?.default) {
                 setOptionChecked(option.value);
                 setOptionIDChecked(option.id);
             }
