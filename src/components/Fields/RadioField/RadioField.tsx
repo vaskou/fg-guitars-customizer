@@ -78,18 +78,20 @@ const RadioField: React.FC<Props> = ({ id, label, fieldName, isRequired, optionI
             {optionIDs.map((optionID) => {
                 const option = options[optionID];
                 return (
-                    <div key={option.id} className="fggc-field__radio">
-                        <label>
-                            <input className="uk-radio" type="radio" name={fieldName} value={option.value} required={isRequired}
-                                   checked={optionChecked == option.id}
-                                   data-id={option.id}
-                                   data-price={option.price}
-                                   onChange={handleOnChange}
-                                   onClick={handleOnClick}
-                                   onInvalid={handleOnInvalid}/>
-                            <span className="label"> {option.label} <PriceAdded price={option.price.toString()}/></span>
-                        </label>
-                    </div>
+                    <>
+                        {option && <div key={option.id} className="fggc-field__radio">
+                            <label>
+                                <input className="uk-radio" type="radio" name={fieldName} value={option.value} required={isRequired}
+                                       checked={optionChecked == option.id}
+                                       data-id={option.id}
+                                       data-price={option.price}
+                                       onChange={handleOnChange}
+                                       onClick={handleOnClick}
+                                       onInvalid={handleOnInvalid}/>
+                                <span className="label"> {option.label} <PriceAdded price={option.price.toString()}/></span>
+                            </label>
+                        </div>}
+                    </>
                 );
             })}
         </>
