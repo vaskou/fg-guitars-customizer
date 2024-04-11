@@ -23,6 +23,10 @@ class Fg_Theme {
 	}
 
 	public function show_single_guitar_available_guitars_customize_block( $guitar_id ) {
+		if ( ! Helpers::show_new_single_page_customize() ) {
+			return;
+		}
+
 		if ( ! Helpers::is_active_for_guitar_customizer( $guitar_id ) ) {
 			return;
 		}
@@ -47,6 +51,10 @@ class Fg_Theme {
 	}
 
 	public function show_single_guitar_related_guitars_before_customize_block( $guitar_id ) {
+		if ( ! Helpers::show_new_single_page_customize() ) {
+			return;
+		}
+
 		if ( ! Helpers::is_active_for_guitar_customizer( $guitar_id ) ) {
 			return;
 		}

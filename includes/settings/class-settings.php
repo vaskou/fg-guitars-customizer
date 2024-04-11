@@ -36,6 +36,7 @@ class Settings extends SettingsSetup {
 			new SettingField( 'fg_guitars_customizer_email', __( 'Email To Address', 'fg-guitars-customizer' ), 'text', $general->get_name() ),
 			new SettingField( 'fg_guitars_customizer_page_id', __( 'Customizer Page', 'fg-guitars-customizer' ), 'pages', $general->get_name() ),
 			new SettingField( 'fg_guitars_customizer_create_guitar_bg_image_id', __( 'Guitar Single page "Create your guitar" block background image ID', 'fg-guitars-customizer' ), 'select', $general->get_name(), $this->_get_attachment_options() ),
+			new SettingField( 'fg_guitars_customizer_new_single_page_customize_roles', __( 'Enable single page "Customize" for these roles', 'fg-guitars-customizer' ), 'multiselect', $general->get_name(), $this->_get_user_role_options() ),
 		);
 
 		foreach ( $settings as $setting ) {
@@ -57,10 +58,14 @@ class Settings extends SettingsSetup {
 		return self::instance()->get_setting( 'fg_guitars_customizer_create_guitar_bg_image_id' );
 	}
 
+	public static function get_new_single_page_customize_roles() {
+		return self::instance()->get_setting( 'fg_guitars_customizer_new_single_page_customize_roles' );
+	}
+
 	private function _get_attachment_options() {
 		$attachment_options = [
 			'options' => [
-				'' => __( 'None', 'demataki-calculator' ),
+				'' => __( 'None', 'fg-guitars-customizer' ),
 			]
 		];
 
@@ -81,5 +86,22 @@ class Settings extends SettingsSetup {
 		}
 
 		return $attachment_options;
+	}
+
+	private function _get_user_role_options() {
+		$user_role_options = array(
+			'options' => array(
+				'all' => __( 'All', 'fg-guitars-customizer' ),
+			)
+		);
+
+		$roles = wp_roles()->roles;
+		foreach ( $roles as $key => $role ) {
+			$name = translate_user_role( $role['name'] );
+
+			$user_role_options['options'][ esc_attr( $key ) ] = $name;
+		}
+
+		return $user_role_options;
 	}
 }

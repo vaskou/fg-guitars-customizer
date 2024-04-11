@@ -5,6 +5,7 @@ namespace FG_Guitars_Customizer\Helpers;
 use FG_Guitars_Customizer\Post_Types\Customizer_Field;
 use FG_Guitars_Customizer\Post_Types\Customizer_Field_Option;
 use FG_Guitars_Customizer\Post_Types\Customizer_Fields_Group;
+use FG_Guitars_Customizer\Settings\Settings;
 use FG_Guitars_Customizer\Taxonomies\Customizer_Section;
 
 class Helpers {
@@ -122,6 +123,38 @@ class Helpers {
 		}
 
 		return true;
+	}
+
+	public static function show_new_single_page_customize() {
+		if ( is_admin() && defined( 'DOING_AJAX' ) && ! DOING_AJAX ) {
+			return false;
+		}
+
+		$selected_roles = Settings::get_new_single_page_customize_roles();
+
+		if ( empty( $selected_roles ) ) {
+			return false;
+		}
+
+		if ( in_array( 'all', $selected_roles ) ) {
+			return true;
+		}
+
+		$user = wp_get_current_user();
+
+		if ( empty( $user ) || empty( $user->ID ) ) {
+			return false;
+		}
+
+		$user_roles = $user->roles;
+
+		foreach ( $user_roles as $role ) {
+			if ( in_array( $role, $selected_roles ) ) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private static function _get_section_groups_data( $section_id ) {
