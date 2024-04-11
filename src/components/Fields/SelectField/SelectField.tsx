@@ -79,11 +79,15 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
                 {optionIDs.map((optionID) => {
                     const option = options[optionID];
                     return (
-                        <option key={option.id} value={option.value}
-                                data-id={option.id}
-                                data-price={option.price}>
-                            {option.label} <PriceAdded price={option.price?.toString()}/>
-                        </option>
+                        <>
+                            {option &&
+                                <option key={option.id} value={option.value}
+                                        data-id={option.id}
+                                        data-price={option.price}>
+                                    {option.label} <PriceAdded price={option.price?.toString()}/>
+                                </option>
+                            }
+                        </>
                     );
                 })}
             </select>
