@@ -67,7 +67,7 @@ const Form: React.FC<Props> = ({}) => {
 
         // dispatch(deleteSelectedOptions());
         // dispatch(clearData());
-        dispatch(clearAllData());
+        // dispatch(clearAllData());
 
         dispatch(loadData(value))
             .finally(() => {
