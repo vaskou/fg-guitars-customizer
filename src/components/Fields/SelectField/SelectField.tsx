@@ -23,13 +23,15 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
     useEffect(() => {
         if (isRequired) {
             const firstOptionID = optionIDs[0];
-            setOptionChecked(options[firstOptionID].value);
-            setOptionIDChecked(options[firstOptionID].id);
+            if (options[firstOptionID]) {
+                setOptionChecked(options[firstOptionID].value);
+                setOptionIDChecked(options[firstOptionID].id);
+            }
         }
 
         optionIDs.forEach((optionID) => {
             const option = options[optionID];
-            if (option.default) {
+            if (option?.default) {
                 setOptionChecked(option.value);
                 setOptionIDChecked(option.id);
             }
@@ -78,6 +80,11 @@ const SelectField: React.FC<Props> = ({ id, label, fieldName, isRequired, option
                 }
                 {optionIDs.map((optionID) => {
                     const option = options[optionID];
+
+                    if (!option?.id) {
+                        return '';
+                    }
+
                     return (
                         <option key={option.id} value={option.value}
                                 data-id={option.id}

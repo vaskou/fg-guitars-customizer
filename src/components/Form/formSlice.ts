@@ -156,6 +156,8 @@ export const {
 
 export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
     try {
+        dispatch(clearAllData());
+
         let requestAction = fggc_customizer_data.action;
         let adminURL = fggc_customizer_data.url;
 
@@ -173,14 +175,8 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
             const data: FormState = await response.json();
             console.log(data) //TODO: remove
 
-            dispatch(clearAllData());
-
             if (data.sections) {
-                // let { newSections, newGroups } = dataFormat(data.sections, dispatch)
                 dataFormat(data.sections, dispatch);
-
-                // dispatch(upsertSections(newSections))
-                // dispatch(upsertGroups(newGroups))
             }
 
             if (data.guitars) {

@@ -3,6 +3,7 @@ import Section, { SectionTypes } from "../Section/Section";
 import Group from "../Group/Group";
 import { useSelector } from "react-redux";
 import {
+    clearAllData,
     deleteSelectedOptions,
     loadData,
     SectionData,
@@ -66,6 +67,7 @@ const Form: React.FC<Props> = ({}) => {
 
         // dispatch(deleteSelectedOptions());
         // dispatch(clearData());
+        // dispatch(clearAllData());
 
         dispatch(loadData(value))
             .finally(() => {
