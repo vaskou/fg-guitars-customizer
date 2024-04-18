@@ -144,6 +144,7 @@ class Customizer_Field {
 			'type'         => 'select',
 			'options_cb'   => [ $this, 'get_option_items' ],
 			'render_class' => 'FG_Guitars_Customizer_Custom_Select',
+			'repeatable'   => true,
 		) );
 	}
 

@@ -3,7 +3,6 @@ import Section, { SectionTypes } from "../Section/Section";
 import Group from "../Group/Group";
 import { useSelector } from "react-redux";
 import {
-    clearAllData,
     deleteSelectedOptions,
     loadData,
     SectionData,
@@ -131,20 +130,23 @@ const Form: React.FC<Props> = ({}) => {
         }
 
         fieldsArray.forEach((field) => {
-            if (field.connectedToOption) {
-                const fieldID = selectedOptionFieldID(field.connectedToOption);
+            if (field.connectedToOptions) {
+                for (let connectedOption of field.connectedToOptions) {
+                    const fieldID = selectedOptionFieldID(connectedOption);
 
-                if (fieldID) {
-                    dispatch(upsertField({
-                        ...field,
-                        hidden: false
-                    }));
-                } else {
-                    dispatch(upsertField({
-                        ...field,
-                        hidden: true
-                    }));
-                    dispatch(removeOneFieldData(field.id));
+                    if (fieldID) {
+                        dispatch(upsertField({
+                            ...field,
+                            hidden: false
+                        }));
+                        break;
+                    } else {
+                        dispatch(upsertField({
+                            ...field,
+                            hidden: true
+                        }));
+                        dispatch(removeOneFieldData(field.id));
+                    }
                 }
             }
         })

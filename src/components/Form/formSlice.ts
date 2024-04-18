@@ -20,7 +20,7 @@ export interface FieldData {
     isRequired: boolean;
     options: OptionData[];
     optionIDs: string[];
-    connectedToOption: string;
+    connectedToOptions: string[];
     hidden: boolean;
 }
 
@@ -192,7 +192,7 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
                     options: data.guitars,
                     type: 'select',
                     optionIDs: optionIDs,
-                    connectedToOption: '',
+                    connectedToOptions: [],
                     hidden: false,
                 }
 
