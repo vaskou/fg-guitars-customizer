@@ -253,7 +253,7 @@ class Customizer_Options {
 
 		$is_enabled = ! empty( $escaped_value[ $field_id ]['required'] );
 		$args       = [
-			'id'   => $field_type->_id( '_option_enable_' . $field_id ),
+			'id'   => $field_type->_id( '_field_required_' . $field_id ),
 			'name' => $field_type->_name( '[' . $field_id . '][required]' ),
 		];
 		?>
