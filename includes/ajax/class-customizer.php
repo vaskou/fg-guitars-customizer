@@ -111,7 +111,7 @@ class Customizer {
 			'post_type'        => 'fg_guitars',
 			'post_status'      => [ 'publish' ],
 			'posts_per_page'   => - 1,
-			'orderby'          => 'title',
+			'orderby'          => 'menu_order title',
 			'order'            => 'ASC',
 			'suppress_filters' => false,
 		];
