@@ -58,11 +58,11 @@ class Customizer_Options {
 
 		foreach ( $val as $key => $value ) {
 
-			$price    = ! empty( $value['price'] ) ? $value['price'] : '';
-			$enable   = ! empty( $value['enable'] ) ? $value['enable'] : '';
-			$default  = ! empty( $value['default'] ) ? $value['default'] : '';
-			$required = ! empty( $value['required'] ) ? $value['required'] : '';
-
+			$price      = ! empty( $value['price'] ) ? $value['price'] : '';
+			$enable     = ! empty( $value['enable'] ) ? $value['enable'] : '';
+			$default    = ! empty( $value['default'] ) ? $value['default'] : '';
+			$required   = ! empty( $value['required'] ) ? $value['required'] : '';
+			$info_image = ! empty( $value['info_image'] ) ? $value['info_image'] : '';
 
 			$sanitized_price = sanitize_text_field( $price );
 			$sanitized_price = isset( $sanitized_price ) && '' != $sanitized_price ? floatval( $sanitized_price ) : '';
@@ -83,6 +83,9 @@ class Customizer_Options {
 			$sanitized_required = isset( $sanitized_required ) && 'on' == $sanitized_required ? $sanitized_required : '';
 
 			$sanitized_val[ $key ]['required'] = $sanitized_required;
+
+            $sanitized_info_image = sanitize_text_field( $info_image );
+			$sanitized_val[ $key ]['info_image'] = $sanitized_info_image;
 
 		}
 
@@ -231,6 +234,7 @@ class Customizer_Options {
                     <label class="fggc-field-label <?php echo $closed_class; ?>"><?php echo $field_title; ?><?php echo $this->_get_toggle_html(); ?></label>
                     <div class="fggc-field-content">
 						<?php echo $this->_get_required_html( $field_id, $field_type, $escaped_value ); ?>
+						<?php echo $this->_get_info_image_html( $field_id, $field_type, $escaped_value ); ?>
 						<?php echo $field_content; ?>
                     </div>
                 </div>
@@ -264,6 +268,38 @@ class Customizer_Options {
                 </div>
                 <div class="cmb-td">
 					<?php echo $field_type->checkbox( $args, $is_enabled ); ?>
+                </div>
+            </div>
+        </div>
+		<?php
+		return ob_get_clean();
+	}
+
+	/**
+	 * @param string $field_id
+	 * @param \CMB2_Types $field_type
+	 * @param mixed $escaped_value
+	 *
+	 * @return false|string
+	 */
+	private function _get_info_image_html( $field_id, $field_type, $escaped_value ) {
+		ob_start();
+
+		$value = ! empty( $escaped_value[ $field_id ]['info_image'] ) ? $escaped_value[ $field_id ]['info_image'] : '';
+		$args  = [
+			'id'    => $field_type->_id( '_field_info_image_' . $field_id ),
+			'name'  => $field_type->_name( '[' . $field_id . '][info_image]' ),
+			'value' => $value,
+			'type'  => 'hidden',
+		];
+		?>
+        <div class="field-<?php echo $field_id; ?> cmb-row">
+            <div class="field" style="clear:both;">
+                <div class="cmb-th">
+                    <label><?php echo __( 'Info Image', 'fg-guitar-customizer' ); ?></label>
+                </div>
+                <div class="cmb-td">
+					<?php echo $field_type->file( $args ); ?>
                 </div>
             </div>
         </div>

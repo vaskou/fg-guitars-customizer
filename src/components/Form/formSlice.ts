@@ -21,6 +21,7 @@ export interface FieldData {
     options: OptionData[];
     optionIDs: string[];
     connectedToOptions: string[];
+    infoImage: string;
     hidden: boolean;
 }
 
@@ -193,6 +194,7 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
                     type: 'select',
                     optionIDs: optionIDs,
                     connectedToOptions: [],
+                    infoImage: '',
                     hidden: false,
                 }
 

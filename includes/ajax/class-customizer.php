@@ -242,6 +242,7 @@ class Customizer {
 				'fieldName'          => $field_id,//$field_name,
 				'type'               => $field_type,
 				'isRequired'         => ! empty( $this->customizer_options[ $field_id ]['required'] ),
+				'infoImage'          => ! empty( $this->customizer_options[ $field_id ]['info_image'] ) ? $this->customizer_options[ $field_id ]['info_image'] : '',
 				'options'            => $option_data,
 				'optionIDs'          => $optionIDs,
 				'connectedToOptions' => $connected_to_options,
