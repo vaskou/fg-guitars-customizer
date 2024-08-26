@@ -78,11 +78,11 @@ class Fg_Theme {
 		}
 		?>
         <div class="fggc-create-guitar-block uk-container uk-margin-large-top uk-margin-large-bottom">
-            <div class="uk-inline">
-				<?php echo wp_get_attachment_image( $bg_image_id, 'full' ); ?>
-                <div class="uk-flex uk-flex-middle uk-overlay uk-position-center-left">
-                    <span class="uk-text-large uk-margin-large-right"><?php echo __( 'Create your own unique Fremediti guitar', 'fg-guitar-customizer' ); ?></span>
-                    <a href="<?php echo esc_url( $url ); ?>" class="uk-button uk-button-primary"><?php echo __( 'Customize', 'fg-guitar-customizer' ); ?></a>
+            <div class="uk-inline fggc-create-guitar-block__wrapper">
+				<?php echo wp_get_attachment_image( $bg_image_id, 'full', false, [ 'class' => 'fggc-create-guitar-block__image' ] ); ?>
+                <div class="uk-flex uk-flex-middle uk-overlay uk-position-center-left fggc-create-guitar-block__text-wrapper">
+                    <span class="uk-text-large uk-margin-large-right fggc-create-guitar-block__text"><?php echo __( 'Create your own unique Fremediti guitar', 'fg-guitar-customizer' ); ?></span>
+                    <a href="<?php echo esc_url( $url ); ?>" class="uk-button uk-button-primary fggc-create-guitar-block__button"><?php echo __( 'Customize', 'fg-guitar-customizer' ); ?></a>
                 </div>
             </div>
         </div>

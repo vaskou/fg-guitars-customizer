@@ -81,7 +81,7 @@ const Field: React.FC<Props> = ({ field, index, onChange }) => {
     }
 
     return (
-        <FieldWrapper label={field.label} isTextControls={isTextControls} isInvalid={isInvalid} validationMessage={validationMessage}>
+        <FieldWrapper label={field.label} infoImage={field.infoImage} isTextControls={isTextControls} isInvalid={isInvalid} validationMessage={validationMessage}>
             {fieldComponent}
         </FieldWrapper>
     );

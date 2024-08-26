@@ -111,7 +111,7 @@ class Customizer {
 			'post_type'        => 'fg_guitars',
 			'post_status'      => [ 'publish' ],
 			'posts_per_page'   => - 1,
-			'orderby'          => 'title',
+			'orderby'          => 'menu_order title',
 			'order'            => 'ASC',
 			'suppress_filters' => false,
 		];
@@ -212,7 +212,10 @@ class Customizer {
 			$field_name  = $field_post->post_name;
 			$field_type  = Customizer_Field::get_field_type( $field_id );
 
-			$connected_to_option = Customizer_Field::get_connected_to_option( $field_id );
+			$connected_to_options = Customizer_Field::get_connected_to_option( $field_id );
+			if ( ! is_array( $connected_to_options ) && ! empty( $connected_to_options ) ) {
+				$connected_to_options = (array) $connected_to_options;
+			}
 
 			$option_data = [];
 			$optionIDs   = [];
@@ -234,14 +237,15 @@ class Customizer {
 			}
 
 			$field_data[] = [
-				'id'                => $field_id,
-				'label'             => $field_title,
-				'fieldName'         => $field_id,//$field_name,
-				'type'              => $field_type,
-				'isRequired'        => ! empty( $this->customizer_options[ $field_id ]['required'] ),
-				'options'           => $option_data,
-				'optionIDs'         => $optionIDs,
-				'connectedToOption' => $connected_to_option,
+				'id'                 => $field_id,
+				'label'              => $field_title,
+				'fieldName'          => $field_id,//$field_name,
+				'type'               => $field_type,
+				'isRequired'         => ! empty( $this->customizer_options[ $field_id ]['required'] ),
+				'infoImage'          => ! empty( $this->customizer_options[ $field_id ]['info_image'] ) ? $this->customizer_options[ $field_id ]['info_image'] : '',
+				'options'            => $option_data,
+				'optionIDs'          => $optionIDs,
+				'connectedToOptions' => $connected_to_options,
 			];
 		}
 
