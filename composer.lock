@@ -1,0 +1,129 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "fd3aa386ba1788d4b8595ad315eb555c",
+    "packages": [
+        {
+            "name": "vaskou/autoloader",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vaskou/autoloader.git",
+                "reference": "aa0956e9c09105cc8077ae908c843c80d5f30e76"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vaskou/autoloader/zipball/aa0956e9c09105cc8077ae908c843c80d5f30e76",
+                "reference": "aa0956e9c09105cc8077ae908c843c80d5f30e76",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "bootstrap_1_0_1.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Vasilis Koutsopoulos",
+                    "email": "vaskou@hotmail.com"
+                }
+            ],
+            "support": {
+                "issues": "https://github.com/vaskou/autoloader/issues",
+                "source": "https://github.com/vaskou/autoloader/tree/v1.0.1"
+            },
+            "time": "2022-11-07T10:12:27+00:00"
+        },
+        {
+            "name": "vaskou/wordpress-custom-settings",
+            "version": "v2.0.7",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vaskou/wordpress-custom-settings.git",
+                "reference": "e08fe7f984f523197e8c4b8e682d55e6eced8060"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vaskou/wordpress-custom-settings/zipball/e08fe7f984f523197e8c4b8e682d55e6eced8060",
+                "reference": "e08fe7f984f523197e8c4b8e682d55e6eced8060",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "WordpressCustomSettings/bootstrap_2_0_7.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Vasilis Koutsopoulos",
+                    "email": "vaskou@hotmail.com"
+                }
+            ],
+            "description": "Wordpress Custom Settings",
+            "support": {
+                "issues": "https://github.com/vaskou/wordpress-custom-settings/issues",
+                "source": "https://github.com/vaskou/wordpress-custom-settings/tree/v2.0.7"
+            },
+            "time": "2024-03-27T13:28:30+00:00"
+        },
+        {
+            "name": "vaskou/wordpress-enqueue",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/vaskou/wordpress-enqueue.git",
+                "reference": "97ba242e711e2bb91f2d201aec753aea5158ddfa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/vaskou/wordpress-enqueue/zipball/97ba242e711e2bb91f2d201aec753aea5158ddfa",
+                "reference": "97ba242e711e2bb91f2d201aec753aea5158ddfa",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "files": [
+                    "WordpressEnqueue/bootstrap_1_0_0.php"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "GPL-2.0-or-later"
+            ],
+            "authors": [
+                {
+                    "name": "Vasilis Koutsopoulos",
+                    "email": "vaskou@hotmail.com"
+                }
+            ],
+            "description": "Wordpress Enqueue",
+            "support": {
+                "issues": "https://github.com/vaskou/wordpress-enqueue/issues",
+                "source": "https://github.com/vaskou/wordpress-enqueue/tree/v1.0.0"
+            },
+            "time": "2022-10-13T15:52:52+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": [],
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": [],
+    "platform-dev": [],
+    "plugin-api-version": "2.1.0"
+}

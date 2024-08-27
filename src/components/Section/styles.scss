@@ -1,0 +1,24 @@
+.fggc-grid-match {
+  & > * {
+    display: flex;
+    flex-direction: column;
+
+    & > .fggc-form__group__content {
+      flex: 1;
+    }
+  }
+
+  @media (max-width: 639px) {
+    & > .uk-width-1-3\@s:not(:first-child),
+    & > .uk-width-1-2\@s:not(:first-child) {
+      margin-top: 10px;
+    }
+  }
+
+  @media (min-width: 640px) {
+    & > .uk-width-1-3\@s:nth-child(n+4),
+    & > .uk-width-1-2\@s:nth-child(n+3) {
+      margin-top: 10px;
+    }
+  }
+}
