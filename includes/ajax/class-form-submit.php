@@ -155,6 +155,12 @@ class Form_Submit {
 
 			<?php foreach ( $group as $option ): ?>
 
+				<?php
+				if ( empty( $option['value'] ) ) {
+					continue;
+				}
+				?>
+
 				<?php if ( $option['type'] == 'textarea' ): ?>
                     <div>
                         <div><strong><?php echo $option['label']; ?></strong></div>
