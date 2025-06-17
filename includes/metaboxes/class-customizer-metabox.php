@@ -47,6 +47,12 @@ class Customizer_Metabox {
 		] );
 
 		$metabox->add_field( [
+			'id'   => 'fggc_customizer_include',
+			'name' => __( 'Include even if has "Draft" status', 'fg-guitar-customizer' ),
+			'type' => 'checkbox',
+		] );
+
+		$metabox->add_field( [
 			'id'         => 'fggc_customizer_options',
 			'name'       => __( 'Customizer', 'fg-guitar-customizer' ),
 			'type'       => 'fggc_cmb2_customizer_options_field',

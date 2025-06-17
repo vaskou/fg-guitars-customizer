@@ -122,6 +122,13 @@ class Helpers {
 			return false;
 		}
 
+		$include_even_is_draft = get_post_meta( $guitar_id, 'fggc_customizer_include', true );
+		$guitar_status         = get_post_status( $guitar_id );
+
+		if ( empty( $include_even_is_draft ) && 'draft' == $guitar_status ) {
+			return false;
+		}
+
 		return true;
 	}
 
