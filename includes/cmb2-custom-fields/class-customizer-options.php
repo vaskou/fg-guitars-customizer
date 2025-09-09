@@ -264,7 +264,7 @@ class Customizer_Options {
         <div class="field-<?php echo $field_id; ?> cmb-row">
             <div class="field" style="clear:both;">
                 <div class="cmb-th">
-                    <label><?php echo __( 'Required', 'fg-guitar-customizer' ); ?></label>
+                    <label><?php echo __( 'Required', 'fg-guitars-customizer' ); ?></label>
                 </div>
                 <div class="cmb-td">
 					<?php echo $field_type->checkbox( $args, $is_enabled ); ?>
@@ -296,7 +296,7 @@ class Customizer_Options {
         <div class="field-<?php echo $field_id; ?> cmb-row">
             <div class="field" style="clear:both;">
                 <div class="cmb-th">
-                    <label><?php echo __( 'Info Image', 'fg-guitar-customizer' ); ?></label>
+                    <label><?php echo __( 'Info Image', 'fg-guitars-customizer' ); ?></label>
                 </div>
                 <div class="cmb-td">
 					<?php echo $field_type->file( $args ); ?>
@@ -328,7 +328,7 @@ class Customizer_Options {
         <div class="field-<?php echo $field_id; ?> cmb-row">
             <div class="field" style="clear:both;">
                 <div class="cmb-th">
-                    <label><?php echo __( 'Enable', 'fg-guitar-customizer' ); ?></label>
+                    <label><?php echo __( 'Enable', 'fg-guitars-customizer' ); ?></label>
                 </div>
                 <div class="cmb-td">
 					<?php echo $field_type->checkbox( $args, $is_enabled ); ?>
@@ -390,7 +390,7 @@ class Customizer_Options {
                         <div class="cmb-row">
                             <div class="field" style="clear:both;">
                                 <div class="cmb-th">
-                                    <label><?php echo __( 'Enable', 'fg-guitar-customizer' ); ?></label>
+                                    <label><?php echo __( 'Enable', 'fg-guitars-customizer' ); ?></label>
                                 </div>
                                 <div class="cmb-td">
 									<?php echo $field_type->checkbox( $option_args, $is_enabled ); ?>
@@ -398,7 +398,7 @@ class Customizer_Options {
                             </div>
                             <div class="field" style="clear:both;">
                                 <div class="cmb-th">
-                                    <label><?php echo __( 'Price', 'fg-guitar-customizer' ); ?></label>
+                                    <label><?php echo __( 'Price', 'fg-guitars-customizer' ); ?></label>
                                 </div>
                                 <div class="cmb-td">
 									<?php echo $field_type->input( $price_args ); ?>
@@ -406,7 +406,7 @@ class Customizer_Options {
                             </div>
                             <div class="field" style="clear:both;">
                                 <div class="cmb-th">
-                                    <label><?php echo __( 'Is selected by default', 'fg-guitar-customizer' ); ?></label>
+                                    <label><?php echo __( 'Is selected by default', 'fg-guitars-customizer' ); ?></label>
                                 </div>
                                 <div class="cmb-td">
 									<?php echo $field_type->checkbox( $is_default_args, $is_default ); ?>

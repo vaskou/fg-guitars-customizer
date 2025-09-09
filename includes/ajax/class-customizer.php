@@ -109,7 +109,7 @@ class Customizer {
 
 		$args = [
 			'post_type'        => 'fg_guitars',
-			'post_status'      => [ 'publish' ],
+			'post_status'      => [ 'publish', 'draft' ],
 			'posts_per_page'   => - 1,
 			'orderby'          => 'menu_order title',
 			'order'            => 'ASC',
