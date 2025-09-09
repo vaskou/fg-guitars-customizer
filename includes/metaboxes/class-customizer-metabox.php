@@ -36,25 +36,25 @@ class Customizer_Metabox {
 
 		$metabox->add_field( [
 			'id'   => 'fggc_customizer_price',
-			'name' => __( 'Base Price', 'fg-guitar-customizer' ),
+			'name' => __( 'Base Price', 'fg-guitars-customizer' ),
 			'type' => 'text_small',
 		] );
 
 		$metabox->add_field( [
 			'id'   => 'fggc_customizer_exclude',
-			'name' => __( 'Exclude', 'fg-guitar-customizer' ),
+			'name' => __( 'Exclude', 'fg-guitars-customizer' ),
 			'type' => 'checkbox',
 		] );
 
 		$metabox->add_field( [
 			'id'   => 'fggc_customizer_include',
-			'name' => __( 'Include even if has "Draft" status', 'fg-guitar-customizer' ),
+			'name' => __( 'Include even if has "Draft" status', 'fg-guitars-customizer' ),
 			'type' => 'checkbox',
 		] );
 
 		$metabox->add_field( [
 			'id'         => 'fggc_customizer_options',
-			'name'       => __( 'Customizer', 'fg-guitar-customizer' ),
+			'name'       => __( 'Customizer', 'fg-guitars-customizer' ),
 			'type'       => 'fggc_cmb2_customizer_options_field',
 			'options_cb' => [ $this, 'get_group_field_option_tree' ],
 			'show_names' => false,

@@ -22,6 +22,8 @@ class FG_Guitars_Customizer {
 		$this->init_classes();
 
 		add_action( 'cmb2_init', [ $this, 'include_custom_multicheck_class' ] );
+
+		add_action( 'plugins_loaded',  [$this, 'on_plugins_loaded' ] );
 	}
 
 	public function init_autoloader() {
@@ -69,5 +71,9 @@ class FG_Guitars_Customizer {
 	public function include_custom_multicheck_class() {
 		include 'cmb2-custom-fields/class-custom-multicheck.php';
 		include 'cmb2-custom-fields/class-custom-select.php';
+	}
+
+	public function on_plugins_loaded() {
+		load_plugin_textdomain( 'fg-guitars-customizer', false, FG_GUITARS_CUSTOMIZER_PLUGIN_DIR_NAME . '/languages/' );
 	}
 }

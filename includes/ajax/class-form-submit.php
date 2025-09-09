@@ -50,7 +50,7 @@ class Form_Submit {
 		$response = [
 			'success' => $mail_sent,
 			'message' => $mail_sent ?
-				__( 'Thank you for your submission', 'fg-guitar-customizer' ) :
+				__( 'Thank you for your submission', 'fg-guitars-customizer' ) :
 				__( 'Something wrong happened. Please try later.', 'fg-guitars-customizer' ),
 		];
 
@@ -80,7 +80,7 @@ class Form_Submit {
 
 				if ( $group_has_guitar_selection_field ) {
 					if ( ! empty( $data['model'] ) ) {
-						$label = __( 'Guitar', 'fg-guitar-customizer' );
+						$label = __( 'Guitar', 'fg-guitars-customizer' );
 
 						$value = Helpers::get_post_title( $data['model']['value'] );
 
@@ -133,7 +133,7 @@ class Form_Submit {
 		}
 
 		if ( ! empty( $data['price_estimate'] ) ) {
-			$label = __( 'Price Estimate', 'fg-guitar-customizer' );
+			$label = __( 'Price Estimate', 'fg-guitars-customizer' );
 
 			$value = $data['price_estimate']['value'];
 
