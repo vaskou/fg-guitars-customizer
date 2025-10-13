@@ -8,6 +8,7 @@ export interface ExternalCustomizerData {
     error_message: string;
     option_validation_message: string;
     text_validation_message: string;
+    lang: string;
 }
 
 export declare global {
