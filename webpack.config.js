@@ -1,6 +1,6 @@
 const defaultConfig = require('@wordpress/scripts/config/webpack.config.js');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
-const siteName = 'https://new.fremeditiguitars.com'
+const siteName = 'https://dev.fremeditiguitars.com'
 
 module.exports = {
     ...defaultConfig,

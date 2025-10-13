@@ -161,11 +161,16 @@ export const loadData = (model?: string) => async (dispatch: AppDispatch) => {
 
         let requestAction = fggc_customizer_data.action;
         let adminURL = fggc_customizer_data.url;
+        let lang = fggc_customizer_data.lang;
 
         let url = `${adminURL}?action=${requestAction}`
 
         if (model) {
             url = `${url}&model=${model}`
+        }
+
+        if (lang) {
+            url = `${url}&lang=${lang}`
         }
 
         const response = await fetch(url);

@@ -36,9 +36,10 @@ class Customizer {
 			'error_message'             => __( 'Something wrong happened. Please try later.', 'fg-guitars-customizer' ),
 			'option_validation_message' => __( 'Please select an option', 'fg-guitars-customizer' ),
 			'text_validation_message'   => __( 'Please fill this field', 'fg-guitars-customizer' ),
+			'lang'                      => apply_filters( 'wpml_current_language', '' ),
 		];
 		wp_localize_script( 'fgcc-scripts', 'fggc_customizer_data', $data );
-        wp_enqueue_script( 'fgcc-scripts' );
+		wp_enqueue_script( 'fgcc-scripts' );
 
 		ob_start();
 		?>
