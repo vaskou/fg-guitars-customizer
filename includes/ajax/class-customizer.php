@@ -153,6 +153,7 @@ class Customizer {
 				'value'     => $post->ID,
 				'label'     => $post->post_title,
 				'basePrice' => get_post_meta( $post->ID, 'fggc_customizer_price', true ),
+				'image'     => get_the_post_thumbnail_url( $post->ID, 'full' ),
 			];
 		}
 

@@ -6,6 +6,7 @@ export interface OptionData {
     label: string;
     value: string;
     price: number;
+    image: string;
     default: boolean;
 }
 
