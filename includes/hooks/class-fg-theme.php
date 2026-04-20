@@ -43,8 +43,8 @@ class Fg_Theme {
 		], get_permalink( $customizer_page ) );
 
 		?>
-        <div class="uk-flex uk-flex-right uk-flex-middle uk-margin-large-top">
-            <span class="uk-margin-right"><?php echo __( 'You can customize this model here', 'fg-guitars-customizer' ); ?></span>
+        <div class="uk-flex uk-flex-right@m uk-flex-between uk-flex-middle uk-margin-top">
+            <span class="uk-margin-right uk-text-right@m"><?php echo __( 'You can customize this model here', 'fg-guitars-customizer' ); ?></span>
             <a href="<?php echo esc_url( $url ); ?>" class="uk-button uk-button-primary"><?php echo __( 'Customize', 'fg-guitars-customizer' ); ?></a>
         </div>
 		<?php
